@@ -51,7 +51,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "thrd.h"
 #include "list.h"
 #include "log.h"
-#include "hex.h"
 #endif
 
 #ifdef TUMBLEWEED
@@ -83,30 +82,7 @@ void log_complex( NODE *n, int code, const char *buffer ) {
 		closelog();
 	}
 }
-#elif MASALA
-void log_complex( IP *c_addr, const char *buffer ) {
-	int verbosity = (_main->conf->quiet == CONF_BEQUIET) ? CONF_BEQUIET : CONF_VERBOSE;
-	char buf[INET6_ADDRSTRLEN+1];
 
-	if( verbosity != CONF_VERBOSE ) {
-		return;
-	}
-
-	memset( buf, '\0', INET6_ADDRSTRLEN+1 );
-		
-	if( _main->conf->mode == CONF_FOREGROUND ) {
-		printf( "%s %s\n", buffer,
-			inet_ntop( AF_INET6, &c_addr->sin6_addr, buf, INET6_ADDRSTRLEN) );
-	} else {
-		openlog( CONF_SRVNAME, LOG_PID|LOG_CONS,LOG_USER );
-		syslog( LOG_INFO, "%s %s", buffer,
-			inet_ntop( AF_INET6, &c_addr->sin6_addr, buf, INET6_ADDRSTRLEN) );
-		closelog();
-	}
-}
-#endif
-
-#ifdef TUMBLEWEED
 void log_info( int code, const char *buffer ) {
 	int verbosity = (_main->conf->quiet == CONF_BEQUIET && code == 200) ? CONF_BEQUIET : CONF_VERBOSE;
 
@@ -129,6 +105,28 @@ void log_info( int code, const char *buffer ) {
 	}
 }
 #endif
+
+
+char* id_to_str( const UCHAR *in, char *buf ) {
+	long int i = 0;
+	UCHAR *p0 = (UCHAR *)in;
+	char *p1 = buf;
+
+	memset( buf, '\0', HEX_LEN+1 );
+
+	for( i=0; i<SHA_DIGEST_LENGTH; i++ ) {
+		snprintf( p1, 3, "%02x", *p0 );
+		p0++;
+		p1+=2;
+	}
+
+	return buf;
+}
+
+char* ip_to_str( IP *addr, char *buf ) {
+	inet_ntop( AF_INET6, &addr->sin6_addr, buf, (INET6_ADDRSTRLEN+1));
+	return buf;
+}
 
 void __log(const char *filename, int line, int priority, const char *format, ...) {
 	char buffer[MAIN_BUF];

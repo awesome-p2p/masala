@@ -47,7 +47,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "bucket.h"
 #include "send_p2p.h"
 #include "cache.h"
-#include "hex.h"
 
 void send_ping( IP *sa, int type ) {
 	struct obj_ben *dict = ben_init( BEN_DICT );
@@ -55,6 +54,7 @@ void send_ping( IP *sa, int type ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
+	char addrbuf[INET6_ADDRSTRLEN+1];
 
 	/*
 		1:i 20:NODE_ID
@@ -96,7 +96,7 @@ void send_ping( IP *sa, int type ) {
 	ben_free( dict );
 
 	/* Log */
-	log_complex( sa, "PING" );
+	log_info( "PING %s", ip_to_str( sa, addrbuf ) );
 }
 
 void send_pong( IP *sa, UCHAR *node_sk ) {
@@ -104,6 +104,7 @@ void send_pong( IP *sa, UCHAR *node_sk ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
+	char addrbuf[INET6_ADDRSTRLEN+1];
 
 	/*
 		1:i 20:NODE_ID
@@ -142,7 +143,7 @@ void send_pong( IP *sa, UCHAR *node_sk ) {
 	ben_free( dict );
 
 	/* Log */
-	log_complex( sa, "PONG" );
+	log_info( "PONG %s", ip_to_str( sa, addrbuf ) );
 }
 
 void send_announce( IP *sa, UCHAR *lkp_id ) {
@@ -151,6 +152,7 @@ void send_announce( IP *sa, UCHAR *lkp_id ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
+	char addrbuf[INET6_ADDRSTRLEN+1];
 
 	/*
 		1:i 20:NODE_ID
@@ -208,7 +210,7 @@ void send_announce( IP *sa, UCHAR *lkp_id ) {
 	ben_free( dict );
 
 	/* Log */
-	log_complex( sa, "ANNOUNCE to" );
+	log_info( "ANNOUNCE to %s", ip_to_str( sa, addrbuf ) );
 }
 
 void send_find( IP *sa, UCHAR *node_id ) {
@@ -217,7 +219,7 @@ void send_find( IP *sa, UCHAR *node_id ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
-	char buffer[MAIN_BUF+1];
+	char addrbuf[INET6_ADDRSTRLEN+1];
 	char hexbuf[HEX_LEN+1];
 
 	/*
@@ -268,9 +270,7 @@ void send_find( IP *sa, UCHAR *node_id ) {
 	ben_free( dict );
 
 	/* Log */
-	hex_encode( hexbuf, node_id );
-	snprintf( buffer, MAIN_BUF+1, "FIND %s at", hexbuf );
-	log_complex( sa, buffer );
+	log_info( "FIND %s at %s", id_to_str( node_id, hexbuf ), ip_to_str( sa, addrbuf ) );
 }
 
 void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
@@ -279,7 +279,7 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
-	char buffer[MAIN_BUF+1];
+	char addrbuf[INET6_ADDRSTRLEN+1];
 	char hexbuf[HEX_LEN+1];
 
 	/*
@@ -338,9 +338,7 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	ben_free( dict );
 
 	/* Log */
-	hex_encode( hexbuf, node_id );
-	snprintf( buffer, MAIN_BUF+1, "LOOKUP %s at", hexbuf );
-	log_complex( sa, buffer );
+	log_info( "LOOKUP %s at %s", id_to_str( node_id, hexbuf ), ip_to_str( sa, addrbuf ) );
 }
 
 void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_type ) {
@@ -354,7 +352,7 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	NODE *n = NULL;
 	long int i=0;
 	IP *sin = NULL;
-	char buffer[MAIN_BUF+1];
+	char addrbuf[INET6_ADDRSTRLEN+1];
 
 	/*
 		1:i 20:NODE_ID
@@ -461,16 +459,15 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	/* Log */
 	switch( *reply_type ) {
 		case 'A':
-			snprintf(buffer, MAIN_BUF+1, "NODES via ANNOUNCE to");
+			log_info( "NODES via ANNOUNCE to %s", ip_to_str( sa, addrbuf ) );
 			break;
 		case 'F':
-			snprintf(buffer, MAIN_BUF+1, "NODES via FIND to");
+			log_info( "NODES via FIND to %s", ip_to_str( sa, addrbuf ) );
 			break;
 		case 'L':
-			snprintf(buffer, MAIN_BUF+1, "NODES via LOOKUP to");
+			log_info( "NODES via LOOKUP to %s", ip_to_str( sa, addrbuf ) );
 			break;
 	}
-	log_complex( sa, buffer );
 }
 
 void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
@@ -478,6 +475,7 @@ void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
+	char addrbuf[INET6_ADDRSTRLEN+1];
 
 	/*
 		1:i 20:NODE_ID
@@ -532,7 +530,7 @@ void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
 	ben_free( dict );
 
 	/* Log */
-	log_complex( sa, "VALUE via LOOKUP to" );
+	log_info( "VALUE via LOOKUP to %s", ip_to_str( sa, addrbuf ) );
 }
 
 void send_aes( IP *sa, struct obj_raw *raw ) {

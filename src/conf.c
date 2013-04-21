@@ -45,7 +45,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "conf.h"
 #include "sha1.h"
 #include "unix.h"
-#include "hex.h"
 #include "random.h"
 #include "ben.h"
 #include "p2p.h"
@@ -146,23 +145,11 @@ void conf_free( void ) {
 }
 
 void conf_check( void ) {
+	char hexbuf[HEX_LEN+1];
 #ifdef MASALA
-	char hex[HEX_LEN+1];
-#endif
-
-#ifdef MASALA
-	log_info( "Hostname: %s (-h)", _main->conf->hostname );
-#endif
-
-#ifdef MASALA
-	hex_encode( hex, _main->conf->node_id );
-	log_info( "Node ID: %s", hex );
-
-	hex_encode( hex, _main->conf->host_id );
-	log_info( "Host ID: %s", hex );
-#endif
-
-#ifdef MASALA
+	log_info( "Hostname: '%s' (-h)", _main->conf->hostname );
+	log_info( "Node ID: %s (/dev/urandom)", id_to_str( _main->conf->node_id, hexbuf ) );
+	log_info( "Host ID: %s (sha1 '%s')", id_to_str(  _main->conf->host_id, hexbuf ), _main->conf->hostname );
 	log_info( "Bootstrap Node: %s (-x)", _main->conf->bootstrap_node );
 	log_info( "Bootstrap Port: UDP/%s (-y)", _main->conf->bootstrap_port );
 #endif

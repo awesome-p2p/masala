@@ -55,7 +55,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "announce.h"
 #include "neighboorhood.h"
 #include "time.h"
-#include "hex.h"
 #include "random.h"
 
 LIST *nbhd_init( void ) {
@@ -235,8 +234,7 @@ void nbhd_print( void ) {
 	ITEM *item_n = NULL;
 	NODE *n = NULL;
 	long int j = 0, k = 0;
-	char hex[HEX_LEN+1];
-	char buf[MAIN_BUF+1];
+	char hexbuf[HEX_LEN+1];
 
 	log_info( "Bucket split:" );
 
@@ -245,18 +243,14 @@ void nbhd_print( void ) {
 	for( k=0; k<_main->nbhd->counter; k++ ) {
 		b = item_b->val;
 
-		hex_encode( hex, b->id );
-		snprintf( buf, MAIN_BUF+1, " Bucket: %s", hex );
-		log_info( buf );
+		log_info( " Bucket: %s", id_to_str( b->id, hexbuf ) );
 
 		/* Cycle through all the nodes */
 		item_n = b->nodes->start;
 		for( j=0; j<b->nodes->counter; j++ ) {
 			n = item_n->val;
 
-			hex_encode( hex, n->id );
-			snprintf( buf, MAIN_BUF+1, "  Node: %s", hex );
-			log_info( buf );
+			log_info( "  Node: %s", id_to_str( n->id, hexbuf ) );
 
 			item_n = list_next( item_n );
 		}

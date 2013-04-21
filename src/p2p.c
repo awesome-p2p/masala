@@ -61,7 +61,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "time.h"
 #include "random.h"
 #include "sha1.h"
-#include "hex.h"
 #include "database.h"
 
 struct obj_p2p *p2p_init( void ) {
