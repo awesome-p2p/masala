@@ -29,6 +29,18 @@ void log_info( int code, const char *buffer );
 void log_info( const char *buffer );
 #endif
 
-void log_simple( const char *buffer );
-void log_fail( const char *buffer );
-void log_memfail( const char *buffer, const char *caller );
+#include <syslog.h>
+
+#ifdef DEBUG
+#define log_crit(...) __log(__FILE__, __LINE__, LOG_CRIT, __VA_ARGS__)
+#define log_err(...) __log(__FILE__, __LINE__, LOG_ERR, __VA_ARGS__)
+#define log_info(...) __log(__FILE__, __LINE__, LOG_INFO, __VA_ARGS__)
+#define log_debug(...) __log(__FILE__, __LINE__, LOG_DEBUG, __VA_ARGS__)
+#else
+#define log_crit(...) __log(NULL, 0, LOG_CRIT, __VA_ARGS__)
+#define log_err(...) __log(NULL, 0, LOG_ERR, __VA_ARGS__)
+#define log_info(...) __log(NULL, 0, LOG_INFO, __VA_ARGS__)
+#define log_debug(...) __log(NULL, 0, LOG_DEBUG, __VA_ARGS__)
+#endif
+
+void __log(const char *filename, int line, int priority, const char *format, ...);

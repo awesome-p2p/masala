@@ -93,7 +93,7 @@ void bckt_put( LIST *l, NODE *n ) {
 	}
 
 	if( ( i = bckt_find_best_match( l, n->id)) == NULL ) {
-		log_fail( "Something is terribly broken: No appropriate bucket found for ID" );
+		log_err( "Something is terribly broken: No appropriate bucket found for ID" );
 		return;
 	}
 	b = i->val;
@@ -116,7 +116,7 @@ void bckt_del( LIST *l, NODE *n ) {
 	}
 
 	if( ( item_b = bckt_find_best_match( l, n->id)) == NULL ) {
-		log_fail( "Something is terribly broken: No appropriate bucket found for ID" );
+		log_err( "Something is terribly broken: No appropriate bucket found for ID" );
 		return;
 	}
 	b = item_b->val;

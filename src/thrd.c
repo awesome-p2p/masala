@@ -47,7 +47,7 @@ sem_t *thrd_init( const char *semname ) {
 	mutex = (sem_t *) myalloc( sizeof(sem_t), "thrd_init" );
 	if( ( sem_init( mutex, 0, 1)) == -1 )
 #endif
-		log_fail( "Initialisation of a semaphore failed." );
+		log_err( "Initialisation of a semaphore failed." );
 
 	return mutex;
 }
@@ -75,7 +75,7 @@ pthread_mutex_t *mutex_init( void ) {
 	pthread_mutex_t *mutex = (pthread_mutex_t *) myalloc( sizeof(pthread_mutex_t), "mutex_init" );
 	
 	if( pthread_mutex_init( mutex, NULL) != 0 )
-		log_fail( "pthread_mutex_init() failed." );
+		log_err( "pthread_mutex_init() failed." );
 
 	return mutex;
 }
@@ -99,7 +99,7 @@ pthread_cond_t *cond_init( void ) {
 	pthread_cond_t *cond = (pthread_cond_t *) myalloc( sizeof(pthread_cond_t), "cond_init" );
 
 	if( pthread_cond_init( cond, NULL) != 0 ) {
-		log_fail( "pthread_cond_init() failed." );
+		log_err( "pthread_cond_init() failed." );
 	}
 
 	return cond;

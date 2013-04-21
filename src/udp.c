@@ -80,7 +80,7 @@ void udp_start( void ) {
 	int optval = 1;
 
 	if( ( _main->udp->sockfd = socket( PF_INET6, SOCK_DGRAM, 0)) < 0 ) {
-		log_fail( "Creating socket failed." );
+		log_err( "Creating socket failed." );
 	}
 	_main->udp->s_addr.sin6_family = AF_INET6;
 	_main->udp->s_addr.sin6_port = htons( _main->conf->port );
@@ -91,15 +91,15 @@ void udp_start( void ) {
 
 	/* Listen to IPv6 only */
 	if( setsockopt( _main->udp->sockfd, IPPROTO_IPV6, IPV6_V6ONLY, &optval, sizeof(int)) == -1 ) {
-		log_fail( "Setting IPV6_V6ONLY failed" );
+		log_err( "Setting IPV6_V6ONLY failed" );
 	}
 
 	if( bind( _main->udp->sockfd,( struct sockaddr *) &_main->udp->s_addr, _main->udp->s_addrlen) ) {
-		log_fail( "bind() to socket failed." );
+		log_err( "bind() to socket failed." );
 	}
 
 	if( udp_nonblocking( _main->udp->sockfd) < 0 ) {
-		log_fail( "udp_nonblocking( _main->udp->sockfd) failed" );
+		log_err( "udp_nonblocking( _main->udp->sockfd) failed" );
 	}
 	
 	/* Setup epoll */
@@ -119,7 +119,7 @@ void udp_stop( void ) {
 	pthread_attr_destroy( &_main->udp->attr );
 	for( i=0; i <= _main->conf->cores; i++ ) {
 		if( pthread_join( *_main->udp->threads[i], NULL) != 0 ) {
-			log_fail( "pthread_join() failed" );
+			log_err( "pthread_join() failed" );
 		}
 		myfree( _main->udp->threads[i], "udp_pool" );
 	}
@@ -127,12 +127,12 @@ void udp_stop( void ) {
 
 	/* Close socket */
 	if( close( _main->udp->sockfd) != 0 ) {
-		log_fail( "close() failed." );
+		log_err( "close() failed." );
 	}
 
 	/* Close epoll */
 	if( close( _main->udp->epollfd) != 0 ) {
-		log_fail( "close() failed." );
+		log_err( "close() failed." );
 	}
 }
 
@@ -141,14 +141,14 @@ void udp_event( void ) {
 
 	_main->udp->epollfd = epoll_create( 23 );
 	if( _main->udp->epollfd == -1 ) {
-		log_fail( "epoll_create() failed" );
+		log_err( "epoll_create() failed" );
 	}
 
 	ev.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
 	ev.data.fd = _main->udp->sockfd;
 	
 	if( epoll_ctl( _main->udp->epollfd, EPOLL_CTL_ADD, _main->udp->sockfd, &ev) == -1 ) {
-		log_fail( "udp_event: epoll_ctl() failed" );
+		log_err( "udp_event: epoll_ctl() failed" );
 	}
 }
 
@@ -164,14 +164,14 @@ void udp_pool( void ) {
 	for( i=0; i < _main->conf->cores; i++ ) {
 		_main->udp->threads[i] = (pthread_t *) myalloc( sizeof(pthread_t), "udp_pool" );
 		if( pthread_create( _main->udp->threads[i], &_main->udp->attr, udp_thread, NULL) != 0 ) {
-			log_fail( "pthread_create()" );
+			log_err( "pthread_create()" );
 		}
 	}
 
 	/* Send 1st request while the workers are starting */
 	_main->udp->threads[_main->conf->cores] = (pthread_t *) myalloc( sizeof(pthread_t), "udp_pool" );
 	if( pthread_create( _main->udp->threads[_main->conf->cores], NULL, udp_client, NULL) != 0 ) {
-		log_fail( "pthread_create()" );
+		log_err( "pthread_create()" );
 	}
 }
 
@@ -195,7 +195,7 @@ void *udp_thread( void *arg ) {
 		if( _main->status == MAIN_ONLINE && nfds == -1 ) {
 			if( errno != EINTR ) {
 				log_info( "udp_thread: epoll_wait() failed" );
-				log_fail( strerror( errno) );
+				log_err( strerror( errno) );
 			}
 		} else if( _main->status == MAIN_ONLINE && nfds == 0 ) {
 			/* Timed wakeup */
@@ -248,7 +248,7 @@ void udp_rearm( int sockfd ) {
 
 	if( epoll_ctl( _main->udp->epollfd, EPOLL_CTL_MOD, sockfd, &ev) == -1 ) {
 		log_info( strerror( errno) );
-		log_fail( "udp_rearm: epoll_ctl() failed" );
+		log_err( "udp_rearm: epoll_ctl() failed" );
 	}
 }
 
@@ -310,7 +310,7 @@ void udp_multicast( void ) {
 	/* Listen to ff0e::1 */
 	memset( &hints, '\0', sizeof(hints) );
 	if( getaddrinfo( "ff0e::1", _main->conf->bootstrap_port, &hints, &multicast) != 0 ) {
-		log_fail( "getaddrinfo failed" );
+		log_err( "getaddrinfo failed" );
 	}
 	memset( &mreq, '\0', sizeof(mreq) );
 	memcpy( &mreq.ipv6mr_multiaddr, &((IP *) multicast->ai_addr)->sin6_addr, sizeof(mreq.ipv6mr_multiaddr) );

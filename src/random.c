@@ -40,7 +40,7 @@ void rand_urandom( void *buffer, size_t size ) {
 	UCHAR *random = NULL;
 
 	if( ( random = (UCHAR *)file_load( "/dev/urandom", 0, size)) == NULL ) {
-		log_fail( "Failed to read /dev/urandom" );
+		log_err( "Failed to read /dev/urandom" );
 	}
 
 	memcpy( buffer, random, size );

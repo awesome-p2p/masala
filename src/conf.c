@@ -146,124 +146,92 @@ void conf_free( void ) {
 }
 
 void conf_check( void ) {
-	char buf[MAIN_BUF+1];
 #ifdef MASALA
 	char hex[HEX_LEN+1];
 #endif
 
 #ifdef MASALA
-	snprintf( buf, MAIN_BUF+1, "Hostname: %s (-h)", _main->conf->hostname );
-	log_info( buf );
+	log_info( "Hostname: %s (-h)", _main->conf->hostname );
 #endif
 
 #ifdef MASALA
 	hex_encode( hex, _main->conf->node_id );
-	snprintf( buf, MAIN_BUF+1, "Node ID: %s", hex );
-	log_info( buf );
+	log_info( "Node ID: %s", hex );
 
 	hex_encode( hex, _main->conf->host_id );
-	snprintf( buf, MAIN_BUF+1, "Host ID: %s", hex );
-	log_info( buf );
+	log_info( "Host ID: %s", hex );
 #endif
 
 #ifdef MASALA
-	snprintf( buf, MAIN_BUF+1, "Bootstrap Node: %s (-x)", _main->conf->bootstrap_node );
-	log_info( buf );
-	snprintf( buf, MAIN_BUF+1, "Bootstrap Port: UDP/%s (-y)", _main->conf->bootstrap_port );
-	log_info( buf );
+	log_info( "Bootstrap Node: %s (-x)", _main->conf->bootstrap_node );
+	log_info( "Bootstrap Port: UDP/%s (-y)", _main->conf->bootstrap_port );
 #endif
 
 #ifdef TUMBLEWEED
-	snprintf( buf, MAIN_BUF+1, "Shared: %s (-s)", _main->conf->home );
-	log_info( 0, buf );
+	log_info( "Shared: %s (-s)", _main->conf->home );
 	
 	if( !file_isdir( _main->conf->home) ) {
-		log_fail( "The shared directory does not exist" );
+		log_err( "The shared directory does not exist" );
 	}
 #endif
 
 #ifdef TUMBLEWEED
-	snprintf( buf, MAIN_BUF+1, "Index file: %s (-i)", _main->conf->index_name );
-	log_info( 0, buf );
+	log_info( "Index file: %s (-i)", _main->conf->index_name );
 	if( !str_isValidFilename( _main->conf->index_name ) ) {
-		snprintf( buf, MAIN_BUF+1, "%s looks suspicious", _main->conf->index_name );
-		log_fail( buf );
+		log_err( "%s looks suspicious", _main->conf->index_name );
 	}
 #endif
 
 	if( _main->conf->mode == CONF_FOREGROUND ) {
-		snprintf( buf, MAIN_BUF+1, "Mode: Foreground (-d)" );
+		log_info( "Mode: Foreground (-d)" );
 	} else {
-		snprintf( buf, MAIN_BUF+1, "Mode: Daemon (-d)" );
+		log_info( "Mode: Daemon (-d)" );
 	}
-#ifdef TUMBLEWEED
-	log_info( 0, buf );
-#elif MASALA
-	log_info( buf );
-#endif
 
 	if( _main->conf->quiet == CONF_BEQUIET ) {
-		snprintf( buf, MAIN_BUF+1, "Verbosity: Quiet (-q)" );
+		log_info( "Verbosity: Quiet (-q)" );
 	} else {
-		snprintf( buf, MAIN_BUF+1, "Verbosity: Verbose (-q)" );
+		log_info( "Verbosity: Verbose (-q)" );
 	}
-#ifdef TUMBLEWEED
-	log_info( 0, buf );
-#elif MASALA
-	log_info( buf );
-#endif
 
 #ifdef TUMBLEWEED
-	snprintf( buf, MAIN_BUF+1, "Listen to TCP/%i (-p)", _main->conf->port );
-	log_info( 0, buf );
+	log_info( "Listen to TCP/%i (-p)", _main->conf->port );
 #elif MASALA
-	snprintf( buf, MAIN_BUF+1, "Listen to UDP/%i (-p)", _main->conf->port );
-	log_info( buf );
+	log_info( "Listen to UDP/%i (-p)", _main->conf->port );
 #endif
 
 	/* Port == 0 => Random source port */
 	if( _main->conf->port < CONF_PORTMIN || _main->conf->port > CONF_PORTMAX ) {
-		log_fail( "Invalid www port number. (-p)" );
+		log_err( "Invalid www port number. (-p)" );
 	}
 
 	/* Check bootstrap server port */
 #ifndef TUMBLEWEED
 	if( str_isSafePort( _main->conf->bootstrap_port) < 0 ) {
-		log_fail( "Invalid bootstrap port number. (-y)" );
+		log_err( "Invalid bootstrap port number. (-y)" );
 	}
 #endif
 
 	/* Encryption */
 #ifdef MASALA
 	if( _main->conf->bool_encryption == 1 ) {
-		snprintf( buf, MAIN_BUF+1, "Encryption key: %s (-k)", _main->conf->key );
-		log_info( buf );
+		log_info( "Encryption key: %s (-k)", _main->conf->key );
 	} else {
-		snprintf( buf, MAIN_BUF+1, "Encryption key: None (-k)" );
-		log_info( buf );
+		log_info( "Encryption key: None (-k)" );
 	}
 #endif
 
 	/* Realm */
 #ifdef MASALA
 	if( _main->conf->bool_realm == 1 ) {
-		snprintf( buf, MAIN_BUF+1, "Realm: %s (-r)", _main->conf->realm );
-		log_info( buf );
+		log_info( "Realm: %s (-r)", _main->conf->realm );
 	} else {
-		snprintf( buf, MAIN_BUF+1, "Realm: None (-r)" );
-		log_info( buf );
+		log_info( "Realm: None (-r)" );
 	}
 #endif
 
-
-
-	snprintf( buf, MAIN_BUF+1, "Worker threads: %i", _main->conf->cores );
-#ifdef TUMBLEWEED
-	log_info( 0, buf );
-#else
-	log_info( buf );
-#endif
+	log_info( "Worker threads: %i", _main->conf->cores );
 	if( _main->conf->cores < 1 || _main->conf->cores > 128 ) {
-		log_fail( "Invalid core number." );
+		log_err( "Invalid core number." );
 	}
 }
