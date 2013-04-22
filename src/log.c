@@ -123,9 +123,14 @@ char* id_to_str( const UCHAR *in, char *buf ) {
 	return buf;
 }
 
-char* ip_to_str( IP *addr, char *buf ) {
-	inet_ntop( AF_INET6, &addr->sin6_addr, buf, (INET6_ADDRSTRLEN+1));
-	return buf;
+char* ip_to_str( IP *addr, char *addrbuf ) {
+	char buf[INET6_ADDRSTRLEN+1];
+	unsigned short port = ntohs( addr->sin6_port );
+
+	inet_ntop( AF_INET6, &addr->sin6_addr, buf, sizeof(buf) );
+	sprintf(addrbuf, "[%s]:%d", buf, port);
+
+	return addrbuf;
 }
 
 void __log(const char *filename, int line, int priority, const char *format, ...) {

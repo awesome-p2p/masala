@@ -54,7 +54,7 @@ void send_ping( IP *sa, int type ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
-	char addrbuf[INET6_ADDRSTRLEN+1];
+	char addrbuf[FULL_ADDSTRLEN];
 
 	/*
 		1:i 20:NODE_ID
@@ -104,7 +104,7 @@ void send_pong( IP *sa, UCHAR *node_sk ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
-	char addrbuf[INET6_ADDRSTRLEN+1];
+	char addrbuf[FULL_ADDSTRLEN];
 
 	/*
 		1:i 20:NODE_ID
@@ -152,7 +152,7 @@ void send_announce( IP *sa, UCHAR *lkp_id ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
-	char addrbuf[INET6_ADDRSTRLEN+1];
+	char addrbuf[FULL_ADDSTRLEN];
 
 	/*
 		1:i 20:NODE_ID
@@ -219,7 +219,7 @@ void send_find( IP *sa, UCHAR *node_id ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
-	char addrbuf[INET6_ADDRSTRLEN+1];
+	char addrbuf[FULL_ADDSTRLEN];
 	char hexbuf[HEX_LEN+1];
 
 	/*
@@ -279,7 +279,7 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
 	UCHAR skey[SHA_DIGEST_LENGTH];
-	char addrbuf[INET6_ADDRSTRLEN+1];
+	char addrbuf[FULL_ADDSTRLEN];
 	char hexbuf[HEX_LEN+1];
 
 	/*
@@ -352,7 +352,7 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	NODE *n = NULL;
 	long int i=0;
 	IP *sin = NULL;
-	char addrbuf[INET6_ADDRSTRLEN+1];
+	char addrbuf[FULL_ADDSTRLEN];
 
 	/*
 		1:i 20:NODE_ID
@@ -475,7 +475,7 @@ void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
-	char addrbuf[INET6_ADDRSTRLEN+1];
+	char addrbuf[FULL_ADDSTRLEN];
 
 	/*
 		1:i 20:NODE_ID

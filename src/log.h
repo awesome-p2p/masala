@@ -19,14 +19,10 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef TUMBLEWEED
 void log_complex( NODE *n, int code, const char *buffer );
-#elif MASALA
-void log_complex( IP *c_addr, const char *buffer );
 #endif
 
 #ifdef TUMBLEWEED
 void log_info( int code, const char *buffer );
-#elif MASALA
-void log_info( const char *buffer );
 #endif
 
 #include <syslog.h>
@@ -43,4 +39,10 @@ void log_info( const char *buffer );
 #define log_debug(...) __log(NULL, 0, LOG_DEBUG, __VA_ARGS__)
 #endif
 
-void __log(const char *filename, int line, int priority, const char *format, ...);
+#define HEX_LEN (2 * SHA_DIGEST_LENGTH)
+#define FULL_ADDSTRLEN (INET6_ADDRSTRLEN + 9)
+
+
+char* id_to_str( const UCHAR *in, char *buf );
+char* ip_to_str( IP *addr, char *buf );
+void __log( const char *filename, int line, int priority, const char *format, ... );
