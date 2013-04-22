@@ -137,12 +137,6 @@ void p2p_parse( UCHAR *bencode, size_t bensize, IP *from ) {
 		return;
 	}
 
-	/* Recursive lookup request from localhost ::1 */
-	if( node_conn_from_localhost(from) ) {
-		p2p_lookup_nss( bencode, bensize, from );
-		return;
-	}
-
 	/* Validate bencode */
 	if( !ben_validate( bencode, bensize ) ) {
 		log_info( "UDP packet contains broken bencode" );
@@ -764,46 +758,6 @@ void p2p_value( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, IP *from
 
 	/* Return IP to NSS */
 	lkp_success(ben_lkp_id->v.s->s, ben_address->v.s->s);
-}
-
-void p2p_lookup_nss( UCHAR *hostname, size_t size, IP *from ) {
-	UCHAR lkp_id[SHA_DIGEST_LENGTH];
-	UCHAR host_id[SHA_DIGEST_LENGTH];
-	char buffer[MAIN_BUF+1];
-	IP *address;
-
-	/* Validate hostname */
-	if ( !str_isValidHostname( (char *)hostname, size ) ) {
-		snprintf( buffer, MAIN_BUF+1, "LOOKUP %s (Invalid hostname)", hostname );
-		log_info( buffer );
-		return;
-	}
-
-	/* That is the lookup key */
-	p2p_compute_realm_id( host_id, (char *)hostname );
-
-	/* Check my own DB for that node. */
-	mutex_block( _main->p2p->mutex );
-	address = db_address( host_id );
-	mutex_unblock( _main->p2p->mutex );
-
-	if( address != NULL ) {
-		snprintf( buffer, MAIN_BUF+1, "LOOKUP %s (Local)", hostname );
-		log_info( buffer );
-		lkp_local( address, from );
-		return;
-	}
-
-	snprintf( buffer, MAIN_BUF+1, "LOOKUP %s (Remote)", hostname );
-	log_info( buffer );
-
-	/* Create random id to identify this search request */
-	rand_urandom( lkp_id, SHA_DIGEST_LENGTH );
-
-	/* Start find process */
-	mutex_block( _main->p2p->mutex );
-	lkp_put( host_id, lkp_id, from );
-	mutex_unblock( _main->p2p->mutex );
 }
 
 void p2p_announce_myself( void ) {

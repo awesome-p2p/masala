@@ -1,4 +1,4 @@
-SUBDIRS = masala masala-nss
+SUBDIRS = masala
 
 .PHONY : all clean install $(SUBDIRS)
 
