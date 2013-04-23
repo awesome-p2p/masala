@@ -1,0 +1,36 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+
+LIST_SEP="
+"
+MASALA_EXEC=/usr/bin/masala
+
+
+section_enabled() {
+	config_get_bool enabled "$1" 'enabled' 0
+	[ $enabled -gt 0 ]
+}
+
+start_instance() {
+	local s="$1"
+
+	section_enabled "$s" || return 1
+
+	eval service_start "'$MASALA_EXEC'" -d
+}
+
+stop_instance() {
+	local s="$1"
+	service_stop "$MASALA_EXEC"
+}
+
+start() {
+	config_load 'masala'
+	config_foreach start_instance 'masala'
+}
+
+stop() {
+	config_load 'masala'
+	config_foreach stop_instance 'masala'
+}
