@@ -133,13 +133,13 @@ char* ip_to_str( IP *addr, char *addrbuf ) {
 	return addrbuf;
 }
 
-void __log(const char *filename, int line, int priority, const char *format, ...) {
+void __log( const char *filename, int line, int priority, const char *format, ... ) {
 	char buffer[MAIN_BUF];
 	va_list vlist;
 
-	va_start(vlist, format);
-	vsnprintf(buffer, MAIN_BUF, format, vlist);
-	va_end(vlist);
+	va_start( vlist, format );
+	vsnprintf( buffer, MAIN_BUF, format, vlist );
+	va_end( vlist );
 
 	if( priority == LOG_INFO && (_main->conf->quiet == CONF_BEQUIET) ) {
 		return;
@@ -152,13 +152,13 @@ void __log(const char *filename, int line, int priority, const char *format, ...
 			fprintf( stderr, "(%s:%d) %s\n", filename, line, buffer );
 	} else {
 		openlog( CONF_SRVNAME, LOG_PID|LOG_CONS, LOG_USER|LOG_PERROR );
-		if(filename == NULL || line == 0)
+		if( filename == NULL || line == 0 )
 			syslog( priority, "%s", buffer );
 		else
 			syslog( priority, "(%s:%d) %s" , filename, line, buffer );
 		closelog();
 	}
 
-	if(priority == LOG_CRIT || priority == LOG_ERR)
+	if( priority == LOG_CRIT || priority == LOG_ERR )
 		exit( 1 );
 }
