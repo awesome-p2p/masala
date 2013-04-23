@@ -54,13 +54,13 @@ hostname with *.p2p* at the end.
 	Be quiet and do not log anything.
 
   * `-da, --dns-addr`:
-	Bind the DNS server interface to this address (Default: '::1').
+	Bind the DNS server interface to this address (Default: ::1).
 
   * `-dp, --dns-port`:
 	Bind the DNS server interface to this port (Default: 3444).
 
   * `-di, --dns-ifce`:
-	Bind the DNS server interface to this interface (Default: <any>).
+	Bind the DNS server interface to this interface (Default: &lt;any&gt;).
 
 ## EXAMPLES
 
@@ -71,7 +71,3 @@ Announce the hostname *fubar.p2p* with the encryption password *fubar*:
 ## BUGS
 
 Lack of IPv6 support by the providers.
-
-## SEE ALSO
-
-nsswitch.conf(5)
