@@ -101,10 +101,10 @@ void udp_start( void ) {
 	if( udp_nonblocking( _main->udp->sockfd) < 0 ) {
 		log_err( "udp_nonblocking( _main->udp->sockfd) failed" );
 	}
-	
+
 	/* Setup epoll */
 	udp_event();
-	
+
 	/* Drop privileges */
 	unix_dropuid0();
 
