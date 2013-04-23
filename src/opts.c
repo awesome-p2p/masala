@@ -54,6 +54,7 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "p2p.h"
 #endif
 
+
 const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 "A Distributed Hashtable (DHT) combined with a basic DNS-server interface.\n\n"
 "Usage: masala [OPTIONS]...\n"
@@ -153,7 +154,7 @@ void opts_interpreter( char *var, char *val ) {
 #ifdef MASALA
 	if( match( var, "-ba", "--bootstrap-addr") ) {
 		replace( var, &_main->conf->bootstrap_node, val);
-	} else if( match( var, "-bp", "--bootstrap-port") ) {
+	} else if( match( var, "-bp", "--bootstrap-port" ) ) {
 		replace( var, &_main->conf->bootstrap_port, val);
 	} else if( match( var, "-k", "--key" ) ) {
 		replace( var, &_main->conf->key, val);
@@ -181,7 +182,7 @@ void opts_interpreter( char *var, char *val ) {
 		replace( var, &_main->conf->dns_addr, val);
 	} else if( match( var, "-di", "--dns-ifce" ) ) {
 		replace( var, &_main->conf->dns_ifce, val);
-	} else if( match( var, "-p", "--port") ) {
+	} else if( match( var, "-p", "--port" ) ) {
 		if( val == NULL )
 			arg_expected( var );
 		_main->conf->port = atoi( val );
@@ -195,7 +196,7 @@ void opts_interpreter( char *var, char *val ) {
 		printf( usage );
 		exit( 0 );
 	} else {
-		log_err("Unknown command line option '%s'", var);
+		log_err( "Unknown command line option '%s'", var );
 	}
 #endif
 }
