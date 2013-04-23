@@ -52,6 +52,7 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 
 struct obj_conf *conf_init( void ) {
 	struct obj_conf *conf = (struct obj_conf *) myalloc( sizeof(struct obj_conf), "conf_init" );
+	char buf[MAIN_BUF+1];
 #ifndef TUMBLEWEED
 	char *fbuf = NULL;
 	char *p = NULL;
@@ -70,16 +71,19 @@ struct obj_conf *conf_init( void ) {
 
 #ifdef MASALA
 	/* /etc/hostname */
-	conf->hostname = strdup( "bulk.p2p" );
 	if( file_isreg( CONF_HOSTFILE) ) {
 		if( ( fbuf = (char *) file_load( CONF_HOSTFILE, 0, file_size( CONF_HOSTFILE))) != NULL ) {
 			if( ( p = strchr( fbuf, '\n')) != NULL ) {
 				*p = '\0';
 			}
-			snprintf( conf->hostname, MAIN_BUF+1, "%s.p2p", fbuf );
+			memset( buf, '\0', MAIN_BUF+1 );
+			strcat( buf, fbuf );
+			strcat( buf, ".p2p" );
 			myfree( fbuf, "conf_init" );
 		}
 	}
+	if( conf->hostname == NULL)
+		conf->hostname = strdup( "bulk.p2p" );
 #endif
 
 #ifdef MASALA
