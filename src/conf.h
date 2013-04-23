@@ -55,6 +55,7 @@ struct obj_conf {
 	char *username;
 
 #ifdef MASALA
+	char *pid_file;
 	char *hostname;
 	UCHAR node_id[SHA_DIGEST_LENGTH];
 	UCHAR host_id[SHA_DIGEST_LENGTH];

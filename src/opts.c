@@ -68,6 +68,7 @@ const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 " -p, --port		Set the port for the node (Default: UDP/8337).\n"
 " -d, --daemon		Run the node in background.\n"
 " -q, --quiet		Be quiet and do not log anything.\n"
+" -pf, --pid-file	Write process pid to a file.\n"
 " -da, --dns-addr	Set the address for the DNS Server interface to listen to (Default: '::1').\n"
 " -dp, --dns-port	Set the port for the DNS Server interface to listen to (Default: 3444).\n"
 " -di, --dns-ifce	Set the interface for the DNS Server interface to listen to (Default: <any>).\n"
@@ -159,6 +160,8 @@ void opts_interpreter( char *var, char *val ) {
 	} else if( match( var, "-k", "--key" ) ) {
 		replace( var, &_main->conf->key, val);
 		_main->conf->bool_encryption = TRUE;
+	} else if( match( var, "-pf", "--pid-file" ) ) {
+		replace( var, &_main->conf->pid_file, val);
 	} else if( match( var, "-h", "--hostname" ) ) {
 		replace( var, &_main->conf->hostname, val);
 

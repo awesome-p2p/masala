@@ -135,6 +135,7 @@ struct obj_conf *conf_init( void ) {
 
 void conf_free( void ) {
 	if( _main->conf != NULL ) {
+		myfree( _main->conf->pid_file, "conf_free" );
 		myfree( _main->conf->username, "conf_free" );
 		myfree( _main->conf->bootstrap_node, "conf_free" );
 		myfree( _main->conf->bootstrap_port, "conf_free" );

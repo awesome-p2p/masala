@@ -29,6 +29,7 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/epoll.h>
 #include <errno.h>
 #include <pwd.h>
+#include <fcntl.h>
 
 #ifdef TUMBLEWEED
 #include "main.h"
@@ -129,6 +130,33 @@ void unix_limits( void ) {
 	}
 
 	log_info( "Max open files: %i", limit );
+}
+
+void unix_write_pidfile( pid_t pid ) {
+	char* pid_file = _main->conf->pid_file;
+
+	if( pid_file == NULL )
+		return;
+
+	int fd = open( pid_file, O_WRONLY|O_CREAT|O_TRUNC, 0666 );
+	if( fd < 0 ) {
+		log_err( "open: Failed to open pid file." );
+	}
+
+	if( dprintf(fd, "%i", pid) < 0 )
+		log_err( "dprintf: Failed to write pid file." );
+
+	if( close(fd) < 0 )
+		log_err( "close: Failed to close pid file." );
+}
+
+void unix_delete_pidfile( void ) {
+	char* pid_file = _main->conf->pid_file;
+
+	if( pid_file == NULL )
+		return;
+
+	unlink( pid_file );
 }
 
 void unix_dropuid0( void ) {
