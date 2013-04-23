@@ -79,6 +79,7 @@ struct obj_conf *conf_init( void ) {
 			memset( buf, '\0', MAIN_BUF+1 );
 			strcat( buf, fbuf );
 			strcat( buf, ".p2p" );
+			conf->hostname = strdup( buf );
 			myfree( fbuf, "conf_init" );
 		}
 	}
