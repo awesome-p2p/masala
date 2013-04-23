@@ -43,7 +43,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_PORT 8337
 #define CONF_BOOTSTRAP_NODE "ff0e::1"
 #define CONF_BOOTSTRAP_PORT "8337"
-#define CONF_BOOTSTRAP_PORT_BUF 5
 #define CONF_KEY "open.p2p"
 #define CONF_REALM "open.p2p"
 #else
@@ -51,20 +50,20 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 struct obj_conf {
-	char username[MAIN_BUF+1];
+	char *username;
 
 #ifdef MASALA
-	char hostname[MAIN_BUF+1];
+	char *hostname;
 	UCHAR node_id[SHA_DIGEST_LENGTH];
 	UCHAR host_id[SHA_DIGEST_LENGTH];
 	UCHAR null_id[SHA_DIGEST_LENGTH];
-	char bootstrap_node[MAIN_BUF+1];
-	char bootstrap_port[CONF_BOOTSTRAP_PORT_BUF+1];
+	char *bootstrap_node;
+	char *bootstrap_port;
 
-	char key[MAIN_BUF+1];
+	char *key;
 	int bool_encryption;
 
-	char realm[MAIN_BUF+1];
+	char *realm;
 	int bool_realm;
 #endif
 

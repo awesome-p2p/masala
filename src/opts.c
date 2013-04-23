@@ -54,35 +54,67 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "p2p.h"
 #endif
 
+const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
+"A Distributed Hashtable (DHT) combined with a basic DNS-server interface.\n\n"
+"Usage: masala [OPTIONS]...\n"
+"\n"
+" -h, --hostname		Set the hostname the node should announce (Default: <hostname>.p2p).\n"
+" -u, --username		Change the UUID after start.\n"
+" -k, --key		Set a password results in encrypting each packet with AES256.\n"
+" -r, --realm		Salt your hostname before its hash is used as node ID.\n"
+" -ba, --boostrap-addr	Use another node to connect to the masala network (Default: 'ff0e::1').\n"
+" -bp, --boostrap-port	Set the port for the bootsrap node (Default: UDP/8337).\n"
+" -p, --port		Set the port for the node (Default: UDP/8337).\n"
+" -d, --daemon		Run the node in background.\n"
+" -q, --quiet		Be quiet and do not log anything.\n"
+" -da, --dns-addr	Set the address for the DNS Server interface to listen to (Default: '::1').\n"
+" -dp, --dns-port	Set the port for the DNS Server interface to listen to (Default: 3444).\n"
+" -di, --dns-ifce	Set the interface for the DNS Server interface to listen to (Default: <any>).\n"
+"\n"
+"Example: masala -h fubar.p2p -k fubar\n"
+"\n";
+
 void opts_load( int argc, char **argv ) {
 	unsigned int i;
 
-	/* ./program blabla */
-	if( argc < 2 ) {
-		return;
-	}
 	if( argv == NULL ) {
 		return;
 	}
 
-	for( i=0; i<argc; i++ ) {
+	for( i=1; i<argc; i++ ) {
 		if( argv[i] != NULL && argv[i][0] == '-' ) {
-			
-			/* -x */
-			if( strlen( argv[i]) == 2 ) {
-				if( i+1 < argc && argv[i+1] != NULL && argv[i+1][0] != '-' ) {
-					
-					/* -x abc */
-					opts_interpreter( argv[i], argv[i+1] );
-					i++;
-				} else {
-					
-					/* -x -y => -x */
-					opts_interpreter( argv[i], NULL );
-				}
+			if( i+1 < argc && argv[i+1] != NULL && argv[i+1][0] != '-' ) {
+				/* -x abc */
+				opts_interpreter( argv[i], argv[i+1] );
+				i++;
+			} else {
+				/* -x -y => -x */
+				opts_interpreter( argv[i], NULL );
 			}
 		}
 	}
+}
+
+
+void arg_expected( const char *var ) {
+	log_err( "Argument expected for option %s.", var );
+}
+
+void no_arg_expected( const char *var ) {
+	log_err( "No argument expected for option %s.", var );
+}
+
+int match( const char *opt, const char *opt1, const char *opt2 ) {
+	return (strcmp( opt, opt1 ) == 0 || strcmp( opt, opt2 ) == 0);
+}
+
+/* free the old string and set the new */
+void replace( char *var, char** dst, char *src ) {
+	if( src == NULL )
+		arg_expected( var );
+
+	myfree( *dst, "opts_replace" );
+	*dst = strdup( src );
 }
 
 void opts_interpreter( char *var, char *val ) {
@@ -119,37 +151,45 @@ void opts_interpreter( char *var, char *val ) {
 #endif
 
 #ifdef MASALA
-	if( strcmp( var, "-x") == 0 && val != NULL && strlen( val ) > 1 ) {
-		strncpy( _main->conf->bootstrap_node, val, MAIN_BUF );
-	} else if( strcmp( var, "-y") == 0 && val != NULL && strlen( val ) > 1 ) {
-		snprintf( _main->conf->bootstrap_port, CONF_BOOTSTRAP_PORT_BUF+1, "%s", val );
-	} else if( strcmp( var, "-k") == 0 && val != NULL && strlen( val ) > 1 ) {
-		snprintf( _main->conf->key, MAIN_BUF+1, "%s", val );
+	if( match( var, "-ba", "--bootstrap-addr") ) {
+		replace( var, &_main->conf->bootstrap_node, val);
+	} else if( match( var, "-bp", "--bootstrap-port") ) {
+		replace( var, &_main->conf->bootstrap_port, val);
+	} else if( match( var, "-k", "--key" ) ) {
+		replace( var, &_main->conf->key, val);
 		_main->conf->bool_encryption = TRUE;
-	} else if( strcmp( var, "-h") == 0 && val != NULL && strlen( val ) > 1 ) {
-		snprintf( _main->conf->hostname, MAIN_BUF+1, "%s", val );
+	} else if( match( var, "-h", "--hostname" ) ) {
+		replace( var, &_main->conf->hostname, val);
 
 		/* Compute host_id. Respect the realm. */
 		p2p_compute_realm_id( _main->conf->host_id, _main->conf->hostname );
 
-	} else if( strcmp( var, "-r") == 0 && val != NULL && strlen( val ) > 1 ) {
-		snprintf( _main->conf->realm, MAIN_BUF+1, "%s", val );
+	} else if( match( var, "-r", "-realm" ) ) {
+		replace( var, &_main->conf->realm, val);
 		_main->conf->bool_realm = TRUE;
 
 		/* Change realm. Recompute the host_id. */
 		p2p_compute_realm_id( _main->conf->host_id, _main->conf->hostname );
 
-	} else if( strcmp( var, "-q") == 0 && val == NULL ) {
+	} else if( match( var, "-q", "--quiet" ) ) {
+		if( val != NULL )
+			no_arg_expected( var );
 		_main->conf->quiet = CONF_BEQUIET;
+	} else if( match( var, "-p", "--port") ) {
+		if( val == NULL )
+			arg_expected( var );
+		_main->conf->port = atoi( val );
+	} else if( match( var, "-u", "--username" ) ) {
+		replace( var, &_main->conf->username, val);
+	} else if( match( var, "-d", "--daemon" ) ) {
+		if( val != NULL)
+			no_arg_expected( var );
+		_main->conf->mode = CONF_DAEMON;
+	} else if( match( var, "--help", "" ) ) {
+		printf( usage );
+		exit( 0 );
+	} else {
+		log_err("Unknown command line option '%s'", var);
 	}
 #endif
-
-	/* Port number */
-	if( strcmp( var, "-p") == 0 && val != NULL ) {
-		_main->conf->port = atoi( val );
-	} else if( strcmp( var, "-u") == 0 && val != NULL ) {
-		snprintf( _main->conf->username, MAIN_BUF+1, "%s", val );
-	} else if( strcmp( var, "-d") == 0 && val == NULL ) {
-		_main->conf->mode = CONF_DAEMON;
-	}
 }

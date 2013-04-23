@@ -58,7 +58,6 @@ struct obj_conf *conf_init( void ) {
 #endif
 
 	conf->mode = CONF_FOREGROUND;
-
 	conf->port = CONF_PORT;
 
 #ifdef TUMBLEWEED
@@ -71,7 +70,7 @@ struct obj_conf *conf_init( void ) {
 
 #ifdef MASALA
 	/* /etc/hostname */
-	strncpy( conf->hostname, "bulk.p2p", MAIN_BUF );
+	conf->hostname = strdup( "bulk.p2p" );
 	if( file_isreg( CONF_HOSTFILE) ) {
 		if( ( fbuf = (char *) file_load( CONF_HOSTFILE, 0, file_size( CONF_HOSTFILE))) != NULL ) {
 			if( ( p = strchr( fbuf, '\n')) != NULL ) {
@@ -84,10 +83,10 @@ struct obj_conf *conf_init( void ) {
 #endif
 
 #ifdef MASALA
-	snprintf( conf->key, MAIN_BUF+1, "%s", CONF_KEY );
+	conf->key = strdup( CONF_KEY );
 	conf->bool_encryption = FALSE;
 
-	snprintf( conf->realm, MAIN_BUF+1, "%s", CONF_REALM );
+	conf->realm = strdup( CONF_REALM );
 	conf->bool_realm = FALSE;
 #endif
 
@@ -104,27 +103,13 @@ struct obj_conf *conf_init( void ) {
 	memset( conf->null_id, '\0', SHA_DIGEST_LENGTH );
 #endif
 
-#ifdef TUMBLEWEED
 	conf->cores = (unix_cpus() > 2) ? unix_cpus() : CONF_CORES;
-#elif MASALA
-	conf->cores = (unix_cpus() > 2) ? unix_cpus() : CONF_CORES;
-#endif
-
-#ifdef TUMBLEWEED
 	conf->quiet = CONF_VERBOSE;
-#elif MASALA
-	conf->quiet = CONF_VERBOSE;
-#endif
-
-#ifdef TUMBLEWEED
-	strncpy( conf->username, CONF_USERNAME, MAIN_BUF );
-#elif MASALA
-	strncpy( conf->username, CONF_USERNAME, MAIN_BUF );
-#endif
+	conf->username = strdup( CONF_USERNAME );
 
 #ifdef MASALA
-	snprintf( conf->bootstrap_node, MAIN_BUF+1, "%s", CONF_BOOTSTRAP_NODE );
-	snprintf( conf->bootstrap_port, CONF_BOOTSTRAP_PORT_BUF+1, "%s", CONF_BOOTSTRAP_PORT );
+	conf->bootstrap_node = strdup( CONF_BOOTSTRAP_NODE );
+	conf->bootstrap_port = strdup( CONF_BOOTSTRAP_PORT );
 #endif
 
 #ifdef TUMBLEWEED
@@ -140,6 +125,11 @@ struct obj_conf *conf_init( void ) {
 
 void conf_free( void ) {
 	if( _main->conf != NULL ) {
+		myfree( _main->conf->username, "conf_free" );
+		myfree( _main->conf->bootstrap_node, "conf_free" );
+		myfree( _main->conf->bootstrap_port, "conf_free" );
+		myfree( _main->conf->key, "conf_free" );
+		myfree( _main->conf->realm, "conf_free" );
 		myfree( _main->conf, "conf_free" );
 	}
 }
@@ -150,8 +140,8 @@ void conf_check( void ) {
 	log_info( "Hostname: '%s' (-h)", _main->conf->hostname );
 	log_info( "Node ID: %s (/dev/urandom)", id_to_str( _main->conf->node_id, hexbuf ) );
 	log_info( "Host ID: %s (sha1 '%s')", id_to_str(  _main->conf->host_id, hexbuf ), _main->conf->hostname );
-	log_info( "Bootstrap Node: %s (-x)", _main->conf->bootstrap_node );
-	log_info( "Bootstrap Port: UDP/%s (-y)", _main->conf->bootstrap_port );
+	log_info( "Bootstrap Node: %s (-ba)", _main->conf->bootstrap_node );
+	log_info( "Bootstrap Port: UDP/%s (-bp)", _main->conf->bootstrap_port );
 #endif
 
 #ifdef TUMBLEWEED
