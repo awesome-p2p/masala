@@ -59,6 +59,7 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "p2p.h"
 #include "cache.h"
 #include "database.h"
+#include "masala-dns.h"
 #endif
 #include "log.h"
 
@@ -146,6 +147,7 @@ int main( int argc, char **argv ) {
 	tcp_start();
 	tcp_stop();
 #else
+	dns_start();
 	udp_start();
 	udp_stop();
 #endif

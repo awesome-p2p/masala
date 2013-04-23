@@ -120,6 +120,11 @@ struct obj_conf *conf_init( void ) {
 	conf->ipv6_only = FALSE;
 #endif
 
+#ifdef MASALA
+	conf->dns_port = strdup( CONF_DNS_PORT );
+	conf->dns_addr = strdup( CONF_DNS_ADDR );
+#endif
+
 	return conf;
 }
 
@@ -130,6 +135,9 @@ void conf_free( void ) {
 		myfree( _main->conf->bootstrap_port, "conf_free" );
 		myfree( _main->conf->key, "conf_free" );
 		myfree( _main->conf->realm, "conf_free" );
+		myfree( _main->conf->dns_port, "conf_free" );
+		myfree( _main->conf->dns_addr, "conf_free" );
+		myfree( _main->conf->dns_ifce, "conf_free" );
 		myfree( _main->conf, "conf_free" );
 	}
 }

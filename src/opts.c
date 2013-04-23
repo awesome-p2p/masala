@@ -175,6 +175,12 @@ void opts_interpreter( char *var, char *val ) {
 		if( val != NULL )
 			no_arg_expected( var );
 		_main->conf->quiet = CONF_BEQUIET;
+	} else if( match( var, "-dp", "--dns-port" ) ) {
+		replace( var, &_main->conf->dns_port, val);
+	} else if( match( var, "-da", "--dns-addr" ) ) {
+		replace( var, &_main->conf->dns_addr, val);
+	} else if( match( var, "-di", "--dns-ifce" ) ) {
+		replace( var, &_main->conf->dns_ifce, val);
 	} else if( match( var, "-p", "--port") ) {
 		if( val == NULL )
 			arg_expected( var );

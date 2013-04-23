@@ -45,6 +45,8 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_BOOTSTRAP_PORT "8337"
 #define CONF_KEY "open.p2p"
 #define CONF_REALM "open.p2p"
+#define CONF_DNS_ADDR "::1"
+#define CONF_DNS_PORT "3444"
 #else
 #define CONF_SRVNAME "nss-masala"
 #endif
@@ -65,6 +67,10 @@ struct obj_conf {
 
 	char *realm;
 	int bool_realm;
+
+	char *dns_port;
+	char *dns_addr;
+	char *dns_ifce;
 #endif
 
 #ifdef TUMBLEWEED
