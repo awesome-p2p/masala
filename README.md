@@ -53,6 +53,9 @@ hostname with *.p2p* at the end.
   * `-q, --quiet`:
 	Be quiet and do not log anything.
 
+  * `--help`:
+	Show a summary of all available command line parameters.
+
   * `-da, --dns-addr`:
 	Bind the DNS server interface to this address (Default: ::1).
 
