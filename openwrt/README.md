@@ -1,10 +1,10 @@
 To inlcude Masala into your OpenWRT image or to create
-an .ipk package (equivalent to Debians .deb files), you
-have to building an OpenWRT image.
-These steps were tested for OpenWRT-"Attitude Adjustment":
+an .ipk package (equivalent to Debians .deb files),
+you have to build an OpenWRT image.
+These steps were tested using OpenWRT-"Attitude Adjustment":
 
 <pre>
-svn co svn://svn.openwrt.org/openwrt/trunk openwrt
+svn co svn://svn.openwrt.org/openwrt/branches/attitude_adjustment openwrt
 cd openwrt
 
 ./scripts/feeds update -a
@@ -29,6 +29,6 @@ make
 </pre>
 
 The images and all *.ipk packages are now inside the bin/ folder.
-You can install the Masala .ipk using "opkg install <ipkg-file>" on the router.
+You can install the Masala .ipk using "opkg install &lt;ipkg-file&gt;" on the router.
 
-For details please consult the OpenWRT documentation.
+For details please check the OpenWRT documentation.
