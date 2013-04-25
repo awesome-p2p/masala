@@ -284,7 +284,7 @@ void code_domain_name( UCHAR** buffer, const char *domain )
 	*buffer += i;
 }
 
-void dedns_code_header( struct message *msg, const UCHAR** buffer )
+void dns_decode_header( struct message *msg, const UCHAR** buffer )
 {
 	uint fields;
 
@@ -326,7 +326,7 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 {
 	int i;
 
-	dedns_code_header( msg, &buffer );
+	dns_decode_header( msg, &buffer );
 
 	if(( msg->anCount+msg->nsCount+msg->arCount) != 0 )
 	{
