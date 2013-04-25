@@ -284,7 +284,7 @@ void code_domain_name( UCHAR** buffer, const char *domain )
 	*buffer += i;
 }
 
-void decode_header( struct message *msg, const UCHAR** buffer )
+void dedns_code_header( struct message *msg, const UCHAR** buffer )
 {
 	uint fields;
 
@@ -305,7 +305,7 @@ void decode_header( struct message *msg, const UCHAR** buffer )
 	msg->arCount = get16bits(buffer);
 }
 
-void code_header(struct message *msg, UCHAR** buffer)
+void dns_code_header(struct message *msg, UCHAR** buffer)
 {
 	uint fields;
 
@@ -322,11 +322,11 @@ void code_header(struct message *msg, UCHAR** buffer)
 	put16bits( buffer, msg->arCount );
 }
 
-int decode_dns_query( struct message *msg, const UCHAR *buffer, int size )
+int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 {
 	int i;
 
-	decode_header( msg, &buffer );
+	dedns_code_header( msg, &buffer );
 
 	if(( msg->anCount+msg->nsCount+msg->arCount) != 0 )
 	{
@@ -350,16 +350,16 @@ int decode_dns_query( struct message *msg, const UCHAR *buffer, int size )
 		}
 		else
 		{
-			myfree( qName, "decode_dns_query" );
+			myfree( qName, "dns_decode_query" );
 		}
 	}
 
 	return -1;
 }
 
-UCHAR * code_dns_response( struct message *msg, UCHAR *buffer )
+UCHAR * dns_code_response( struct message *msg, UCHAR *buffer )
 {
-	code_header( msg, &buffer );
+	dns_code_header( msg, &buffer );
 	
 	if(msg->anCount == 1)
 	{
@@ -382,7 +382,7 @@ UCHAR * code_dns_response( struct message *msg, UCHAR *buffer )
 }
 
 
-void send_dns_response( int sockfd, struct message *msg, IP *from, IP *record ) {
+void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) {
 	UCHAR buf[1500];
 	struct ResourceRecord *a;
 	struct question *q;
@@ -409,7 +409,7 @@ void send_dns_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 	a->rd_length = 16;
 	memcpy( a->rd_data.aaaa_record.addr, &record->sin6_addr, 16 );
 
-	UCHAR* p = code_dns_response( msg, buf );
+	UCHAR* p = dns_code_response( msg, buf );
 
 	if( p )
 	{
@@ -421,7 +421,7 @@ void send_dns_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 }
 
 
-int masala_lookup(const char *hostname, size_t size, IP *from, IP *record) {
+int dns_masala_lookup(const char *hostname, size_t size, IP *from, IP *record) {
 	UCHAR lkp_id[SHA_DIGEST_LENGTH];
 	UCHAR host_id[SHA_DIGEST_LENGTH];
 	IP *addr;
@@ -539,15 +539,15 @@ void* dns_loop( void* _ ) {
 
 		log_debug( "DNS: Received query from %s.",  ip_to_str( &from, addrbuf )  );
 
-		rc = decode_dns_query( &msg, buffer, rc );
+		rc = dns_decode_query( &msg, buffer, rc );
 		if(rc < 0)
 			continue;
 
-		rc = masala_lookup( msg.question.qName, strlen(msg.question.qName), &from, &record );
+		rc = dns_masala_lookup( msg.question.qName, strlen(msg.question.qName), &from, &record );
 
 		if(rc > 0) {
 			log_debug("DNS: Lookup succeded for '%s'.", msg.question.qName );
-			send_dns_response( sockfd, &msg, &from, &record );
+			dns_send_response( sockfd, &msg, &from, &record );
 		} else {
 			log_debug("DNS: Lookup failed for '%s'.", msg.question.qName );
 		}
