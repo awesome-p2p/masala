@@ -113,15 +113,16 @@ void p2p_bootstrap( void ) {
 	while( p != NULL && i < XP2P_MAX_BOOTSTRAP_NODES ) {
 
 		/* Send PING to a bootstrap node */
-		if( strcmp( _main->conf->bootstrap_node, CONF_BOOTSTRAP_NODE) == 0 ) {
+		if( strcmp( _main->conf->bootstrap_node, CONF_BOOTSTRAP_NODE ) == 0 ) {
 			send_ping( (IP *)p->ai_addr, SEND_MULTICAST );
 		} else {
 			send_ping( (IP *)p->ai_addr, SEND_UNICAST );
 		}
 		
-		p = p->ai_next;	i++;
+		p = p->ai_next;
+		i++;
 	}
-	
+
 	freeaddrinfo( info );
 }
 
