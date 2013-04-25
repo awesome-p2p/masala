@@ -96,7 +96,7 @@ void send_ping( IP *sa, int type ) {
 	ben_free( dict );
 
 	/* Log */
-	log_info( "PING %s", ip_to_str( sa, addrbuf ) );
+	log_info( "PING %s", addr_str( sa, addrbuf ) );
 }
 
 void send_pong( IP *sa, UCHAR *node_sk ) {
@@ -143,7 +143,7 @@ void send_pong( IP *sa, UCHAR *node_sk ) {
 	ben_free( dict );
 
 	/* Log */
-	log_info( "PONG %s", ip_to_str( sa, addrbuf ) );
+	log_info( "PONG %s", addr_str( sa, addrbuf ) );
 }
 
 void send_announce( IP *sa, UCHAR *lkp_id ) {
@@ -210,7 +210,7 @@ void send_announce( IP *sa, UCHAR *lkp_id ) {
 	ben_free( dict );
 
 	/* Log */
-	log_info( "ANNOUNCE to %s", ip_to_str( sa, addrbuf ) );
+	log_info( "ANNOUNCE to %s", addr_str( sa, addrbuf ) );
 }
 
 void send_find( IP *sa, UCHAR *node_id ) {
@@ -270,7 +270,7 @@ void send_find( IP *sa, UCHAR *node_id ) {
 	ben_free( dict );
 
 	/* Log */
-	log_info( "FIND %s at %s", id_to_str( node_id, hexbuf ), ip_to_str( sa, addrbuf ) );
+	log_info( "FIND %s at %s", id_str( node_id, hexbuf ), addr_str( sa, addrbuf ) );
 }
 
 void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
@@ -338,7 +338,7 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	ben_free( dict );
 
 	/* Log */
-	log_info( "LOOKUP %s at %s", id_to_str( node_id, hexbuf ), ip_to_str( sa, addrbuf ) );
+	log_info( "LOOKUP %s at %s", id_str( node_id, hexbuf ), addr_str( sa, addrbuf ) );
 }
 
 void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_type ) {
@@ -459,13 +459,13 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	/* Log */
 	switch( *reply_type ) {
 		case 'A':
-			log_info( "NODES via ANNOUNCE to %s", ip_to_str( sa, addrbuf ) );
+			log_info( "NODES via ANNOUNCE to %s", addr_str( sa, addrbuf ) );
 			break;
 		case 'F':
-			log_info( "NODES via FIND to %s", ip_to_str( sa, addrbuf ) );
+			log_info( "NODES via FIND to %s", addr_str( sa, addrbuf ) );
 			break;
 		case 'L':
-			log_info( "NODES via LOOKUP to %s", ip_to_str( sa, addrbuf ) );
+			log_info( "NODES via LOOKUP to %s", addr_str( sa, addrbuf ) );
 			break;
 	}
 }
@@ -530,7 +530,7 @@ void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
 	ben_free( dict );
 
 	/* Log */
-	log_info( "VALUE via LOOKUP to %s", ip_to_str( sa, addrbuf ) );
+	log_info( "VALUE via LOOKUP to %s", addr_str( sa, addrbuf ) );
 }
 
 void send_aes( IP *sa, struct obj_raw *raw ) {

@@ -43,6 +43,6 @@ void log_info( int code, const char *buffer );
 #define FULL_ADDSTRLEN (INET6_ADDRSTRLEN + 9)
 
 
-char* id_to_str( const UCHAR *in, char *buf );
-char* ip_to_str( IP *addr, char *buf );
+char* id_str( const UCHAR *in, char *buf );
+char* addr_str( IP *addr, char *buf );
 void __log( const char *filename, int line, int priority, const char *format, ... );

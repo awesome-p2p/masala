@@ -107,7 +107,7 @@ void log_info( int code, const char *buffer ) {
 #endif
 
 
-char* id_to_str( const UCHAR *in, char *buf ) {
+char* id_str( const UCHAR *in, char *buf ) {
 	long int i = 0;
 	UCHAR *p0 = (UCHAR *)in;
 	char *p1 = buf;
@@ -123,7 +123,7 @@ char* id_to_str( const UCHAR *in, char *buf ) {
 	return buf;
 }
 
-char* ip_to_str( IP *addr, char *addrbuf ) {
+char* addr_str( IP *addr, char *addrbuf ) {
 	char buf[INET6_ADDRSTRLEN+1];
 	unsigned short port = ntohs( addr->sin6_port );
 

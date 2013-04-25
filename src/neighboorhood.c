@@ -243,14 +243,14 @@ void nbhd_print( void ) {
 	for( k=0; k<_main->nbhd->counter; k++ ) {
 		b = item_b->val;
 
-		log_info( " Bucket: %s", id_to_str( b->id, hexbuf ) );
+		log_info( " Bucket: %s", id_str( b->id, hexbuf ) );
 
 		/* Cycle through all the nodes */
 		item_n = b->nodes->start;
 		for( j=0; j<b->nodes->counter; j++ ) {
 			n = item_n->val;
 
-			log_info( "  Node: %s", id_to_str( n->id, hexbuf ) );
+			log_info( "  Node: %s", id_str( n->id, hexbuf ) );
 
 			item_n = list_next( item_n );
 		}

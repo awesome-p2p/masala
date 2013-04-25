@@ -414,7 +414,7 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 	if( p )
 	{
 		int buflen = p - buf;
-		log_debug( "DNS: send address [%s] to [%s]. Packet is %d Bytes.", ip_to_str(record, addrbuf1 ), ip_to_str(from, addrbuf2 ), buflen);
+		log_debug( "DNS: send address [%s] to [%s]. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
 
 		sendto( sockfd, buf, buflen, 0, (struct sockaddr*) from, sizeof(IP) );
 	}
@@ -435,7 +435,7 @@ int dns_masala_lookup(const char *hostname, size_t size, IP *from, IP *record) {
 
 	/* That is the lookup key */
 	p2p_compute_realm_id( host_id, (char *)hostname );
-	log_debug( "DNS: Lookup %s as '%s'.", hostname, id_to_str( host_id, hexbuf ) );
+	log_debug( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
 
 	/* Check my own DB for that node. */
 	mutex_block( _main->p2p->mutex );
@@ -526,7 +526,7 @@ void* dns_loop( void* _ ) {
 	setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 
 	log_info( "Bind DNS interface to %s, device %s.",
-		bind_addr ? ip_to_str( &sockaddr, addrbuf ) : "<any>",
+		bind_addr ? addr_str( &sockaddr, addrbuf ) : "<any>",
 		bind_ifce ? bind_ifce : "<any>"
 	);
 
@@ -537,7 +537,7 @@ void* dns_loop( void* _ ) {
 		if(rc < 0)
 			continue;
 
-		log_debug( "DNS: Received query from %s.",  ip_to_str( &from, addrbuf )  );
+		log_debug( "DNS: Received query from %s.",  addr_str( &from, addrbuf )  );
 
 		rc = dns_decode_query( &msg, buffer, rc );
 		if(rc < 0)
