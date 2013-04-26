@@ -465,7 +465,7 @@ void* dns_loop( void* _ ) {
 	char *bind_addr = _main->conf->dns_addr;
 	char *bind_ifce = _main->conf->dns_ifce;
 	char *bind_port = _main->conf->dns_port;
-	
+
 	int rc;
 	int val;
 	struct addrinfo hints, *servinfo, *p;
@@ -503,7 +503,7 @@ void* dns_loop( void* _ ) {
 	}
 
 	if( bind_ifce && setsockopt( sockfd, SOL_SOCKET, SO_BINDTODEVICE, bind_ifce, strlen( bind_ifce )) ) {
-		log_err( "DNS: Unable to bind to device '%s': %s", bind_ifce,  gai_strerror(errno ) );
+		log_err( "DNS: Unable to bind to interface '%s': %s", bind_ifce,  gai_strerror(errno ) );
 		return NULL;
 	}
 
@@ -567,6 +567,6 @@ int dns_start()
 	}
 
 	pthread_detach( tid );
-	
+
 	return 0;
 }

@@ -279,6 +279,7 @@ void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {
 	}
 
 	mutex_block( _main->p2p->mutex );
+
 	switch( *q->v.s->s ) {
 
 		/* Requests */
@@ -323,6 +324,7 @@ void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {
 		default:
 			log_info( "Unknown query type" );
 	}
+
 	mutex_unblock( _main->p2p->mutex );
 
 	/* Free */

@@ -84,7 +84,7 @@ NODE *node_put( UCHAR *id, IP *sa ) {
 		n = i->val;
 	} else {
 		n = (NODE *) myalloc( sizeof(NODE), "node_put" );
-		
+
 		/* ID */
 		memcpy( n->id, id, SHA_DIGEST_LENGTH );
 
