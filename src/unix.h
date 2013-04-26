@@ -24,7 +24,6 @@ void unix_set_time( int seconds );
 void unix_fork( void );
 void unix_limits( void );
 void unix_write_pidfile( pid_t );
-void unix_delete_pidfile( void );
 void unix_dropuid0( void );
 void unix_environment( void );
 int unix_cpus( void );

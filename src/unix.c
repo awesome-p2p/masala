@@ -150,15 +150,6 @@ void unix_write_pidfile( pid_t pid ) {
 		log_err( "close: Failed to close pid file." );
 }
 
-void unix_delete_pidfile( void ) {
-	char* pid_file = _main->conf->pid_file;
-
-	if( pid_file == NULL )
-		return;
-
-	unlink( pid_file );
-}
-
 void unix_dropuid0( void ) {
 	struct passwd *pw = NULL;
 

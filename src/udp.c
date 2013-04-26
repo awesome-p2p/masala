@@ -108,9 +108,6 @@ void udp_start( void ) {
 	/* Drop privileges */
 	unix_dropuid0();
 
-	/* Write a pid file */
-	unix_write_pidfile( getpid() );
-
 	/* Create worker */
 	udp_pool();
 }
@@ -212,8 +209,6 @@ void *udp_thread( void *arg ) {
 			break;
 		}
 	}
-
-	unix_delete_pidfile();
 
 	pthread_exit( NULL );
 }
