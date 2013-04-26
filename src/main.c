@@ -136,6 +136,9 @@ int main( int argc, char **argv ) {
 	/* Increase limits */
 	unix_limits();
 
+	/* Write a pid file */
+	unix_write_pidfile( getpid() );
+
 #ifdef TUMBLEWEED
 	/* Load mime types */
 	mime_load();
