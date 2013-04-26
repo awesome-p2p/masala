@@ -143,10 +143,10 @@ void unix_write_pidfile( pid_t pid ) {
 		log_err( "open: Failed to open pid file." );
 	}
 
-	if( dprintf(fd, "%i", pid) < 0 )
+	if( dprintf( fd, "%i", pid ) < 0 )
 		log_err( "dprintf: Failed to write pid file." );
 
-	if( close(fd) < 0 )
+	if( close( fd ) < 0 )
 		log_err( "close: Failed to close pid file." );
 }
 
@@ -181,10 +181,10 @@ void unix_dropuid0( void ) {
 	}
 
 	/* Test permissions */
-	if( setuid( 0) != -1 ) {
+	if( setuid( 0 ) != -1 ) {
 		log_err( "ERROR: Managed to regain root privileges?" );
 	}
-	if( setgid( 0) != -1 ) {
+	if( setgid( 0 ) != -1 ) {
 		log_err( "ERROR: Managed to regain root privileges?" );
 	}
 
