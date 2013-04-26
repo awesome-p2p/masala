@@ -32,3 +32,19 @@ The images and all *.ipk packages are now inside the bin/ folder.
 You can install the Masala .ipk using "opkg install &lt;ipkg-file&gt;" on the router.
 
 For details please check the OpenWRT documentation.
+
+#### Note for developers:
+
+You might want to put the sources right into the package without using git.
+To do this replace the "Build/Prepare" section of the Makefile with this:
+
+<pre>
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
+endef
+</pre>
+
+The folder "src/" needs to be created inside OpenWRT masala package folder.
+Folder "src/" needs to contain the "masala/" and "src/" folders and "Makefile"
+from the repository root.
