@@ -60,7 +60,7 @@ const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 "Usage: masala [OPTIONS]...\n"
 "\n"
 " -h, --hostname		Set the hostname the node should announce (Default: <hostname>.p2p).\n"
-" -u, --username		Change the UUID after start.\n"
+" -u, --user		Change the UUID after start.\n"
 " -k, --key		Set a password results in encrypting each packet with AES256.\n"
 " -r, --realm		Salt your hostname before its hash is used as node ID.\n"
 " -ba, --boostrap-addr	Use another node to connect to the masala network (Default: 'ff0e::1').\n"
@@ -189,8 +189,8 @@ void opts_interpreter( char *var, char *val ) {
 		if( val == NULL )
 			arg_expected( var );
 		_main->conf->port = atoi( val );
-	} else if( match( var, "-u", "--username" ) ) {
-		replace( var, &_main->conf->username, val);
+	} else if( match( var, "-u", "--user" ) ) {
+		replace( var, &_main->conf->user, val);
 	} else if( match( var, "-d", "--daemon" ) ) {
 		if( val != NULL)
 			no_arg_expected( var );

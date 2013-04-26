@@ -44,7 +44,7 @@ hostname with *.p2p* at the end.
   * `-bp, --bootstrap-port` *port*:
 	The bootstrap server will be addressed at this port. (Default: UDP/8337)
 
-  * `-u, --username` *username*:
+  * `-u, --user` *username*:
     When starting as root, use -u to change the UID.
 
   * `-d, --daemon`:

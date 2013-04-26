@@ -110,7 +110,7 @@ struct obj_conf *conf_init( void ) {
 
 	conf->cores = (unix_cpus() > 2) ? unix_cpus() : CONF_CORES;
 	conf->quiet = CONF_VERBOSE;
-	conf->username = strdup( CONF_USERNAME );
+	conf->user = strdup( CONF_USER );
 
 #ifdef MASALA
 	conf->bootstrap_node = strdup( CONF_BOOTSTRAP_NODE );
@@ -136,7 +136,7 @@ struct obj_conf *conf_init( void ) {
 void conf_free( void ) {
 	if( _main->conf != NULL ) {
 		myfree( _main->conf->pid_file, "conf_free" );
-		myfree( _main->conf->username, "conf_free" );
+		myfree( _main->conf->user, "conf_free" );
 		myfree( _main->conf->bootstrap_node, "conf_free" );
 		myfree( _main->conf->bootstrap_port, "conf_free" );
 		myfree( _main->conf->key, "conf_free" );

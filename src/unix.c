@@ -158,8 +158,8 @@ void unix_dropuid0( void ) {
 	}
 
 	/* Process is running as root, drop privileges */
-	if( ( pw = getpwnam( _main->conf->username)) == NULL ) {
-		log_err( "Dropping uid 0 failed. Use \"-u\" to set a valid username." );
+	if( ( pw = getpwnam( _main->conf->user)) == NULL ) {
+		log_err( "Dropping uid 0 failed. Use \"-u\" to set a valid user." );
 	}
 	if( setenv( "HOME", pw->pw_dir, 1) != 0 ) {
 		log_err( "setenv: Setting new $HOME failed." );
