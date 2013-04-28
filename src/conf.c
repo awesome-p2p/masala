@@ -59,7 +59,7 @@ struct obj_conf *conf_init( void ) {
 #endif
 
 	conf->mode = CONF_FOREGROUND;
-	conf->port = CONF_PORT;
+	conf->port = strdup( CONF_PORT );
 
 #ifdef TUMBLEWEED
 	if( ( getenv( "HOME")) == NULL ) {
@@ -135,6 +135,7 @@ struct obj_conf *conf_init( void ) {
 
 void conf_free( void ) {
 	if( _main->conf != NULL ) {
+		myfree( _main->conf->port, "conf_free" );
 		myfree( _main->conf->pid_file, "conf_free" );
 		myfree( _main->conf->user, "conf_free" );
 		myfree( _main->conf->bootstrap_node, "conf_free" );
@@ -186,13 +187,13 @@ void conf_check( void ) {
 	}
 
 #ifdef TUMBLEWEED
-	log_info( "Listen to TCP/%i (-p)", _main->conf->port );
+	log_info( "Listen to TCP/%s (-p)", _main->conf->port );
 #elif MASALA
-	log_info( "Listen to UDP/%i (-p)", _main->conf->port );
+	log_info( "Listen to UDP/%s (-p)", _main->conf->port );
 #endif
 
 	/* Port == 0 => Random source port */
-	if( _main->conf->port < CONF_PORTMIN || _main->conf->port > CONF_PORTMAX ) {
+	if( str_isSafePort( _main->conf->port ) < 0 ) {
 		log_err( "Invalid www port number. (-p)" );
 	}
 

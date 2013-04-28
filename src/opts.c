@@ -186,9 +186,7 @@ void opts_interpreter( char *var, char *val ) {
 	} else if( match( var, "-di", "--dns-ifce" ) ) {
 		replace( var, &_main->conf->dns_ifce, val);
 	} else if( match( var, "-p", "--port" ) ) {
-		if( val == NULL )
-			arg_expected( var );
-		_main->conf->port = atoi( val );
+		replace( var, &_main->conf->port, val);
 	} else if( match( var, "-u", "--user" ) ) {
 		replace( var, &_main->conf->user, val);
 	} else if( match( var, "-d", "--daemon" ) ) {

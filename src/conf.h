@@ -33,14 +33,14 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_USER "tumbleweed"
 #define CONF_EPOLL_WAIT 1000
 #define CONF_SRVNAME "tumbleweed"
-#define CONF_PORT 8080
+#define CONF_PORT "8080"
 #define CONF_INDEX_NAME "index.html"
 #define CONF_KEEPALIVE 5
 #elif MASALA
 #define CONF_USER "masala"
 #define CONF_EPOLL_WAIT 2000
 #define CONF_SRVNAME "masala"
-#define CONF_PORT 8337
+#define CONF_PORT "8337"
 #define CONF_BOOTSTRAP_NODE "ff0e::1"
 #define CONF_BOOTSTRAP_PORT "8337"
 #define CONF_KEY "open.p2p"
@@ -90,7 +90,7 @@ struct obj_conf {
 	int mode;
 
 	/* TCP/UDP Port */
-	int port;
+	char *port;
 };
 
 struct obj_conf *conf_init( void );

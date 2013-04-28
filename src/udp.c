@@ -83,7 +83,7 @@ void udp_start( void ) {
 		log_err( "Creating socket failed." );
 	}
 	_main->udp->s_addr.sin6_family = AF_INET6;
-	_main->udp->s_addr.sin6_port = htons( _main->conf->port );
+	_main->udp->s_addr.sin6_port = htons( atoi( _main->conf->port ) );
 	_main->udp->s_addr.sin6_addr = in6addr_any;
 
 	/* Listen to ff0e::1 */
