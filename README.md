@@ -12,10 +12,11 @@ distributed hash table. The basic design has been inspired by the Kademlia DHT.
 The communication between nodes is realized by using bencode encoded messages on
 top of UDP. There are 4 message types: PING, FIND, LOOKUP and ANNOUNCE. By
 default, masala sends the first packet to a multicast address. So there is no
-configuration necessary within your broadcast domain (LAN). With a bootstrap
-server, it is also possible to connect nodes around the globe. A DNS server
-can be used as a local upstream DNS server and tries to resolve any
-hostname with *.p2p* at the end.
+configuration necessary within your broadcast domain (LAN) and will continue to do so
+in intervals until another node is found. With a bootstrap server, it is also possible
+to connect nodes around the globe.
+Masala also includes a very simple DNS server so it can be used as
+a local upstream DNS server.
 
 ## OPTIONS
 
