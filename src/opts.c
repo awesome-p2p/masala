@@ -154,22 +154,22 @@ void opts_interpreter( char *var, char *val ) {
 
 #ifdef MASALA
 	if( match( var, "-ba", "--bootstrap-addr") ) {
-		replace( var, &_main->conf->bootstrap_node, val);
+		replace( var, &_main->conf->bootstrap_node, val );
 	} else if( match( var, "-bp", "--bootstrap-port" ) ) {
-		replace( var, &_main->conf->bootstrap_port, val);
+		replace( var, &_main->conf->bootstrap_port, val );
 	} else if( match( var, "-k", "--key" ) ) {
-		replace( var, &_main->conf->key, val);
+		replace( var, &_main->conf->key, val );
 		_main->conf->bool_encryption = TRUE;
 	} else if( match( var, "-pf", "--pid-file" ) ) {
-		replace( var, &_main->conf->pid_file, val);
+		replace( var, &_main->conf->pid_file, val );
 	} else if( match( var, "-h", "--hostname" ) ) {
-		replace( var, &_main->conf->hostname, val);
+		replace( var, &_main->conf->hostname, val );
 
 		/* Compute host_id. Respect the realm. */
 		p2p_compute_realm_id( _main->conf->host_id, _main->conf->hostname );
 
 	} else if( match( var, "-r", "-realm" ) ) {
-		replace( var, &_main->conf->realm, val);
+		replace( var, &_main->conf->realm, val );
 		_main->conf->bool_realm = TRUE;
 
 		/* Change realm. Recompute the host_id. */
@@ -180,15 +180,15 @@ void opts_interpreter( char *var, char *val ) {
 			no_arg_expected( var );
 		_main->conf->quiet = CONF_BEQUIET;
 	} else if( match( var, "-dp", "--dns-port" ) ) {
-		replace( var, &_main->conf->dns_port, val);
+		replace( var, &_main->conf->dns_port, val );
 	} else if( match( var, "-da", "--dns-addr" ) ) {
-		replace( var, &_main->conf->dns_addr, val);
+		replace( var, &_main->conf->dns_addr, val );
 	} else if( match( var, "-di", "--dns-ifce" ) ) {
-		replace( var, &_main->conf->dns_ifce, val);
+		replace( var, &_main->conf->dns_ifce, val );
 	} else if( match( var, "-p", "--port" ) ) {
-		replace( var, &_main->conf->port, val);
+		replace( var, &_main->conf->port, val );
 	} else if( match( var, "-u", "--user" ) ) {
-		replace( var, &_main->conf->user, val);
+		replace( var, &_main->conf->user, val );
 	} else if( match( var, "-d", "--daemon" ) ) {
 		if( val != NULL)
 			no_arg_expected( var );

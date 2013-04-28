@@ -79,7 +79,7 @@ void udp_free( void ) {
 void udp_start( void ) {
 	int optval = 1;
 
-	if( ( _main->udp->sockfd = socket( PF_INET6, SOCK_DGRAM, 0)) < 0 ) {
+	if( ( _main->udp->sockfd = socket( PF_INET6, SOCK_DGRAM, 0) ) < 0 ) {
 		log_err( "Creating socket failed." );
 	}
 	_main->udp->s_addr.sin6_family = AF_INET6;

@@ -199,8 +199,8 @@ void conf_check( void ) {
 
 	/* Check bootstrap server port */
 #ifndef TUMBLEWEED
-	if( str_isSafePort( _main->conf->bootstrap_port) < 0 ) {
-		log_err( "Invalid bootstrap port number. (-y)" );
+	if( str_isSafePort( _main->conf->bootstrap_port ) < 0 ) {
+		log_err( "Invalid bootstrap port number. (-bp)" );
 	}
 #endif
 
