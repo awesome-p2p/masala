@@ -1,4 +1,4 @@
-SUBDIRS = masala
+SUBDIRS = build
 
 .PHONY : all clean install $(SUBDIRS)
 
