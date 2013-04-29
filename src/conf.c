@@ -136,6 +136,7 @@ struct obj_conf *conf_init( void ) {
 void conf_free( void ) {
 	if( _main->conf != NULL ) {
 		myfree( _main->conf->port, "conf_free" );
+		myfree( _main->conf->interface, "conf_free" );
 		myfree( _main->conf->pid_file, "conf_free" );
 		myfree( _main->conf->user, "conf_free" );
 		myfree( _main->conf->bootstrap_node, "conf_free" );
@@ -189,7 +190,11 @@ void conf_check( void ) {
 #ifdef TUMBLEWEED
 	log_info( "Listen to TCP/%s (-p)", _main->conf->port );
 #elif MASALA
-	log_info( "Listen to UDP/%s (-p)", _main->conf->port );
+	if( _main->conf->interface ) {
+		log_info( "Listen to UDP/%s (-p), interface '%s' (-i)",  _main->conf->port, _main->conf->interface );
+	} else {
+		log_info( "Listen to UDP/%s (-p), interface <any> (-i)", _main->conf->port, _main->conf->interface );
+	}
 #endif
 
 	/* Port == 0 => Random source port */

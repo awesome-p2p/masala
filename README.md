@@ -39,6 +39,9 @@ a local upstream DNS server.
   * `-p, --port` *port*:
 	Listen to this port (Default: UDP/8337)
 
+  * `-i, --interface` *interface*:
+	Limit communication to this interface (Default: &lt;any&gt;)
+
   * `-ba, --bootstrap-addr` *server*:
 	Use server as a bootstrap server. The server can be an IPv6 address, a FQHN like www.example.net or even a IPv6 multicast address. (Default: ff0e::1)
 

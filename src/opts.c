@@ -66,6 +66,7 @@ const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 " -ba, --boostrap-addr	Use another node to connect to the masala network (Default: 'ff0e::1').\n"
 " -bp, --boostrap-port	Set the port for the bootsrap node (Default: UDP/8337).\n"
 " -p, --port		Set the port for the node (Default: UDP/8337).\n"
+" -i, --interface	Use this interface only (Default: <any>).\n"
 " -d, --daemon		Run the node in background.\n"
 " -q, --quiet		Be quiet and do not log anything.\n"
 " -pf, --pid-file	Write process pid to a file.\n"
@@ -187,6 +188,8 @@ void opts_interpreter( char *var, char *val ) {
 		replace( var, &_main->conf->dns_ifce, val );
 	} else if( match( var, "-p", "--port" ) ) {
 		replace( var, &_main->conf->port, val );
+	} else if( match( var, "-i", "--interface" ) ) {
+		replace( var, &_main->conf->interface, val );
 	} else if( match( var, "-u", "--user" ) ) {
 		replace( var, &_main->conf->user, val );
 	} else if( match( var, "-d", "--daemon" ) ) {

@@ -34,6 +34,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/epoll.h>
 #include <sys/resource.h>
 #include <netdb.h>
+#include <net/if.h>
 
 #include "malloc.h"
 #include "thrd.h"
@@ -98,7 +99,13 @@ void udp_start( void ) {
 		log_err( "bind() to socket failed." );
 	}
 
-	if( udp_nonblocking( _main->udp->sockfd) < 0 ) {
+	const char *ifce = _main->conf->interface;
+	if( ifce && setsockopt( _main->udp->sockfd, SOL_SOCKET, SO_BINDTODEVICE, ifce, strlen( ifce )) ) {
+		log_err( "Unable to set interface '%s': %s", ifce,  gai_strerror( errno ) );
+		return NULL;
+	}
+
+	if( udp_nonblocking( _main->udp->sockfd ) < 0 ) {
 		log_err( "udp_nonblocking( _main->udp->sockfd) failed" );
 	}
 
@@ -314,7 +321,13 @@ void udp_multicast( void ) {
 	}
 	memset( &mreq, '\0', sizeof(mreq) );
 	memcpy( &mreq.ipv6mr_multiaddr, &((IP *) multicast->ai_addr)->sin6_addr, sizeof(mreq.ipv6mr_multiaddr) );
-	mreq.ipv6mr_interface = 0;
+
+	if ( _main->conf->interface && ((mreq.ipv6mr_interface = if_nametoindex( _main->conf->interface )) == 0) ) {
+		log_err( "Cannot get device '%s': %s", _main->conf->interface, strerror( errno ) );
+	} else {
+		mreq.ipv6mr_interface = 0;
+	}
+
 	if( setsockopt( _main->udp->sockfd, IPPROTO_IPV6, IPV6_JOIN_GROUP, &mreq, sizeof(mreq)) == 0 ) {
 		_main->udp->multicast = 1;
 	} else {

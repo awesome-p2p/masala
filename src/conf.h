@@ -91,6 +91,9 @@ struct obj_conf {
 
 	/* TCP/UDP Port */
 	char *port;
+
+	/* Limit communication to this interface */
+	char *interface;
 };
 
 struct obj_conf *conf_init( void );
