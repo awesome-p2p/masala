@@ -7,7 +7,7 @@
 \fBmasala\fR \- P2P name resolution daemon
 .
 .SH "SYNOPSIS"
-\fBmasala\fR [\-d] [\-q] [\-h hostname] [\-k password] [\-r realm] [\-p port] [\-ba server] [\-bp port] [\-u username]
+\fBmasala\fR [\-d] [\-q] [\-h hostname] [\-k password] [\-r realm] [\-i interface ] [\-p port] [\-ba server] [\-bp port] [\-u username]
 .
 .SH "DESCRIPTION"
 \fBmasala\fR is a P2P name resolution daemon\. It organizes IPv6 addresses in a distributed hash table\. The basic design has been inspired by the Kademlia DHT\. The communication between nodes is realized by using bencode encoded messages on top of UDP\. There are 4 message types: PING, FIND, LOOKUP and ANNOUNCE\. By default, masala sends the first packet to a multicast address\. So there is no configuration necessary within your broadcast domain (LAN) and will continue to do so in intervals until another node is found\. With a bootstrap server, it is also possible to connect nodes around the globe\. Masala also includes a very simple DNS server so it can be used as a local upstream DNS server\.
@@ -28,11 +28,11 @@ Creating a realm affects the lookup process and the way how you announce your ho
 .
 .TP
 \fB\-p, \-\-port\fR \fIport\fR
-Listen to this port (Default: UDP/8337)
+Bind to this port (Default: UDP/8337)
 .
 .TP
 \fB\-i, \-\-interface\fR \fIinterface\fR
-Limit communication to this interface (Default: <any>)
+Bind to this interface (Default: <any>)
 .
 .TP
 \fB\-ba, \-\-bootstrap\-addr\fR \fIserver\fR
@@ -68,7 +68,7 @@ Bind the DNS server interface to this port (Default: 3444)\.
 .
 .TP
 \fB\-di, \-\-dns\-ifce\fR
-Bind the DNS server interface to this interface (Default: <any>)\.
+Bind the DNS server to this interface (Default: <any>)\.
 .
 .SH "EXAMPLES"
 Announce the hostname \fIfubar\.p2p\fR with the encryption password \fIfubar\fR:

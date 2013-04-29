@@ -3,7 +3,7 @@ masala(1) -- P2P name resolution daemon
 
 ## SYNOPSIS
 
-`masala`  [-d] [-q] [-h hostname] [-k password] [-r realm] [-p port] [-ba server] [-bp port] [-u username]
+`masala`  [-d] [-q] [-h hostname] [-k password] [-r realm] [-i interface ] [-p port] [-ba server] [-bp port] [-u username]
 
 ## DESCRIPTION
 
@@ -37,10 +37,10 @@ a local upstream DNS server.
 	as you do not share your realm with others.
 
   * `-p, --port` *port*:
-	Listen to this port (Default: UDP/8337)
+	Bind to this port (Default: UDP/8337)
 
   * `-i, --interface` *interface*:
-	Limit communication to this interface (Default: &lt;any&gt;)
+	Bind to this interface (Default: &lt;any&gt;)
 
   * `-ba, --bootstrap-addr` *server*:
 	Use server as a bootstrap server. The server can be an IPv6 address, a FQHN like www.example.net or even a IPv6 multicast address. (Default: ff0e::1)
@@ -67,7 +67,7 @@ a local upstream DNS server.
 	Bind the DNS server interface to this port (Default: 3444).
 
   * `-di, --dns-ifce`:
-	Bind the DNS server interface to this interface (Default: &lt;any&gt;).
+	Bind the DNS server to this interface (Default: &lt;any&gt;).
 
 ## EXAMPLES
 
