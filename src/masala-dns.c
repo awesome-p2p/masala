@@ -462,10 +462,6 @@ int dns_masala_lookup(const char *hostname, size_t size, IP *from, IP *record) {
 
 void* dns_loop( void* _ ) {
 
-	char *bind_addr = _main->conf->dns_addr;
-	char *bind_ifce = _main->conf->dns_ifce;
-	char *bind_port = _main->conf->dns_port;
-
 	int rc;
 	int val;
 	struct addrinfo hints, *servinfo, *p;
@@ -478,13 +474,16 @@ void* dns_loop( void* _ ) {
 	struct message msg;
 	char addrbuf[FULL_ADDSTRLEN];
 
+	const char *addr = _main->conf->dns_addr;
+	const char *ifce = _main->conf->dns_ifce;
+	const char *port = _main->conf->dns_port;
 
 	memset( &hints, 0, sizeof(hints) );
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_INET6;
 	hints.ai_socktype = SOCK_DGRAM;
 
-	if( (rc = getaddrinfo( bind_addr, bind_port, &hints, &servinfo )) == 0 ) {
+	if( (rc = getaddrinfo( addr, port, &hints, &servinfo )) == 0 ) {
 		for( p = servinfo; p != NULL; p = p->ai_next ) {
 			memset( &sockaddr, 0, sizeof(IP) );
 			sockaddr = *((IP*) p->ai_addr);
@@ -498,12 +497,12 @@ void* dns_loop( void* _ ) {
 
 	sockfd = socket( PF_INET6, SOCK_DGRAM, IPPROTO_UDP );
 	if(sockfd < 0) {
-		log_err( "DNS: Failed to create socket: %s", gai_strerror(errno) );
+		log_err( "DNS: Failed to create socket: %s", gai_strerror( errno ) );
 		return NULL;
 	}
 
-	if( bind_ifce && setsockopt( sockfd, SOL_SOCKET, SO_BINDTODEVICE, bind_ifce, strlen( bind_ifce )) ) {
-		log_err( "DNS: Unable to bind to interface '%s': %s", bind_ifce,  gai_strerror(errno ) );
+	if( ifce && setsockopt( sockfd, SOL_SOCKET, SO_BINDTODEVICE, ifce, strlen( ifce )) ) {
+		log_err( "DNS: Unable to set interface '%s': %s", ifce,  gai_strerror( errno ) );
 		return NULL;
 	}
 
@@ -525,9 +524,9 @@ void* dns_loop( void* _ ) {
 	tv.tv_usec = 0;
 	setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 
-	log_info( "Bind DNS interface to %s, device %s.",
-		bind_addr ? addr_str( &sockaddr, addrbuf ) : "<any>",
-		bind_ifce ? bind_ifce : "<any>"
+	log_info( "Bind DNS interface to %s, interface %s.",
+		addr ? addr_str( &sockaddr, addrbuf ) : "<any>",
+		ifce ? ifce : "<any>"
 	);
 
 	while(1) {
