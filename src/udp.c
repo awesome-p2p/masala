@@ -102,7 +102,6 @@ void udp_start( void ) {
 	const char *ifce = _main->conf->interface;
 	if( ifce && setsockopt( _main->udp->sockfd, SOL_SOCKET, SO_BINDTODEVICE, ifce, strlen( ifce )) ) {
 		log_err( "Unable to set interface '%s': %s", ifce,  gai_strerror( errno ) );
-		return NULL;
 	}
 
 	if( udp_nonblocking( _main->udp->sockfd ) < 0 ) {
