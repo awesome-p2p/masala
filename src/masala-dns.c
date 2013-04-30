@@ -414,7 +414,7 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 	if( p )
 	{
 		int buflen = p - buf;
-		log_debug( "DNS: send address [%s] to [%s]. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
+		log_debug( "DNS: send address %s to %s. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
 
 		sendto( sockfd, buf, buflen, 0, (struct sockaddr*) from, sizeof(IP) );
 	}
