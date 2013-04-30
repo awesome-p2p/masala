@@ -133,7 +133,7 @@ char* addr_str( IP *addr, char *addrbuf ) {
 	return addrbuf;
 }
 
-void __log( const char *filename, int line, int priority, const char *format, ... ) {
+void _log( const char *filename, int line, int priority, const char *format, ... ) {
 	char buffer[MAIN_BUF];
 	va_list vlist;
 
@@ -146,16 +146,10 @@ void __log( const char *filename, int line, int priority, const char *format, ..
 	}
 
 	if( _main->conf->mode == CONF_FOREGROUND ) {
-		if(filename == NULL || line == 0)
-			fprintf( stderr, "%s\n", buffer );
-		else
-			fprintf( stderr, "(%s:%d) %s\n", filename, line, buffer );
+		fprintf( stderr, "(%s:%d) %s\n", filename, line, buffer );
 	} else {
 		openlog( CONF_SRVNAME, LOG_PID|LOG_CONS, LOG_USER|LOG_PERROR );
-		if( filename == NULL || line == 0 )
-			syslog( priority, "%s", buffer );
-		else
-			syslog( priority, "(%s:%d) %s" , filename, line, buffer );
+		syslog( priority, "(%s:%d) %s" , filename, line, buffer );
 		closelog();
 	}
 

@@ -27,17 +27,10 @@ void log_info( int code, const char *buffer );
 
 #include <syslog.h>
 
-#ifdef DEBUG
-#define log_crit(...) __log(__FILE__, __LINE__, LOG_CRIT, __VA_ARGS__)
-#define log_err(...) __log(__FILE__, __LINE__, LOG_ERR, __VA_ARGS__)
-#define log_info(...) __log(__FILE__, __LINE__, LOG_INFO, __VA_ARGS__)
-#define log_debug(...) __log(__FILE__, __LINE__, LOG_DEBUG, __VA_ARGS__)
-#else
-#define log_crit(...) __log(NULL, 0, LOG_CRIT, __VA_ARGS__)
-#define log_err(...) __log(NULL, 0, LOG_ERR, __VA_ARGS__)
-#define log_info(...) __log(NULL, 0, LOG_INFO, __VA_ARGS__)
-#define log_debug(...) __log(NULL, 0, LOG_DEBUG, __VA_ARGS__)
-#endif
+#define log_crit(...) _log(__BASE_FILE__, __LINE__, LOG_CRIT, __VA_ARGS__)
+#define log_err(...) _log(__BASE_FILE__, __LINE__, LOG_ERR, __VA_ARGS__)
+#define log_info(...) _log(__BASE_FILE__, __LINE__, LOG_INFO, __VA_ARGS__)
+#define log_debug(...) _log(__BASE_FILE__, __LINE__, LOG_DEBUG, __VA_ARGS__)
 
 #define HEX_LEN (2 * SHA_DIGEST_LENGTH)
 #define FULL_ADDSTRLEN (INET6_ADDRSTRLEN + 9)
@@ -45,4 +38,4 @@ void log_info( int code, const char *buffer );
 
 char* id_str( const UCHAR *in, char *buf );
 char* addr_str( IP *addr, char *buf );
-void __log( const char *filename, int line, int priority, const char *format, ... );
+void _log( const char *filename, int line, int priority, const char *format, ... );
