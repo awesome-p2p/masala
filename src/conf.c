@@ -150,8 +150,8 @@ void conf_check( void ) {
 	char hexbuf[HEX_LEN+1];
 #ifdef MASALA
 	log_info( "Hostname: '%s' (-h)", _main->conf->hostname );
-	log_info( "Node ID: %s (/dev/urandom)", id_str( _main->conf->node_id, hexbuf ) );
-	log_info( "Host ID: %s (sha1 '%s')", id_str(  _main->conf->host_id, hexbuf ), _main->conf->hostname );
+	log_info( "Node ID: %s", id_str( _main->conf->node_id, hexbuf ) );
+	log_info( "Host ID: %s", id_str(  _main->conf->host_id, hexbuf ), _main->conf->hostname );
 	log_info( "Bootstrap Node: %s (-ba)", _main->conf->bootstrap_node );
 	log_info( "Bootstrap Port: UDP/%s (-bp)", _main->conf->bootstrap_port );
 #endif
