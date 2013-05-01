@@ -761,7 +761,7 @@ void p2p_compute_id( UCHAR *host_id, char *hostname ) {
 
 	if( size >= HEX_LEN && str_isHex( hostname, HEX_LEN ) ) {
 		/* treat hostname as hex string and ignore any kind of suffix */
-		str_fromHex( host_id, hostname, size );
+		str_fromHex( host_id, hostname, HEX_LEN );
 	} else {
 		sha1_hash( host_id, hostname, size);
 	}
