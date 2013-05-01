@@ -62,7 +62,6 @@ const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 " -h, --hostname		Set the hostname the node should announce (Default: <hostname>.p2p).\n"
 " -u, --user		Change the UUID after start.\n"
 " -k, --key		Set a password results in encrypting each packet with AES256.\n"
-" -r, --realm		Salt your hostname before its hash is used as node ID.\n"
 " -ba, --boostrap-addr	Use another node to connect to the masala network (Default: 'ff0e::1').\n"
 " -bp, --boostrap-port	Set the port for the bootsrap node (Default: UDP/8337).\n"
 " -p, --port		Bind to this port (Default: UDP/8337).\n"
@@ -166,16 +165,8 @@ void opts_interpreter( char *var, char *val ) {
 	} else if( match( var, "-h", "--hostname" ) ) {
 		replace( var, &_main->conf->hostname, val );
 
-		/* Compute host_id. Respect the realm. */
-		p2p_compute_realm_id( _main->conf->host_id, _main->conf->hostname );
-
-	} else if( match( var, "-r", "-realm" ) ) {
-		replace( var, &_main->conf->realm, val );
-		_main->conf->bool_realm = TRUE;
-
-		/* Change realm. Recompute the host_id. */
-		p2p_compute_realm_id( _main->conf->host_id, _main->conf->hostname );
-
+		/* Compute host_id. */
+		p2p_compute_id( _main->conf->host_id, _main->conf->hostname );
 	} else if( match( var, "-q", "--quiet" ) ) {
 		if( val != NULL )
 			no_arg_expected( var );

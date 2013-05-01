@@ -3,7 +3,7 @@ masala(1) -- P2P name resolution daemon
 
 ## SYNOPSIS
 
-`masala`  [-d] [-q] [-h hostname] [-k password] [-r realm] [-i interface ] [-p port] [-ba server] [-bp port] [-u username]
+`masala`  [-d] [-q] [-h hostname] [-k password] [-i interface ] [-p port] [-ba server] [-bp port] [-u username]
 
 ## DESCRIPTION
 
@@ -27,14 +27,6 @@ a local upstream DNS server.
 	Setting a password results in encrypting each packet with AES256. The
 	encrypted packet is encapsulated in bencode. With this action you
 	effectively isolate your nodes from the rest of the world.
-
-  * `-r, --realm` *realm*:
-	Creating a realm affects the lookup process and the way how you announce
-	your hostname to the swarm. It helps you to isolate your nodes and be part
-	of a bigger swarm at the same time. This can be useful if you do not have
-	your own bootstrap server and do not want to get mixed up with the rest of
-	the swarm. You do not have problems with duplicate hostnames either as long
-	as you do not share your realm with others.
 
   * `-p, --port` *port*:
 	Bind to this port (Default: UDP/8337)

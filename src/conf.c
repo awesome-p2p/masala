@@ -90,9 +90,6 @@ struct obj_conf *conf_init( void ) {
 #ifdef MASALA
 	conf->key = strdup( CONF_KEY );
 	conf->bool_encryption = FALSE;
-
-	conf->realm = strdup( CONF_REALM );
-	conf->bool_realm = FALSE;
 #endif
 
 	/* SHA1 Hash of hostname */
@@ -142,7 +139,6 @@ void conf_free( void ) {
 		myfree( _main->conf->bootstrap_node, "conf_free" );
 		myfree( _main->conf->bootstrap_port, "conf_free" );
 		myfree( _main->conf->key, "conf_free" );
-		myfree( _main->conf->realm, "conf_free" );
 		myfree( _main->conf->dns_port, "conf_free" );
 		myfree( _main->conf->dns_addr, "conf_free" );
 		myfree( _main->conf->dns_ifce, "conf_free" );
@@ -215,15 +211,6 @@ void conf_check( void ) {
 		log_info( "Encryption key: %s (-k)", _main->conf->key );
 	} else {
 		log_info( "Encryption key: None (-k)" );
-	}
-#endif
-
-	/* Realm */
-#ifdef MASALA
-	if( _main->conf->bool_realm == 1 ) {
-		log_info( "Realm: %s (-r)", _main->conf->realm );
-	} else {
-		log_info( "Realm: None (-r)" );
 	}
 #endif
 

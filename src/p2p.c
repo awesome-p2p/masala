@@ -756,16 +756,8 @@ void p2p_announce_myself( void ) {
 	announce_put( lkp_id );
 }
 
-void p2p_compute_realm_id( UCHAR *host_id, char *hostname ) {
-	char buffer[MAIN_BUF+1];
-
-	/* The realm influences the way, the lookup hash gets computed */
-	if( _main->conf->bool_realm == TRUE ) {
-		snprintf(buffer, MAIN_BUF+1, "%s.%s", hostname, _main->conf->realm);
-		sha1_hash( host_id, buffer, strlen(buffer) );
-	} else {
-		sha1_hash( host_id, hostname, strlen(hostname) );
-	}
+void p2p_compute_id( UCHAR *host_id, char *hostname ) {
+	sha1_hash( host_id, hostname, strlen( hostname ) );
 }
 
 int p2p_is_hash( struct obj_ben *node ) {

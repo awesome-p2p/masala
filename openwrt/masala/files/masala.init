@@ -34,7 +34,7 @@ start_instance() {
 	OPTS=""
 
 	append_opts "$s" bootstrap_addr bootstrap_port dns_addr \
-		dns_ifce dns_port hostname interface port realm user
+		dns_ifce dns_port hostname interface port user
 
 	eval service_start "'$MASALA_BIN'" --daemon --pid-file "'$SERVICE_PID_FILE'" $OPTS
 }

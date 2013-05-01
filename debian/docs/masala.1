@@ -1,13 +1,13 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "MASALA" "1" "April 2013" "" ""
+.TH "MASALA" "1" "May 2013" "" ""
 .
 .SH "NAME"
 \fBmasala\fR \- P2P name resolution daemon
 .
 .SH "SYNOPSIS"
-\fBmasala\fR [\-d] [\-q] [\-h hostname] [\-k password] [\-r realm] [\-i interface ] [\-p port] [\-ba server] [\-bp port] [\-u username]
+\fBmasala\fR [\-d] [\-q] [\-h hostname] [\-k password] [\-i interface ] [\-p port] [\-ba server] [\-bp port] [\-u username]
 .
 .SH "DESCRIPTION"
 \fBmasala\fR is a P2P name resolution daemon\. It organizes IPv6 addresses in a distributed hash table\. The basic design has been inspired by the Kademlia DHT\. The communication between nodes is realized by using bencode encoded messages on top of UDP\. There are 4 message types: PING, FIND, LOOKUP and ANNOUNCE\. By default, masala sends the first packet to a multicast address\. So there is no configuration necessary within your broadcast domain (LAN) and will continue to do so in intervals until another node is found\. With a bootstrap server, it is also possible to connect nodes around the globe\. Masala also includes a very simple DNS server so it can be used as a local upstream DNS server\.
@@ -21,10 +21,6 @@ By default /etc/hostname is used to determine the hostname\.
 .TP
 \fB\-k, \-\-key\fR \fIpassword\fR
 Setting a password results in encrypting each packet with AES256\. The encrypted packet is encapsulated in bencode\. With this action you effectively isolate your nodes from the rest of the world\.
-.
-.TP
-\fB\-r, \-\-realm\fR \fIrealm\fR
-Creating a realm affects the lookup process and the way how you announce your hostname to the swarm\. It helps you to isolate your nodes and be part of a bigger swarm at the same time\. This can be useful if you do not have your own bootstrap server and do not want to get mixed up with the rest of the swarm\. You do not have problems with duplicate hostnames either as long as you do not share your realm with others\.
 .
 .TP
 \fB\-p, \-\-port\fR \fIport\fR
