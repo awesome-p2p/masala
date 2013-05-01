@@ -426,7 +426,7 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record )
 	}
 
 	/* That is the lookup key */
-	p2p_compute_realm_id( host_id, (char *)hostname );
+	p2p_compute_id( host_id, (char *)hostname );
 	log_debug( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
 
 	/* Check my own DB for that node. */

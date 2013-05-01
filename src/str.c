@@ -114,10 +114,10 @@ int str_isSafePort( char *string ) {
 	return number;
 }
 
-/*int str_isHex( char *string ) {
+int str_isHex( const char *string, int size ) {
 	unsigned int i = 0;
 
-	for( i=0; i<strlen( string ); i++ ) {
+	for( i=0; i<size; i++ ) {
 		if( string[i] >= '0' && string[i] <= '9' ) {
 			continue;
 		} else if( string[i] >= 'A' && string[i] <= 'F' ) {
@@ -130,7 +130,7 @@ int str_isSafePort( char *string ) {
 	}
 
 	return 1;
-}*/
+}
 
 int str_isValidFilename( char *string ) {
 	unsigned int i = 0;
@@ -269,6 +269,31 @@ void str_prettySize( char *buffer, int size, unsigned long filesize ) {
 		snprintf( buffer, size, "%lu KiB", thissize );
 	} else {
 		snprintf( buffer, size, "%lu B", filesize );
+	}
+}
+
+void str_fromHex( UCHAR *id, const char *hex, size_t size ) {
+	int i;
+	char c;
+	int xv = 0;
+
+	for(i = 0; i < size; ++i) {
+
+		c = *(hex+i);
+		if( c >= 'a' ) {
+			xv += (c - 'a') + 10;
+		} else if ( c >= 'A') {
+			xv += (c - 'A') + 10;
+		} else {
+			xv += c - '0';
+		}
+
+		if( i%2 ) {
+			id[i/2] = xv;
+			xv = 0;
+		} else {
+			xv *= 16;
+		}
 	}
 }
 

@@ -28,7 +28,7 @@ void str_free( struct obj_str *str );
 int str_isValidUTF8( char *string );
 int str_isNumber( char *string );
 int str_isSafePort( char *string );
-/* int str_isHex( char *string ); */
+int str_isHex( const char *string, int size );
 int str_isValidFilename( char *string );
 int str_isValidHostname( const char *hostname, int size );
 
@@ -39,5 +39,6 @@ int str_count( char *buffer, const char *search );
 void str_GMTtime( char *buffer, int size );
 void str_gmttime( char *buffer, int size, time_t timestamp );
 void str_prettySize( char *buffer, int size, unsigned long filesize );
+void str_fromHex( UCHAR *id, const char *hex, size_t size );
 
 char *str_append( char *buf1, long int size1, char *buf2, long int size2 );

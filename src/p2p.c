@@ -757,7 +757,14 @@ void p2p_announce_myself( void ) {
 }
 
 void p2p_compute_id( UCHAR *host_id, char *hostname ) {
-	sha1_hash( host_id, hostname, strlen( hostname ) );
+	size_t size = strlen( hostname );
+
+	if( size >= HEX_LEN && str_isHex( hostname, HEX_LEN ) ) {
+		/* treat hostname as hex string and ignore any kind of suffix */
+		str_fromHex( host_id, hostname, size );
+	} else {
+		sha1_hash( host_id, hostname, size);
+	}
 }
 
 int p2p_is_hash( struct obj_ben *node ) {
