@@ -179,7 +179,7 @@ struct message
 * Basic memory operations.
 */
 
-int get16bits(const UCHAR** buffer)
+int get16bits( const UCHAR** buffer )
 {
 	int value = (*buffer)[0];
 	value = value << 8;
@@ -188,14 +188,14 @@ int get16bits(const UCHAR** buffer)
 	return value;
 }
 
-void put16bits(UCHAR** buffer, uint value)
+void put16bits( UCHAR** buffer, uint value )
 {
 	(*buffer)[0] = (value & 0xFF00) >> 8;
 	(*buffer)[1] = value & 0xFF;
 	(*buffer) += 2;
 }
 
-void put32bits(UCHAR** buffer, ulong value)
+void put32bits( UCHAR** buffer, ulong value )
 {
 	(*buffer)[0] = (value & 0xFF000000) >> 24;
 	(*buffer)[1] = (value & 0xFF0000) >> 16;
@@ -218,7 +218,7 @@ char *decode_domain_name( const UCHAR** buffer )
 	int i = 0;
 	int len = 0;
 
-	while(buf[i] != 0 && i < sizeof(name))
+	while( buf[i] != 0 && i < sizeof( name ) )
 	{
 		if(i != 0)
 		{
@@ -259,7 +259,7 @@ void code_domain_name( UCHAR** buffer, const char *domain )
 	int len = 0;
 	int i = 0;
 
-	while((pos = strchr(beg, '.')) != '\0')
+	while( (pos = strchr(beg, '.')) != '\0' )
 	{
 		len = pos - beg;
 		buf[i] = len;
@@ -288,8 +288,8 @@ void dns_decode_header( struct message *msg, const UCHAR** buffer )
 {
 	uint fields;
 
-	msg->id = get16bits(buffer);
-	fields = get16bits(buffer);
+	msg->id = get16bits( buffer );
+	fields = get16bits( buffer );
 	msg->qr = fields & QR_MASK;
 	msg->opcode = fields & OPCODE_MASK;
 	msg->aa = fields & AA_MASK;
@@ -299,17 +299,17 @@ void dns_decode_header( struct message *msg, const UCHAR** buffer )
 	msg->rcode = fields & RCODE_MASK;
 
 
-	msg->qdCount = get16bits(buffer);
-	msg->anCount = get16bits(buffer);
-	msg->nsCount = get16bits(buffer);
-	msg->arCount = get16bits(buffer);
+	msg->qdCount = get16bits( buffer );
+	msg->anCount = get16bits( buffer );
+	msg->nsCount = get16bits( buffer );
+	msg->arCount = get16bits( buffer );
 }
 
-void dns_code_header(struct message *msg, UCHAR** buffer)
+void dns_code_header( struct message *msg, UCHAR** buffer )
 {
 	uint fields;
 
-	put16bits(buffer, msg->id);
+	put16bits( buffer, msg->id );
 	fields = (msg->qr << 15);
 	fields += (msg->opcode << 14);
 	/* TODO: insert the rest of the field */
@@ -328,28 +328,23 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 
 	dns_decode_header( msg, &buffer );
 
-	if(( msg->anCount+msg->nsCount+msg->arCount) != 0 )
-	{
+	if(( msg->anCount+msg->nsCount+msg->arCount) != 0 ) {
 		log_info("DNS: Only questions expected.");
 		return -1;
 	}
 
 	/* parse questions */
-	for(i = 0; i < msg->qdCount; ++i)
-	{
+	for(i = 0; i < msg->qdCount; ++i) {
 		char *qName = decode_domain_name( &buffer );
 		int qType = get16bits( &buffer );
 		int qClass = get16bits( &buffer );
 
-		if( qType == AAAA_Resource_RecordType )
-		{
+		if( qType == AAAA_Resource_RecordType ) {
 			msg->question.qName = qName;
 			msg->question.qType = qType;
 			msg->question.qClass = qClass;
 			return 1;
-		}
-		else
-		{
+		} else {
 			myfree( qName, "dns_decode_query" );
 		}
 	}
@@ -360,9 +355,8 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 UCHAR * dns_code_response( struct message *msg, UCHAR *buffer )
 {
 	dns_code_header( msg, &buffer );
-	
-	if(msg->anCount == 1)
-	{
+
+	if(msg->anCount == 1) {
 		/* Attach a single question section. */
 		code_domain_name( &buffer, msg->question.qName );
 		put16bits( &buffer, msg->question.qType );
@@ -411,8 +405,7 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 
 	UCHAR* p = dns_code_response( msg, buf );
 
-	if( p )
-	{
+	if( p ) {
 		int buflen = p - buf;
 		log_debug( "DNS: send address %s to %s. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
 
@@ -420,8 +413,7 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 	}
 }
 
-
-int dns_masala_lookup(const char *hostname, size_t size, IP *from, IP *record) {
+int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record ) {
 	UCHAR lkp_id[SHA_DIGEST_LENGTH];
 	UCHAR host_id[SHA_DIGEST_LENGTH];
 	IP *addr;
@@ -531,7 +523,7 @@ void* dns_loop( void* _ ) {
 
 	while(1) {
 		memset( &msg, 0, sizeof(msg) );
-		rc = recvfrom( sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &from, &addr_len );
+		rc = recvfrom( sockfd, buffer, sizeof( buffer ), 0, (struct sockaddr *) &from, &addr_len );
 
 		if(rc < 0)
 			continue;

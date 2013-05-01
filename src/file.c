@@ -114,7 +114,7 @@ char *file_load( const char *filename, long int offset, size_t size ) {
 		myfree( buffer, "file_load" );
 		return NULL;
 	}
-	
+
 	return buffer;
 }
 
@@ -129,7 +129,7 @@ int file_write( const char *filename, char *buffer, size_t size ) {
 
 	if( fclose( fh) != 0 )
 		return -3;
-	
+
 	return size;
 }
 
@@ -144,14 +144,14 @@ size_t file_append( const char *filename, char *buffer, size_t size ) {
 
 	if( fclose( fh) != 0 )
 		return -3;
-	
+
 	return size;
 }
 
 int file_rm( const char *filename ) {
 	if( unlink( filename) != 0 )
 		return 0;
-	
+
 	return 1;
 }
 
@@ -159,12 +159,12 @@ int file_rmdir( const char *dirname ) {
 	if( rmdir( dirname) == 0 ) {
 		return 1;
 	}
-	
+
 	return 0;
 }
 
 int file_rmrf( char *fileordir ) {
-	DIR *dh	= NULL;
+	DIR *dh = NULL;
 	struct dirent *entry = NULL;
 	char filename[MAIN_BUF+1];
 
@@ -176,7 +176,7 @@ int file_rmrf( char *fileordir ) {
 		if( ( dh = opendir( fileordir)) == NULL ) {
 			return 0;
 		}
-	  
+
 		while( ( entry = readdir( dh)) != NULL ) {
 			if( strcmp( entry->d_name,".") != 0 && strcmp( entry->d_name,"..") != 0 ) {
 				snprintf( filename, MAIN_BUF+1, "%s/%s", fileordir, entry->d_name );
@@ -185,7 +185,7 @@ int file_rmrf( char *fileordir ) {
 				}
 			}
 		}
-		
+
 		if( closedir( dh) != 0 )
 			return 0;
 

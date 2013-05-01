@@ -67,7 +67,7 @@ int str_isValidUTF8( char *string ) {
 	unsigned int length = strlen( string );
 
 	for( i=0; i<length; i++ ) {
-		if( string[i] < 0x80)			 n=0; /* 0bbbbbbb */
+		if( string[i] < 0x80) n=0; /* 0bbbbbbb */
 		else if( ( string[i] & 0xE0) == 0xC0) n=1; /* 110bbbbb */
 		else if( ( string[i] & 0xF0) == 0xE0) n=2; /* 1110bbbb */
 		else if( ( string[i] & 0xF8) == 0xF0) n=3; /* 11110bbb */
