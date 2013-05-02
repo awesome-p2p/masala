@@ -30,7 +30,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include <netdb.h>
 #include <sys/epoll.h>
 
-#include "malloc.h"
 #include "thrd.h"
 #include "main.h"
 #include "str.h"
@@ -38,24 +37,11 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "hash.h"
 #include "log.h"
 #include "conf.h"
-#include "file.h"
-#include "unix.h"
-#include "opts.h"
-#include "udp.h"
 #include "ben.h"
-#include "aes.h"
 #include "node_p2p.h"
-#include "bucket.h"
 #include "lookup.h"
-#include "announce.h"
-#include "neighboorhood.h"
 #include "p2p.h"
-#include "send_p2p.h"
-#include "search.h"
-#include "cache.h"
-#include "time.h"
 #include "random.h"
-#include "sha1.h"
 #include "database.h"
 #include "masala-dns.h"
 
@@ -172,6 +158,9 @@ struct message
 	/* We only handle one question and one answer! */
 	struct question question;
 	struct ResourceRecord answer;
+
+	/* Buffer for the qName part. */
+	char qName_buffer[256];
 };
 
 
@@ -209,49 +198,39 @@ void put32bits( UCHAR** buffer, ulong value )
 */
 
 /* 3foo3bar3com0 => foo.bar.com */
-char *decode_domain_name( const UCHAR** buffer )
+int dns_decode_domain( char *domain, const UCHAR** buffer, int size )
 {
-	UCHAR name[256];
-	const UCHAR *buf = *buffer;
-	char *dup;
-	int j = 0;
+	const UCHAR *p = *buffer;
 	int i = 0;
 	int len = 0;
 
-	while( buf[i] != 0 && i < sizeof( name ) )
-	{
-		if(i != 0)
-		{
-			name[j] = '.';
-			j += 1;
+	while( *p != '\0' ) {
+
+		if( i != 0 ) {
+			domain[i] = '.';
+			i += 1;
 		}
 
-		len = buf[i];
-		i += 1;
+		len = *p;
+		p += 1;
 
-		memcpy(name+j, buf+i, len);
+		if( i+len >=  256 || i+len >= size )
+			return -1;
+
+		memcpy( domain+i, p, len );
+		p += len;
 		i += len;
-		j += len;
 	}
 
-	name[j] = '\0';
+	domain[i] = '\0';
 
-	*buffer += i + 1; /* also jump over the last 0 */
+	*buffer = p + 1; /* also jump over the last 0 */
 
-	dup = (char*) malloc(j+1);
-	if(dup)
-	{
-		memcpy(dup, name, j+1);
-		return dup;
-	}
-	else
-	{
-		return NULL;
-	}
+	return 1;
 }
 
 /* foo.bar.com => 3foo3bar3com0 */
-void code_domain_name( UCHAR** buffer, const char *domain )
+void dns_code_domain( UCHAR** buffer, const char *domain )
 {
 	char *buf = (char*) *buffer;
 	const char *beg = domain;
@@ -259,8 +238,7 @@ void code_domain_name( UCHAR** buffer, const char *domain )
 	int len = 0;
 	int i = 0;
 
-	while( (pos = strchr(beg, '.')) != '\0' )
-	{
+	while( (pos = strchr(beg, '.')) != '\0' ) {
 		len = pos - beg;
 		buf[i] = len;
 		i += 1;
@@ -284,9 +262,12 @@ void code_domain_name( UCHAR** buffer, const char *domain )
 	*buffer += i;
 }
 
-void dns_decode_header( struct message *msg, const UCHAR** buffer )
+int dns_decode_header( struct message *msg, const UCHAR** buffer, int size )
 {
 	uint fields;
+
+	if( size < 12 )
+		return -1;
 
 	msg->id = get16bits( buffer );
 	fields = get16bits( buffer );
@@ -303,6 +284,8 @@ void dns_decode_header( struct message *msg, const UCHAR** buffer )
 	msg->anCount = get16bits( buffer );
 	msg->nsCount = get16bits( buffer );
 	msg->arCount = get16bits( buffer );
+
+	return 12;
 }
 
 void dns_code_header( struct message *msg, UCHAR** buffer )
@@ -324,9 +307,14 @@ void dns_code_header( struct message *msg, UCHAR** buffer )
 
 int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 {
-	int i;
+	int i, rc;
 
-	dns_decode_header( msg, &buffer );
+	rc = dns_decode_header( msg, &buffer, size);
+	if( rc < 0 ) {
+		log_info("DNS: Invalid header received.");
+		return -1;
+	}
+	size -= rc;
 
 	if(( msg->anCount+msg->nsCount+msg->arCount) != 0 ) {
 		log_info("DNS: Only questions expected.");
@@ -335,20 +323,19 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 
 	/* parse questions */
 	for(i = 0; i < msg->qdCount; ++i) {
-		char *qName = decode_domain_name( &buffer );
+		rc = dns_decode_domain( msg->qName_buffer, &buffer, size );
 		int qType = get16bits( &buffer );
 		int qClass = get16bits( &buffer );
 
 		if( qType == AAAA_Resource_RecordType ) {
-			msg->question.qName = qName;
+			msg->question.qName = msg->qName_buffer;
 			msg->question.qType = qType;
 			msg->question.qClass = qClass;
 			return 1;
-		} else {
-			myfree( qName, "dns_decode_query" );
 		}
 	}
 
+	log_debug("DNS: No question for AAAA resource found in query.");
 	return -1;
 }
 
@@ -358,12 +345,12 @@ UCHAR * dns_code_response( struct message *msg, UCHAR *buffer )
 
 	if(msg->anCount == 1) {
 		/* Attach a single question section. */
-		code_domain_name( &buffer, msg->question.qName );
+		dns_code_domain( &buffer, msg->question.qName );
 		put16bits( &buffer, msg->question.qType );
 		put16bits( &buffer, msg->question.qClass );
 
 		/* Attach a single resource section. */
-		code_domain_name( &buffer, msg->answer.name );
+		dns_code_domain( &buffer, msg->answer.name );
 		put16bits( &buffer, msg->answer.type );
 		put16bits( &buffer, msg->answer.class );
 		put32bits( &buffer, msg->answer.ttl );
@@ -374,7 +361,6 @@ UCHAR * dns_code_response( struct message *msg, UCHAR *buffer )
 	}
 	return buffer;
 }
-
 
 void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) {
 	UCHAR buf[1500];
