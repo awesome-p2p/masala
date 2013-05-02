@@ -158,7 +158,7 @@ void send_announce( IP *sa, UCHAR *lkp_id ) {
 		1:i 20:NODE_ID
 		1:k 20:SESSION_ID
 		1:l 20:LOOKUP_ID
-		1:f 20:NODE_ID
+		1:f 20:HOST_ID
 		1:q 1:a
 	*/
 
