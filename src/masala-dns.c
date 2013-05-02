@@ -335,7 +335,7 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 		}
 	}
 
-	log_debug("DNS: No question for AAAA resource found in query.");
+	log_warn("DNS: No question for AAAA resource found in query.");
 	return -1;
 }
 
@@ -393,7 +393,7 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 
 	if( p ) {
 		int buflen = p - buf;
-		log_debug( "DNS: send address %s to %s. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
+		log_warn( "DNS: send address %s to %s. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
 
 		sendto( sockfd, buf, buflen, 0, (struct sockaddr*) from, sizeof(IP) );
 	}
@@ -413,7 +413,7 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record )
 
 	/* That is the lookup key */
 	p2p_compute_id( host_id, (char *)hostname );
-	log_debug( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
+	log_warn( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
 
 	/* Check my own DB for that node. */
 	mutex_block( _main->p2p->mutex );
@@ -514,7 +514,7 @@ void* dns_loop( void* _ ) {
 		if(rc < 0)
 			continue;
 
-		log_debug( "DNS: Received query from %s.",  addr_str( &from, addrbuf )  );
+		log_warn( "DNS: Received query from %s.",  addr_str( &from, addrbuf )  );
 
 		rc = dns_decode_query( &msg, buffer, rc );
 		if(rc < 0)
@@ -523,10 +523,10 @@ void* dns_loop( void* _ ) {
 		rc = dns_masala_lookup( msg.question.qName, strlen(msg.question.qName), &from, &record );
 
 		if(rc > 0) {
-			log_debug("DNS: Lookup succeded for '%s'.", msg.question.qName );
+			log_warn("DNS: Lookup succeded for '%s'.", msg.question.qName );
 			dns_send_response( sockfd, &msg, &from, &record );
 		} else {
-			log_debug("DNS: Lookup failed for '%s'.", msg.question.qName );
+			log_warn("DNS: Lookup failed for '%s'.", msg.question.qName );
 		}
 	}
 

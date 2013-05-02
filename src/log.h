@@ -27,10 +27,10 @@ void log_info( int code, const char *buffer );
 
 #include <syslog.h>
 
-#define log_crit(...) _log(__BASE_FILE__, __LINE__, LOG_CRIT, __VA_ARGS__)
-#define log_err(...) _log(__BASE_FILE__, __LINE__, LOG_ERR, __VA_ARGS__)
-#define log_info(...) _log(__BASE_FILE__, __LINE__, LOG_INFO, __VA_ARGS__)
-#define log_debug(...) _log(__BASE_FILE__, __LINE__, LOG_DEBUG, __VA_ARGS__)
+#define log_crit(...) _log(NULL, 0, LOG_CRIT, __VA_ARGS__)
+#define log_err(...) _log(NULL, 0, LOG_ERR, __VA_ARGS__)
+#define log_info(...) _log(NULL, 0, LOG_INFO, __VA_ARGS__)
+#define log_warn(...) _log(NULL, 0, LOG_WARNING, __VA_ARGS__)
 
 #define HEX_LEN (2 * SHA_DIGEST_LENGTH)
 #define FULL_ADDSTRLEN (INET6_ADDRSTRLEN + 9)

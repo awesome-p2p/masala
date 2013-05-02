@@ -146,10 +146,16 @@ void _log( const char *filename, int line, int priority, const char *format, ...
 	}
 
 	if( _main->conf->mode == CONF_FOREGROUND ) {
-		fprintf( stderr, "(%s:%d) %s\n", filename, line, buffer );
+		if(filename)
+			fprintf( stderr, "(%s:%d) %s\n", filename, line, buffer );
+		else
+			fprintf( stderr, "%s\n", buffer );
 	} else {
 		openlog( CONF_SRVNAME, LOG_PID|LOG_CONS, LOG_USER|LOG_PERROR );
-		syslog( priority, "(%s:%d) %s" , filename, line, buffer );
+		if(filename)
+			syslog( priority, "(%s:%d) %s", filename, line, buffer );
+		else
+			syslog( priority, "%s", buffer );
 		closelog();
 	}
 
