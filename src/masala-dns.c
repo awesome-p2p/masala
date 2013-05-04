@@ -201,6 +201,7 @@ void put32bits( UCHAR** buffer, ulong value )
 int dns_decode_domain( char *domain, const UCHAR** buffer, int size )
 {
 	const UCHAR *p = *buffer;
+	const UCHAR *beg = p;
 	int i = 0;
 	int len = 0;
 
@@ -225,8 +226,7 @@ int dns_decode_domain( char *domain, const UCHAR** buffer, int size )
 	domain[i] = '\0';
 
 	*buffer = p + 1; /* also jump over the last 0 */
-
-	return 1;
+	return (*buffer) - beg;
 }
 
 /* foo.bar.com => 3foo3bar3com0 */
@@ -290,14 +290,10 @@ int dns_decode_header( struct message *msg, const UCHAR** buffer, int size )
 
 void dns_code_header( struct message *msg, UCHAR** buffer )
 {
-	uint fields;
-
 	put16bits( buffer, msg->id );
-	fields = (msg->qr << 15);
-	fields += (msg->opcode << 14);
-	/* TODO: insert the rest of the field */
-	fields += msg->rcode;
-	put16bits( buffer, fields);
+
+	/* Set response flag only */
+	put16bits( buffer, (1 << 15) );
 
 	put16bits( buffer, msg->qdCount );
 	put16bits( buffer, msg->anCount );
@@ -309,21 +305,27 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 {
 	int i, rc;
 
-	rc = dns_decode_header( msg, &buffer, size);
-	if( rc < 0 ) {
-		log_info("DNS: Invalid header received.");
+	rc = dns_decode_header( msg, &buffer, size );
+	if( rc < 0 )
 		return -1;
-	}
 	size -= rc;
 
 	if(( msg->anCount+msg->nsCount+msg->arCount) != 0 ) {
-		log_info("DNS: Only questions expected.");
+		log_warn("DNS: Only questions expected.");
 		return -1;
 	}
 
 	/* parse questions */
 	for(i = 0; i < msg->qdCount; ++i) {
 		rc = dns_decode_domain( msg->qName_buffer, &buffer, size );
+		if( rc < 0 )
+			return -1;
+
+		size -= rc;
+
+		if( size < 4 )
+			return -1;
+
 		int qType = get16bits( &buffer );
 		int qClass = get16bits( &buffer );
 
@@ -393,7 +395,7 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 
 	if( p ) {
 		int buflen = p - buf;
-		log_warn( "DNS: send address %s to %s. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
+		log_info( "DNS: send address %s to %s. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
 
 		sendto( sockfd, buf, buflen, 0, (struct sockaddr*) from, sizeof(IP) );
 	}
@@ -407,13 +409,13 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record )
 
 	/* Validate hostname */
 	if ( !str_isValidHostname( (char *)hostname, size ) ) {
-		log_info( "DNS: Invalid hostname for lookup: '%s'", hostname );
+		log_warn( "DNS: Invalid hostname for lookup: '%s'", hostname );
 		return -1;
 	}
 
 	/* That is the lookup key */
 	p2p_compute_id( host_id, (char *)hostname );
-	log_warn( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
+	log_info( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
 
 	/* Check my own DB for that node. */
 	mutex_block( _main->p2p->mutex );
@@ -435,7 +437,8 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record )
 	mutex_block( _main->p2p->mutex );
 	lkp_put( host_id, lkp_id, from );
 	mutex_unblock( _main->p2p->mutex );
-	return 0;
+
+	return -1;
 }
 
 void* dns_loop( void* _ ) {
@@ -514,19 +517,19 @@ void* dns_loop( void* _ ) {
 		if(rc < 0)
 			continue;
 
-		log_warn( "DNS: Received query from %s.",  addr_str( &from, addrbuf )  );
+		log_info( "DNS: Received query from %s.",  addr_str( &from, addrbuf )  );
 
 		rc = dns_decode_query( &msg, buffer, rc );
+
 		if(rc < 0)
 			continue;
 
 		rc = dns_masala_lookup( msg.question.qName, strlen(msg.question.qName), &from, &record );
 
-		if(rc > 0) {
-			log_warn("DNS: Lookup succeded for '%s'.", msg.question.qName );
-			dns_send_response( sockfd, &msg, &from, &record );
-		} else {
+		if(rc < 0) {
 			log_warn("DNS: Lookup failed for '%s'.", msg.question.qName );
+		} else {
+			dns_send_response( sockfd, &msg, &from, &record );
 		}
 	}
 
