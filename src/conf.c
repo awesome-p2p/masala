@@ -132,16 +132,17 @@ struct obj_conf *conf_init( void ) {
 
 void conf_free( void ) {
 	if( _main->conf != NULL ) {
-		myfree( _main->conf->port, "conf_free" );
-		myfree( _main->conf->interface, "conf_free" );
-		myfree( _main->conf->pid_file, "conf_free" );
 		myfree( _main->conf->user, "conf_free" );
+		myfree( _main->conf->pid_file, "conf_free" );
+		myfree( _main->conf->hostname, "conf_free" );
 		myfree( _main->conf->bootstrap_node, "conf_free" );
 		myfree( _main->conf->bootstrap_port, "conf_free" );
 		myfree( _main->conf->key, "conf_free" );
 		myfree( _main->conf->dns_port, "conf_free" );
 		myfree( _main->conf->dns_addr, "conf_free" );
 		myfree( _main->conf->dns_ifce, "conf_free" );
+		myfree( _main->conf->port, "conf_free" );
+		myfree( _main->conf->interface, "conf_free" );
 		myfree( _main->conf, "conf_free" );
 	}
 }
