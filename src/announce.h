@@ -30,7 +30,6 @@ struct obj_node_announce {
 
 	IP c_addr;
 	time_t time_find;
-
 };
 typedef struct obj_node_announce ANNOUNCE;
 

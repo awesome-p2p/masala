@@ -350,7 +350,7 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	struct obj_raw *raw = NULL;
 	ITEM *item_n = NULL;
 	NODE *n = NULL;
-	long int i=0;
+	long int i = 0;
 	IP *sin = NULL;
 	char addrbuf[FULL_ADDSTRLEN];
 

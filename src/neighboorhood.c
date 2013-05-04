@@ -177,7 +177,7 @@ void nbhd_lookup( LOOKUP *l ) {
 	long int max = 0;
 
 	/* Find a matching bucket */
-	if( ( item_b = bckt_find_any_match( _main->nbhd, l->find_id)) == NULL ) {
+	if( ( item_b = bckt_find_any_match( _main->nbhd, l->find_id )) == NULL ) {
 		return;
 	}
 
