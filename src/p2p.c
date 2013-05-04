@@ -742,8 +742,8 @@ void p2p_value( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, IP *from
 		return;
 	}
 
-	/* Return IP to NSS */
-	lkp_success(ben_lkp_id->v.s->s, ben_address->v.s->s);
+	/* Finish lookup */
+	lkp_success(ben_lkp_id->v.s->s, node_id, ben_address->v.s->s);
 }
 
 void p2p_announce_myself( void ) {

@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+typedef void (CALLBACK)( void *ctx, UCHAR *node_id, UCHAR *address );
+
 struct obj_lookups {
 	LIST *list;
 	HASH *hash;
@@ -30,21 +32,21 @@ struct obj_lookup {
 	UCHAR find_id[SHA_DIGEST_LENGTH+1];
 	UCHAR lkp_id[SHA_DIGEST_LENGTH+1];
 
-	IP c_addr;
-	time_t time_find;
+	CALLBACK *callback;
+	void *ctx;
 
+	time_t time_find;
 };
 typedef struct obj_lookup LOOKUP;
 
 LOOKUPS *lkp_init( void );
 void lkp_free( void );
 
-LOOKUP *lkp_put( UCHAR *find_id, UCHAR *lkp_id, IP *from );
+LOOKUP *lkp_put( UCHAR *find_id, CALLBACK *callback, void *ctx );
 void lkp_del( ITEM *i );
 
 void lkp_expire( void );
 
 void lkp_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr );
-void lkp_success( UCHAR *lkp_id, UCHAR *address );
-void lkp_local( IP *address, IP *from );
+void lkp_success( UCHAR *lkp_id, UCHAR *node_id, UCHAR *address );
 void lkp_remember( LOOKUP *l, UCHAR *node_id );

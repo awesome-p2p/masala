@@ -70,7 +70,7 @@ void lkp_free( void ) {
 	myfree( _main->lkps, "lkp_free" );
 }
 
-LOOKUP *lkp_put( UCHAR *find_id, UCHAR *lkp_id, IP *from ) {
+LOOKUP *lkp_put( UCHAR *find_id, CALLBACK *callback, void *ctx ) {
 	ITEM *i = NULL;
 	LOOKUP *l = NULL;
 
@@ -82,10 +82,13 @@ LOOKUP *lkp_put( UCHAR *find_id, UCHAR *lkp_id, IP *from ) {
 
 	/* ID */
 	memcpy( l->find_id, find_id, SHA_DIGEST_LENGTH );
-	memcpy( l->lkp_id, lkp_id, SHA_DIGEST_LENGTH );
 
-	/* Socket */
-	memcpy( &l->c_addr, from, sizeof(IP) );
+	/* Create random id to identify this search request */
+	rand_urandom( l->lkp_id, SHA_DIGEST_LENGTH );
+
+	/* Callback on success */
+	l->callback = callback;
+	l->ctx = ctx;
 
 	/* Timings */
 	l->time_find = 0;
@@ -146,7 +149,7 @@ void lkp_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr ) {
 	if( hash_exists( l->hash, node_id, SHA_DIGEST_LENGTH) ) {
 		return;
 	}
-		
+
 	/* Ask the node just once */
 	if( !node_me( node_id ) ) {
 		send_lookup( c_addr, l->find_id, lkp_id );
@@ -156,10 +159,9 @@ void lkp_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr ) {
 	lkp_remember( l, node_id );
 }
 
-void lkp_success( UCHAR *lkp_id, UCHAR *address ) {
+void lkp_success( UCHAR *lkp_id, UCHAR *node_id, UCHAR *address ) {
 	ITEM *i = NULL;
 	LOOKUP *l = NULL;
-	socklen_t addrlen = sizeof(IP);
 
 	/* Lookup the lookup ID */
 	if( ( i = hash_get( _main->lkps->hash, lkp_id, SHA_DIGEST_LENGTH)) == NULL ) {
@@ -167,15 +169,11 @@ void lkp_success( UCHAR *lkp_id, UCHAR *address ) {
 	}
 	l = i->val;
 
-	sendto( _main->udp->sockfd, address, 16, 0, (const struct sockaddr *)&l->c_addr, addrlen );
+	if(l->callback)
+		l->callback( l->ctx, node_id, address );
 
 	/* Done */
 	lkp_del( i );
-}
-
-void lkp_local( IP *address, IP *from ) {
-	socklen_t addrlen = sizeof(IP);
-	sendto( _main->udp->sockfd, &address->sin6_addr, 16, 0, (const struct sockaddr *)from, addrlen );
 }
 
 void lkp_remember( LOOKUP *l, UCHAR *node_id ) {

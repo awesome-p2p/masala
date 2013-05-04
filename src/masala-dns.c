@@ -402,7 +402,6 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 }
 
 int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record ) {
-	UCHAR lkp_id[SHA_DIGEST_LENGTH];
 	UCHAR host_id[SHA_DIGEST_LENGTH];
 	IP *addr;
 	char hexbuf[HEX_LEN+1];
@@ -430,12 +429,9 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record )
 
 	log_info( "DNS: No local entry found. Create P2P request for '%s'.", hostname  );
 
-	/* Create random id to identify this search request */
-	rand_urandom( lkp_id, SHA_DIGEST_LENGTH );
-
 	/* Start find process */
 	mutex_block( _main->p2p->mutex );
-	lkp_put( host_id, lkp_id, from );
+	lkp_put( host_id, NULL, NULL );
 	mutex_unblock( _main->p2p->mutex );
 
 	return -1;
