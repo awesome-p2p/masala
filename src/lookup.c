@@ -55,6 +55,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "neighboorhood.h"
 #include "bucket.h"
 #include "send_p2p.h"
+#include "random.h"
 
 LOOKUPS *lkp_init( void ) {
 	LOOKUPS *lookups = (LOOKUPS *) myalloc( sizeof(LOOKUPS), "lkp_init" );
