@@ -106,6 +106,10 @@ LOOKUP *lkp_put( UCHAR *find_id, CALLBACK *callback, void *ctx ) {
 void lkp_del( ITEM *i ) {
 	LOOKUP *l = i->val;
 
+	/* Let the callback know the lookup timed out */
+	if(l->callback)
+		l->callback( l->ctx, l->find_id, NULL );
+
 	/* Free lookup cache */
 	list_clear( l->list );
 	list_free( l->list );
@@ -140,13 +144,13 @@ void lkp_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr ) {
 	LOOKUP *l = NULL;
 
 	/* Lookup the lookup ID */
-	if( ( i = hash_get( _main->lkps->hash, lkp_id, SHA_DIGEST_LENGTH)) == NULL ) {
+	if( ( i = hash_get( _main->lkps->hash, lkp_id, SHA_DIGEST_LENGTH ) ) == NULL ) {
 		return;
 	}
 	l = i->val;
 
 	/* Ask every node only once */
-	if( hash_exists( l->hash, node_id, SHA_DIGEST_LENGTH) ) {
+	if( hash_exists( l->hash, node_id, SHA_DIGEST_LENGTH ) ) {
 		return;
 	}
 
@@ -164,7 +168,7 @@ void lkp_success( UCHAR *lkp_id, UCHAR *node_id, UCHAR *address ) {
 	LOOKUP *l = NULL;
 
 	/* Lookup the lookup ID */
-	if( ( i = hash_get( _main->lkps->hash, lkp_id, SHA_DIGEST_LENGTH)) == NULL ) {
+	if( ( i = hash_get( _main->lkps->hash, lkp_id, SHA_DIGEST_LENGTH ) ) == NULL ) {
 		return;
 	}
 	l = i->val;
