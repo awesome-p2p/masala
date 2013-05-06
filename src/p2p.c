@@ -92,7 +92,6 @@ void p2p_bootstrap( void ) {
 	struct addrinfo hints;
 	struct addrinfo *info = NULL;
 	struct addrinfo *p = NULL;
-	char buffer[MAIN_BUF+1];
 	int rc = 0;
 	int i = 0;
 
@@ -104,8 +103,7 @@ void p2p_bootstrap( void ) {
 	hints.ai_family = AF_INET6;
 	rc = getaddrinfo( _main->conf->bootstrap_node, _main->conf->bootstrap_port, &hints, &info );
 	if( rc != 0 ) {
-		snprintf( buffer, MAIN_BUF+1, "getaddrinfo: %s", gai_strerror( rc) );
-		log_info( buffer );
+		log_info( "getaddrinfo: %s", gai_strerror( rc) );
 		return;
 	}
 

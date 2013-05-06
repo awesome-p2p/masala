@@ -183,7 +183,6 @@ void udp_pool( void ) {
 
 void *udp_thread( void *arg ) {
 	struct epoll_event events[UDP_MAX_EVENTS];
-	char buffer[MAIN_BUF+1];
 	int nfds;
 	int id = 0;
 
@@ -191,8 +190,7 @@ void *udp_thread( void *arg ) {
 	id = _main->udp->id++;
 	mutex_unblock( _main->p2p->mutex );
 
-	snprintf( buffer, MAIN_BUF+1, "UDP Thread[%i] - Max events: %i", id, UDP_MAX_EVENTS );
-	log_info( buffer );
+	log_info( "UDP Thread[%i] - Max events: %i", id, UDP_MAX_EVENTS );
 
 	while( _main->status == MAIN_ONLINE ) {
 		
