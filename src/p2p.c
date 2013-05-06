@@ -743,7 +743,7 @@ void p2p_value( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, IP *from
 	}
 
 	/* Finish lookup */
-	lkp_success(ben_lkp_id->v.s->s, node_id, ben_address->v.s->s);
+	lkp_success( ben_lkp_id->v.s->s, node_id, ben_address->v.s->s );
 }
 
 void p2p_announce_myself( void ) {
@@ -763,7 +763,7 @@ void p2p_compute_id( UCHAR *host_id, char *hostname ) {
 		/* treat hostname as hex string and ignore any kind of suffix */
 		str_fromHex( host_id, hostname, HEX_LEN );
 	} else {
-		sha1_hash( host_id, hostname, size);
+		sha1_hash( host_id, hostname, size );
 	}
 }
 

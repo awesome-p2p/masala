@@ -133,7 +133,7 @@ void announce_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr ) {
 	ANNOUNCE *a = NULL;
 
 	/* Lookup the lookup ID */
-	if( ( i = hash_get( _main->announce->hash, lkp_id, SHA_DIGEST_LENGTH)) == NULL ) {
+	if( ( i = hash_get( _main->announce->hash, lkp_id, SHA_DIGEST_LENGTH )) == NULL ) {
 		return;
 	}
 	a = i->val;
@@ -141,8 +141,8 @@ void announce_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr ) {
 	/* Found the lookup ID */
 
 	/* Now look if this node has already been asked */
-	if( !hash_exists( a->hash, node_id, SHA_DIGEST_LENGTH) ) {
-		
+	if( !hash_exists( a->hash, node_id, SHA_DIGEST_LENGTH ) ) {
+
 		/* Ask the node just once */
 		if( !node_me( node_id ) ) {
 			send_announce( c_addr, lkp_id );
