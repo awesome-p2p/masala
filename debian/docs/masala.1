@@ -16,15 +16,15 @@
 .
 .TP
 \fB\-h, \-\-hostname\fR \fIhostname\fR
-By default /etc/hostname is used to determine the hostname\.
+The hostname whose sha1 hash will be announced\. Can also be a 20 Byte hexadecimal string\. (Optional)
 .
 .TP
 \fB\-k, \-\-key\fR \fIpassword\fR
-Setting a password results in encrypting each packet with AES256\. The encrypted packet is encapsulated in bencode\. With this action you effectively isolate your nodes from the rest of the world\.
+Setting a password results in encrypting each packet with AES256\. The encrypted packet is encapsulated in bencode\. With this action you effectively isolate your nodes from the rest of the world\. (Optional)
 .
 .TP
 \fB\-p, \-\-port\fR \fIport\fR
-Bind to this port (Default: UDP/8337)
+Bind to this port\. (Default: UDP/8337)
 .
 .TP
 \fB\-i, \-\-interface\fR \fIinterface\fR
@@ -40,7 +40,7 @@ The bootstrap server will be addressed at this port\. (Default: UDP/8337)
 .
 .TP
 \fB\-u, \-\-user\fR \fIusername\fR
-When starting as root, use \-u to change the UID\.
+When starting as root, use \-u to change the UID\. (Optional)
 .
 .TP
 \fB\-d, \-\-daemon\fR

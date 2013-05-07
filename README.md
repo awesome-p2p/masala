@@ -21,15 +21,15 @@ a local upstream DNS server.
 ## OPTIONS
 
   * `-h, --hostname` *hostname*:
-    By default /etc/hostname is used to determine the hostname.
+    The hostname whose sha1 hash will be announced. Can also be a 20 Byte hexadecimal string. (Optional)
 
   * `-k, --key` *password*:
 	Setting a password results in encrypting each packet with AES256. The
 	encrypted packet is encapsulated in bencode. With this action you
-	effectively isolate your nodes from the rest of the world.
+	effectively isolate your nodes from the rest of the world. (Optional)
 
   * `-p, --port` *port*:
-	Bind to this port (Default: UDP/8337)
+	Bind to this port. (Default: UDP/8337)
 
   * `-i, --interface` *interface*:
 	Bind to this interface (Default: &lt;any&gt;)
@@ -41,7 +41,7 @@ a local upstream DNS server.
 	The bootstrap server will be addressed at this port. (Default: UDP/8337)
 
   * `-u, --user` *username*:
-    When starting as root, use -u to change the UID.
+    When starting as root, use -u to change the UID. (Optional)
 
   * `-d, --daemon`:
 	Start as a daemon and run in background. The output will be send to syslog.
