@@ -27,8 +27,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_DAEMON 0
 #define CONF_FOREGROUND 1
 
-#define CONF_HOSTFILE "/etc/hostname"
-
 #ifdef TUMBLEWEED
 #define CONF_USER "tumbleweed"
 #define CONF_EPOLL_WAIT 1000
