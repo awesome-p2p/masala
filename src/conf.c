@@ -65,14 +65,8 @@ struct obj_conf *conf_init( void ) {
 #endif
 
 #ifdef MASALA
-	conf->hostname = strdup( "bulk.p2p" );
 	conf->key = strdup( CONF_KEY );
 	conf->bool_encryption = FALSE;
-#endif
-
-	/* SHA1 Hash of hostname */
-#ifdef MASALA
-	sha1_hash( conf->host_id, conf->hostname, strlen( conf->hostname ) );
 #endif
 
 #ifdef MASALA
@@ -128,9 +122,13 @@ void conf_free( void ) {
 void conf_check( void ) {
 	char hexbuf[HEX_LEN+1];
 #ifdef MASALA
-	log_info( "Hostname: '%s' (-h)", _main->conf->hostname );
+	if( _main->conf->hostname != NULL ) {
+		log_info( "Hostname: '%s' (-h)",  _main->conf->hostname );
+		log_info( "Host ID: %s", id_str(  _main->conf->host_id, hexbuf ), _main->conf->hostname );
+	} else {
+		log_info( "Hostname: <none> (-h)" );
+	}
 	log_info( "Node ID: %s", id_str( _main->conf->node_id, hexbuf ) );
-	log_info( "Host ID: %s", id_str(  _main->conf->host_id, hexbuf ), _main->conf->hostname );
 	log_info( "Bootstrap Node: %s (-ba)", _main->conf->bootstrap_node );
 	log_info( "Bootstrap Port: UDP/%s (-bp)", _main->conf->bootstrap_port );
 #endif

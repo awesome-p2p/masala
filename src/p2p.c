@@ -385,7 +385,7 @@ void p2p_cron( void ) {
 	}
 
 	/* Try to register multicast address until it works. */
-	if( _main->udp->multicast == 0 ) {
+	if( _main->udp->multicast == 0 && _main->conf->hostname != NULL ) {
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_multicast ) {
 			udp_multicast();
 			_main->p2p->time_multicast = time_add_5_min_approx();
@@ -577,7 +577,9 @@ void p2p_node_announce( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, 
 	}
 
 	/* Announce myself */
-	announce_resolve( ben_lkp_id->v.s->s, node_id, from );
+	if( _main->conf->hostname != NULL ) {
+		announce_resolve( ben_lkp_id->v.s->s, node_id, from );
+	}
 
 	/* Reply */
 	item = nodes->v.l->start;
@@ -618,7 +620,9 @@ void p2p_node_announce( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, 
 		memcpy( &sin.sin6_port, po->v.s->s, 2 );
 
 		/* Announce myself */
-		announce_resolve( ben_lkp_id->v.s->s, id->v.s->s, &sin );
+		if( _main->conf->hostname != NULL ) {
+			announce_resolve( ben_lkp_id->v.s->s, id->v.s->s, &sin );
+		}
 
 		/* Store node */
 		if( !node_me( id->v.s->s) ) {
