@@ -36,7 +36,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "log.h"
 #include "conf.h"
 #include "random.h"
-#include "aes.h"
 #include "udp.h"
 #include "str.h"
 #include "list.h"
@@ -87,11 +86,8 @@ void send_ping( IP *sa, int type ) {
 	ben_dict( dict, key, val );
 
 	raw = ben_enc( dict );
-	if( _main->conf->bool_encryption ) {
-		send_aes( sa, raw );
-	} else {
-		send_exec( sa, raw );
-	}
+	send_exec( sa, raw );
+
 	raw_free( raw );
 	ben_free( dict );
 
@@ -134,11 +130,8 @@ void send_pong( IP *sa, UCHAR *node_sk ) {
 	ben_dict( dict, key, val );
 
 	raw = ben_enc( dict );
-	if( _main->conf->bool_encryption ) {
-		send_aes( sa, raw );
-	} else {
-		send_exec( sa, raw );
-	}
+	send_exec( sa, raw );
+
 	raw_free( raw );
 	ben_free( dict );
 
@@ -201,11 +194,8 @@ void send_announce( IP *sa, UCHAR *lkp_id ) {
 	ben_dict( dict, key, val );
 
 	raw = ben_enc( dict );
-	if( _main->conf->bool_encryption ) {
-		send_aes( sa, raw );
-	} else {
-		send_exec( sa, raw );
-	}
+	send_exec( sa, raw );
+
 	raw_free( raw );
 	ben_free( dict );
 
@@ -261,11 +251,8 @@ void send_find( IP *sa, UCHAR *node_id ) {
 	ben_dict( dict, key, val );
 
 	raw = ben_enc( dict );
-	if( _main->conf->bool_encryption ) {
-		send_aes( sa, raw );
-	} else {
-		send_exec( sa, raw );
-	}
+	send_exec( sa, raw );
+
 	raw_free( raw );
 	ben_free( dict );
 
@@ -329,11 +316,8 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	ben_dict( dict, key, val );
 
 	raw = ben_enc( dict );
-	if( _main->conf->bool_encryption ) {
-		send_aes( sa, raw );
-	} else {
-		send_exec( sa, raw );
-	}
+	send_exec( sa, raw );
+
 	raw_free( raw );
 	ben_free( dict );
 
@@ -448,11 +432,8 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	ben_dict( dict, key, val );
 
 	raw = ben_enc( dict );
-	if( _main->conf->bool_encryption ) {
-		send_aes( sa, raw );
-	} else {
-		send_exec( sa, raw );
-	}
+	send_exec( sa, raw );
+
 	raw_free( raw );
 	ben_free( dict );
 
@@ -521,62 +502,13 @@ void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
 	ben_dict( dict, key, val );
 
 	raw = ben_enc( dict );
-	if( _main->conf->bool_encryption ) {
-		send_aes( sa, raw );
-	} else {
-		send_exec( sa, raw );
-	}
+	send_exec( sa, raw );
+
 	raw_free( raw );
 	ben_free( dict );
 
 	/* Log */
 	log_info( "VALUE via LOOKUP to %s", addr_str( sa, addrbuf ) );
-}
-
-void send_aes( IP *sa, struct obj_raw *raw ) {
-	struct obj_ben *dict = ben_init( BEN_DICT );
-	struct obj_ben *key = NULL;
-	struct obj_ben *val = NULL;
-	struct obj_str *aes = NULL;
-	struct obj_raw *enc = NULL;
-	UCHAR salt[AES_IV_SIZE];
-
-	/*
-		1:a[es] XX:LENGTH
-		1:s[alt] 32:SALT
-	*/
-
-	/* Create random salt */
-	rand_urandom( salt, AES_IV_SIZE );
-
-	/* Encrypt message */
-	aes = aes_encrypt( raw->code, raw->size, salt, 
-			_main->conf->key, strlen( _main->conf->key) );
-	if( aes == NULL ) {
-		log_info( "Encoding AES message failed" );
-		ben_free( dict );
-		return;
-	}
-
-	/* AES */
-	key = ben_init( BEN_STR );
-	val = ben_init( BEN_STR );
-	ben_str( key,( UCHAR *)"a", 1 );
-	ben_str( val, aes->s, aes->i );
-	ben_dict( dict, key, val );
-
-	/* Salt */
-	key = ben_init( BEN_STR );
-	val = ben_init( BEN_STR );
-	ben_str( key,( UCHAR *)"s", 1 );
-	ben_str( val, salt, AES_IV_SIZE );
-	ben_dict( dict, key, val );
-
-	enc = ben_enc( dict );
-	send_exec( sa, enc );
-	raw_free( enc );
-	ben_free( dict );
-	str_free( aes );
 }
 
 void send_exec( IP *sa, struct obj_raw *raw ) {

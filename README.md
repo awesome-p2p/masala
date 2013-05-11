@@ -23,11 +23,6 @@ a local upstream DNS server.
   * `-h, --hostname` *hostname*:
     The hostname whose sha1 hash will be announced. Can also be a 20 Byte hexadecimal string. (Optional)
 
-  * `-k, --key` *password*:
-	Setting a password results in encrypting each packet with AES256. The
-	encrypted packet is encapsulated in bencode. With this action you
-	effectively isolate your nodes from the rest of the world. (Optional)
-
   * `-p, --port` *port*:
 	Bind to this port. (Default: UDP/8337)
 

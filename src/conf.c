@@ -65,11 +65,6 @@ struct obj_conf *conf_init( void ) {
 #endif
 
 #ifdef MASALA
-	conf->key = strdup( CONF_KEY );
-	conf->bool_encryption = FALSE;
-#endif
-
-#ifdef MASALA
 	rand_urandom( conf->node_id, SHA_DIGEST_LENGTH );
 #endif
 
@@ -109,7 +104,6 @@ void conf_free( void ) {
 		myfree( _main->conf->hostname, "conf_free" );
 		myfree( _main->conf->bootstrap_node, "conf_free" );
 		myfree( _main->conf->bootstrap_port, "conf_free" );
-		myfree( _main->conf->key, "conf_free" );
 		myfree( _main->conf->dns_port, "conf_free" );
 		myfree( _main->conf->dns_addr, "conf_free" );
 		myfree( _main->conf->dns_ifce, "conf_free" );
@@ -179,15 +173,6 @@ void conf_check( void ) {
 #ifndef TUMBLEWEED
 	if( str_isSafePort( _main->conf->bootstrap_port ) < 0 ) {
 		log_err( "Invalid bootstrap port number. (-bp)" );
-	}
-#endif
-
-	/* Encryption */
-#ifdef MASALA
-	if( _main->conf->bool_encryption == 1 ) {
-		log_info( "Encryption key: %s (-k)", _main->conf->key );
-	} else {
-		log_info( "Encryption key: None (-k)" );
 	}
 #endif
 

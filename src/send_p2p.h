@@ -30,5 +30,4 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id );
 void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_type );
 void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id );
 
-void send_aes( IP *sa, struct obj_raw *raw );
 void send_exec( IP *sa, struct obj_raw *raw );

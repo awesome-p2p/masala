@@ -48,7 +48,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "opts.h"
 #include "udp.h"
 #include "ben.h"
-#include "aes.h"
 #include "node_p2p.h"
 #include "bucket.h"
 #include "lookup.h"
@@ -142,76 +141,8 @@ void p2p_parse( UCHAR *bencode, size_t bensize, IP *from ) {
 		return;
 	}
 
-	/* Encrypted message or plaintext message */
-	if( _main->conf->bool_encryption ) {
-		p2p_decrypt( bencode, bensize, from );
-	} else {
-		p2p_decode( bencode, bensize, from );
-	}
-}
-
-void p2p_decrypt( UCHAR *bencode, size_t bensize, IP *from ) {
-	struct obj_ben *packet = NULL;
-	struct obj_ben *salt = NULL;
-	struct obj_ben *aes = NULL;
-	struct obj_str *plain = NULL;
-
-	/* Parse request */
-	packet = ben_dec( bencode, bensize );
-	if( !ben_is_dict( packet ) ) {
-		log_info( "Decoding AES packet failed" );
-		ben_free( packet );
-		return;
-	}
-
-	/* Salt */
-	salt = ben_searchDictStr( packet, "s" );
-	if( !ben_is_str( salt ) || ben_str_size( salt ) != AES_IV_SIZE ) {
-		log_info( "Salt missing or broken" );
-		ben_free( packet );
-		return;
-	}
-
-	/* Encrypted AES message */
-	aes = ben_searchDictStr( packet, "a" );
-	if( !ben_is_str( aes ) || ben_str_size( aes ) <= 2 ) {
-		log_info( "AES message missing or broken" );
-		ben_free( packet );
-		return;
-	}
-
-	/* Decrypt message */
-	plain = aes_decrypt( aes->v.s->s, aes->v.s->i,
-		salt->v.s->s,
-		_main->conf->key, strlen( _main->conf->key) );
-	if( plain == NULL ) {
-		log_info( "Decoding AES message failed" );
-		ben_free( packet );
-		return;
-	}
-
-	/* AES packet too small */
-	if( plain->i < SHA_DIGEST_LENGTH ) {
-		ben_free( packet );
-		str_free( plain );
-		log_info( "AES packet contains less than 20 bytes" );
-		return;
-	}
-
-	/* Validate bencode */
-	if( !ben_validate( plain->s, plain->i) ) {
-		ben_free( packet );
-		str_free( plain );
-		log_info( "AES packet contains broken bencode" );
-		return;
-	}
-
-	/* Parse message */
-	p2p_decode( plain->s, plain->i, from );
-
-	/* Free */
-	ben_free( packet );
-	str_free( plain );
+	/* Decode plaintext message */
+	p2p_decode( bencode, bensize, from );
 }
 
 void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {

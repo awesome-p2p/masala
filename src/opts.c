@@ -61,7 +61,6 @@ const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 "\n"
 " -h, --hostname		Set the hostname the node should announce (Default: <hostname>.p2p).\n"
 " -u, --user		Change the UUID after start.\n"
-" -k, --key		Set a password results in encrypting each packet with AES256.\n"
 " -ba, --boostrap-addr	Use another node to connect to the masala network (Default: 'ff0e::1').\n"
 " -bp, --boostrap-port	Set the port for the bootsrap node (Default: UDP/8337).\n"
 " -p, --port		Bind to this port (Default: UDP/8337).\n"
@@ -157,9 +156,6 @@ void opts_interpreter( char *var, char *val ) {
 		replace( var, &_main->conf->bootstrap_node, val );
 	} else if( match( var, "-bp", "--bootstrap-port" ) ) {
 		replace( var, &_main->conf->bootstrap_port, val );
-	} else if( match( var, "-k", "--key" ) ) {
-		replace( var, &_main->conf->key, val );
-		_main->conf->bool_encryption = TRUE;
 	} else if( match( var, "-pf", "--pid-file" ) ) {
 		replace( var, &_main->conf->pid_file, val );
 	} else if( match( var, "-h", "--hostname" ) ) {
