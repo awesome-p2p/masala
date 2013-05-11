@@ -2,7 +2,7 @@ To build a Debian package of masala (a *.deb file).
 You first need to have installed the following programm:
 
 <pre>
-apt-get install build-essential debhelper hardening-includes libpolarssl-dev
+apt-get install build-essential debhelper hardening-includes
 </pre>
 
 Run this command in the repository root folder to create the package:

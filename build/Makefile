@@ -6,10 +6,9 @@ CFLAGS += -Wall -Wwrite-strings -pedantic -std=gnu99
 CFLAGS += -DMASALA
 #CFLAGS += $(shell dpkg-buildflags --get CFLAGS)
 #CFLAGS += $(HARDENING_CFLAGS)
-export POST_LINKING = -lpthread -lpolarssl
+export POST_LINKING = -lpthread
 #POST_LINKING += $(shell dpkg-buildflags --get LDFLAGS)
 #POST_LINKING += $(HARDENING_LDFLAGS)
-#POST_LINKING += -lpolarssl
 SUBDIRS =
 OBJS=main.o conf.o unix.o log.o file.o lookup.o \
 	hash.o list.o malloc.o opts.o str.o thrd.o \

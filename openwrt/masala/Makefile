@@ -16,7 +16,7 @@ define Package/masala
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=P2P DNS Server
-	DEPENDS:=+libpolarssl +libpthread
+	DEPENDS:=+libpthread
 	SUBMENU:=IP Addresses and Names
 endef
 
