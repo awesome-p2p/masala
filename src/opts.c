@@ -47,7 +47,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "log.h"
 #include "file.h"
 #include "opts.h"
-#include "sha1.h"
 #include "node_p2p.h"
 #include "search.h"
 #include "ben.h"

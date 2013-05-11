@@ -43,7 +43,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "log.h"
 #include "file.h"
 #include "conf.h"
-#include "sha1.h"
 #include "unix.h"
 #include "random.h"
 #include "ben.h"
