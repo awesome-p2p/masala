@@ -264,6 +264,16 @@ void p2p_cron( void ) {
 	/* Tick Tock */
 	gettimeofday( &_main->p2p->time_now, NULL );
 
+	/* Expire objects every ~2 minutes */
+	if( _main->p2p->time_now.tv_sec > _main->p2p->time_expire ) {
+		announce_expire();
+		cache_expire();
+		node_expire();
+		lkp_expire();
+		db_expire();
+		_main->p2p->time_expire = time_add_2_min_approx();
+	}
+
 	if( node_counter() == 0 ) {
 		
 		/* Bootstrap PING */
@@ -273,16 +283,6 @@ void p2p_cron( void ) {
 		}
 	
 	} else {
-
-		/* Expire objects every ~2 minutes */
-		if( _main->p2p->time_now.tv_sec > _main->p2p->time_expire ) {
-			announce_expire();
-			cache_expire();
-			node_expire();
-			lkp_expire();
-			db_expire();
-			_main->p2p->time_expire = time_add_2_min_approx();
-		}
 
 		/* Split container every ~2 minutes */
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_split ) {
