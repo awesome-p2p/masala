@@ -107,10 +107,6 @@ LOOKUP *lkp_put( UCHAR *find_id, CALLBACK *callback, void *ctx ) {
 void lkp_del( ITEM *i ) {
 	LOOKUP *l = i->val;
 
-	/* Let the callback know the lookup timed out */
-	if(l->callback)
-		l->callback( l->ctx, l->find_id, NULL );
-
 	/* Free lookup cache */
 	list_clear( l->list );
 	list_free( l->list );
@@ -134,6 +130,11 @@ void lkp_expire( void ) {
 		next = list_next( i );
 
 		if( _main->p2p->time_now.tv_sec > l->time_find ) {
+
+			/* Let the callback know the lookup timed out */
+			if(l->callback)
+				l->callback( l->ctx, l->find_id, NULL );
+
 			lkp_del( i );
 		}
 		i = next;
