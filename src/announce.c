@@ -83,8 +83,8 @@ ANNOUNCE *announce_put( UCHAR *lkp_id ) {
 	/* ID */
 	memcpy( a->lkp_id, lkp_id, SHA_DIGEST_LENGTH );
 
-	/* Timings */
-	a->time_find = 0;
+	/* Expire after at least 5 seconds  */
+	a->time_find = time_add_x_sec( 10 );
 
 	/* Remember lookup request */
 	i = list_put( _main->announce->list, a );

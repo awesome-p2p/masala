@@ -44,6 +44,10 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "p2p.h"
 #include "time.h"
 
+time_t time_add_x_sec( int sec ) {
+	return _main->p2p->time_now.tv_sec + sec;
+}
+
 time_t time_add_1_min( void ) {
 	return _main->p2p->time_now.tv_sec + TIME_1_MINUTE;
 }

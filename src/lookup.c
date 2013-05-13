@@ -91,8 +91,8 @@ LOOKUP *lkp_put( UCHAR *find_id, CALLBACK *callback, void *ctx ) {
 	l->callback = callback;
 	l->ctx = ctx;
 
-	/* Timings */
-	l->time_find = 0;
+	/* Expire after at least 5 seconds  */
+	l->time_find = time_add_x_sec( 5 );
 
 	/* Remember lookup request */
 	i = list_put( _main->lkps->list, l );
