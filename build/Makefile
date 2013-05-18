@@ -3,7 +3,7 @@
 export CC = gcc
 export CFLAGS = -O2
 CFLAGS += -Wall -Wwrite-strings -pedantic -std=gnu99
-CFLAGS += -DMASALA
+CFLAGS += -DMASALA -DDNS -DWEB
 #CFLAGS += $(shell dpkg-buildflags --get CFLAGS)
 #CFLAGS += $(HARDENING_CFLAGS)
 export POST_LINKING = -lpthread
@@ -14,7 +14,8 @@ OBJS=main.o conf.o unix.o log.o file.o lookup.o \
 	hash.o list.o malloc.o opts.o str.o thrd.o \
 	ben.o udp.o random.o send_p2p.o sha1.o \
 	database.o node_p2p.o bucket.o neighboorhood.o \
-	cache.o announce.o time.o p2p.o masala-dns.o
+	cache.o announce.o time.o p2p.o masala-dns.o \
+	masala-web.o
 
 .PHONY: all clean install $(SUBDIRS)
 

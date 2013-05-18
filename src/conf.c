@@ -89,8 +89,14 @@ struct obj_conf *conf_init( void ) {
 #endif
 
 #ifdef MASALA
+#ifdef DNS
 	conf->dns_port = strdup( CONF_DNS_PORT );
 	conf->dns_addr = strdup( CONF_DNS_ADDR );
+#endif
+#ifdef WEB
+	conf->web_port = strdup( CONF_WEB_PORT );
+	conf->web_addr = strdup( CONF_WEB_ADDR );
+#endif
 #endif
 
 	return conf;
@@ -103,9 +109,16 @@ void conf_free( void ) {
 		myfree( _main->conf->hostname, "conf_free" );
 		myfree( _main->conf->bootstrap_node, "conf_free" );
 		myfree( _main->conf->bootstrap_port, "conf_free" );
+#ifdef DNS
 		myfree( _main->conf->dns_port, "conf_free" );
 		myfree( _main->conf->dns_addr, "conf_free" );
 		myfree( _main->conf->dns_ifce, "conf_free" );
+#endif
+#ifdef WEB
+		myfree( _main->conf->web_port, "conf_free" );
+		myfree( _main->conf->web_addr, "conf_free" );
+		myfree( _main->conf->web_ifce, "conf_free" );
+#endif
 		myfree( _main->conf->port, "conf_free" );
 		myfree( _main->conf->interface, "conf_free" );
 		myfree( _main->conf, "conf_free" );

@@ -67,9 +67,16 @@ const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 " -d, --daemon		Run the node in background.\n"
 " -q, --quiet		Be quiet and do not log anything.\n"
 " -pf, --pid-file	Write process pid to a file.\n"
+#ifdef DNS
 " -da, --dns-addr	Bind the DNS server to this address (Default: '::1').\n"
 " -dp, --dns-port	Bind the DNS server to this port (Default: 3444).\n"
 " -di, --dns-ifce	Bind the DNS server to this interface (Default: <any>).\n"
+#endif
+#ifdef WEB
+" -wa, --web-addr	Bind the WEB server to this address (Default: '::1').\n"
+" -wp, -web-port	Bind the WEB server to this port (Default: 8080).\n"
+" -wi, --web-ifce	Bind the WEB server to this interface (Default: <any>).\n"
+#endif
 "\n"
 "Example: masala -h fubar.p2p -k fubar\n"
 "\n";
@@ -166,12 +173,22 @@ void opts_interpreter( char *var, char *val ) {
 		if( val != NULL )
 			no_arg_expected( var );
 		_main->conf->quiet = CONF_BEQUIET;
+#ifdef DNS
 	} else if( match( var, "-dp", "--dns-port" ) ) {
 		replace( var, &_main->conf->dns_port, val );
 	} else if( match( var, "-da", "--dns-addr" ) ) {
 		replace( var, &_main->conf->dns_addr, val );
 	} else if( match( var, "-di", "--dns-ifce" ) ) {
 		replace( var, &_main->conf->dns_ifce, val );
+#endif
+#ifdef WEB
+	} else if( match( var, "-wp", "--web-port" ) ) {
+		replace( var, &_main->conf->web_port, val );
+	} else if( match( var, "-wa", "--web-addr" ) ) {
+		replace( var, &_main->conf->web_addr, val );
+	} else if( match( var, "-wi", "--web-ifce" ) ) {
+		replace( var, &_main->conf->web_ifce, val );
+#endif
 	} else if( match( var, "-p", "--port" ) ) {
 		replace( var, &_main->conf->port, val );
 	} else if( match( var, "-i", "--interface" ) ) {

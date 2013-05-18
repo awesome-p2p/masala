@@ -43,6 +43,8 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_BOOTSTRAP_PORT "8337"
 #define CONF_DNS_ADDR "::1"
 #define CONF_DNS_PORT "3444"
+#define CONF_WEB_ADDR "::1"
+#define CONF_WEB_PORT "8080"
 #else
 #define CONF_SRVNAME "nss-masala"
 #endif
@@ -58,10 +60,16 @@ struct obj_conf {
 	UCHAR null_id[SHA_DIGEST_LENGTH];
 	char *bootstrap_node;
 	char *bootstrap_port;
-
+#ifdef DNS
 	char *dns_port;
 	char *dns_addr;
 	char *dns_ifce;
+#endif
+#ifdef WEB
+	char *web_port;
+	char *web_addr;
+	char *web_ifce;
+#endif
 #endif
 
 #ifdef TUMBLEWEED
