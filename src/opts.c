@@ -1,20 +1,20 @@
 /*
 Copyright 2006 Aiko Barz
 
-This file is part of masala/tumbleweed.
+This file is part of masala.
 
-masala/tumbleweed is free software: you can redistribute it and/or modify
+masala is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-masala/tumbleweed is distributed in the hope that it will be useful,
+masala is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
+along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdio.h>
@@ -26,18 +26,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#ifdef TUMBLEWEED
-#include "malloc.h"
-#include "main.h"
-#include "conf.h"
-#include "str.h"
-#include "hash.h"
-#include "list.h"
-#include "node_web.h"
-#include "log.h"
-#include "file.h"
-#include "opts.h"
-#else
 #include "malloc.h"
 #include "main.h"
 #include "conf.h"
@@ -51,8 +39,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "search.h"
 #include "ben.h"
 #include "p2p.h"
-#endif
-
 
 const char *usage = "Masala - A P2P name resolution daemon (IPv6 only)\n"
 "A Distributed Hashtable (DHT) combined with a basic DNS-server interface.\n\n"
@@ -125,39 +111,7 @@ void replace( char *var, char** dst, char *src ) {
 }
 
 void opts_interpreter( char *var, char *val ) {
-#ifdef TUMBLEWEED
-	char *p0 = NULL, *p1 = NULL;
 
-	/* WWW Directory */
-	if( strcmp( var, "-s") == 0 && val != NULL && strlen( val ) > 1 ) {
-		p0 = val;
-
-		if( *p0 == '/' ) {
-			/* Absolute path? */
-			snprintf( _main->conf->home, MAIN_BUF+1, "%s", p0 );
-		} else {
-			/* Relative path? */
-			if( ( p1 = getenv( "PWD")) != NULL ) {
-				snprintf( _main->conf->home, MAIN_BUF+1, "%s/%s", p1, p0 );
-			} else {
-				snprintf( _main->conf->home, MAIN_BUF+1, "/notexistant" );
-			}
-		}
-	}
-
-	/* Create HTML index */
-	if( strcmp( var, "-i") == 0 && val != NULL && strlen( val ) > 1 ) {
-		snprintf( _main->conf->index_name, MAIN_BUF+1, "%s", val );
-	}
-
-	/* IPv6 only */
-	if( strcmp( var, "-6") == 0 && val == NULL ) {
-		_main->conf->ipv6_only = TRUE;
-	}
-
-#endif
-
-#ifdef MASALA
 	if( match( var, "-ba", "--bootstrap-addr") ) {
 		replace( var, &_main->conf->bootstrap_node, val );
 	} else if( match( var, "-bp", "--bootstrap-port" ) ) {
@@ -205,5 +159,4 @@ void opts_interpreter( char *var, char *val ) {
 	} else {
 		log_err( "Unknown command line option '%s'", var );
 	}
-#endif
 }

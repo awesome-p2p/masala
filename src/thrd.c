@@ -1,20 +1,20 @@
 /*
 Copyright 2009 Aiko Barz
 
-This file is part of masala/tumbleweed.
+This file is part of masala.
 
-masala/tumbleweed is free software: you can redistribute it and/or modify
+masala is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-masala/tumbleweed is distributed in the hope that it will be useful,
+masala is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
+along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdio.h>
@@ -25,18 +25,10 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include <netinet/in.h>
 #include <signal.h>
 
-#ifdef TUMBLEWEED
-#include "main.h"
-#include "list.h"
-#include "node_web.h"
-#include "log.h"
-#include "malloc.h"
-#else
 #include "main.h"
 #include "list.h"
 #include "log.h"
 #include "malloc.h"
-#endif
 
 sem_t *thrd_init( const char *semname ) {
 	sem_t *mutex = NULL;

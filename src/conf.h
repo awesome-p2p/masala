@@ -1,20 +1,20 @@
 /*
 Copyright 2006 Aiko Barz
 
-This file is part of masala/tumbleweed.
+This file is part of masala.
 
-masala/tumbleweed is free software: you can redistribute it and/or modify
+masala is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-masala/tumbleweed is distributed in the hope that it will be useful,
+masala is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
+along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #define CONF_CORES 2
@@ -27,14 +27,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_DAEMON 0
 #define CONF_FOREGROUND 1
 
-#ifdef TUMBLEWEED
-#define CONF_USER "tumbleweed"
-#define CONF_EPOLL_WAIT 1000
-#define CONF_SRVNAME "tumbleweed"
-#define CONF_PORT "8080"
-#define CONF_INDEX_NAME "index.html"
-#define CONF_KEEPALIVE 5
-#elif MASALA
 #define CONF_USER "masala"
 #define CONF_EPOLL_WAIT 2000
 #define CONF_SRVNAME "masala"
@@ -45,14 +37,10 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_DNS_PORT "3444"
 #define CONF_WEB_ADDR "::1"
 #define CONF_WEB_PORT "8080"
-#else
-#define CONF_SRVNAME "nss-masala"
-#endif
 
 struct obj_conf {
 	char *user;
 
-#ifdef MASALA
 	char *pid_file;
 	char *hostname;
 	UCHAR node_id[SHA_DIGEST_LENGTH];
@@ -60,6 +48,7 @@ struct obj_conf {
 	UCHAR null_id[SHA_DIGEST_LENGTH];
 	char *bootstrap_node;
 	char *bootstrap_port;
+
 #ifdef DNS
 	char *dns_port;
 	char *dns_addr;
@@ -69,13 +58,6 @@ struct obj_conf {
 	char *web_port;
 	char *web_addr;
 	char *web_ifce;
-#endif
-#endif
-
-#ifdef TUMBLEWEED
-	char home[MAIN_BUF+1];
-	char index_name[MAIN_BUF+1];
-	int ipv6_only;
 #endif
 
 	/* Number of cores */

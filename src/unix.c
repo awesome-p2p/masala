@@ -1,20 +1,20 @@
 /*
 Copyright 2006 Aiko Barz
 
-This file is part of masala/tumbleweed.
+This file is part of masala.
 
-masala/tumbleweed is free software: you can redistribute it and/or modify
+masala is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-masala/tumbleweed is distributed in the hope that it will be useful,
+masala is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
+along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdio.h>
@@ -31,19 +31,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include <pwd.h>
 #include <fcntl.h>
 
-#ifdef TUMBLEWEED
-#include "main.h"
-#include "str.h"
-#include "malloc.h"
-#include "list.h"
-#include "node_web.h"
-#include "log.h"
-#include "file.h"
-#include "conf.h"
-#include "unix.h"
-#include "tcp.h"
-#include "hash.h"
-#else
 #include "main.h"
 #include "str.h"
 #include "malloc.h"
@@ -54,7 +41,6 @@ along with masala/tumbleweed.  If not, see <http://www.gnu.org/licenses/>.
 #include "conf.h"
 #include "unix.h"
 #include "hash.h"
-#endif
 
 void unix_signal( void ) {
 	/* STRG+C aka SIGINT => Stop the program */
@@ -111,11 +97,8 @@ void unix_fork( void ) {
 
 void unix_limits( void ) {
 	struct rlimit rl;
-#ifdef TUMBLEWEED
-	int guess = 2 * TCP_MAX_EVENTS * _main->conf->cores + 50;
-#else
+
 	int guess = 2 * UDP_MAX_EVENTS * _main->conf->cores + 50;
-#endif
 	int limit = (guess < 4096) ? 4096 : guess; /* RLIM_INFINITY; */
 
 	if( getuid() != 0 ) {
