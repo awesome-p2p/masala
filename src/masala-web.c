@@ -118,9 +118,9 @@ void* web_loop( void* _ ) {
 	socklen_t addr_len = sizeof(IP);
 	char addrbuf[FULL_ADDSTRLEN];
 
-	const char *addr = "::1";
-	const char *ifce = NULL;
-	const char *port = "8080";
+	const char *addr = _main->conf->web_addr;
+	const char *ifce = _main->conf->web_ifce;
+	const char *port = _main->conf->web_port;
 
 	memset( &hints, 0, sizeof(hints) );
 	hints.ai_flags = AI_PASSIVE;
