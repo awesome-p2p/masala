@@ -689,7 +689,7 @@ void p2p_announce_myself( void ) {
 	announce_put( lkp_id );
 }
 
-void p2p_compute_id( UCHAR *host_id, char *hostname ) {
+void p2p_compute_id( UCHAR *host_id, const char *hostname ) {
 	size_t size = strlen( hostname );
 
 	if( size >= HEX_LEN && str_isHex( hostname, HEX_LEN ) ) {

@@ -55,7 +55,7 @@ void p2p_value( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, IP *from
 
 void p2p_announce_myself( void );
 
-void p2p_compute_id( UCHAR *host_id, char *hostname );
+void p2p_compute_id( UCHAR *host_id, const char *hostname );
 
 int p2p_is_hash( struct obj_ben *node );
 int p2p_is_ip( struct obj_ben *node );
