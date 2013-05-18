@@ -43,6 +43,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "p2p.h"
 #include "random.h"
 #include "database.h"
+#include "malloc.h"
 #include "masala-dns.h"
 
 
@@ -163,6 +164,11 @@ struct message
 	char qName_buffer[256];
 };
 
+struct task {
+	int sockfd;
+	IP clientaddr;
+	struct message msg;
+};
 
 /*
 * Basic memory operations.
@@ -364,15 +370,27 @@ UCHAR * dns_code_response( struct message *msg, UCHAR *buffer )
 	return buffer;
 }
 
-void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) {
-	UCHAR buf[1500];
-	struct ResourceRecord *a;
-	struct question *q;
+void dns_reply( void *ctx, UCHAR *id, UCHAR *address ) {
+	UCHAR buf[512];
+	IP record;
+	struct message *msg;
+	struct ResourceRecord *rr;
+	struct question *qu;
+	struct task *task;
 	char addrbuf1[FULL_ADDSTRLEN];
 	char addrbuf2[FULL_ADDSTRLEN];
 
-	a = &msg->answer;
-	q = &msg->question;
+	task = (struct task *) ctx;
+
+	if( address == NULL )
+		goto end;
+
+	msg = &task->msg;
+	rr = &msg->answer;
+	qu = &msg->question;
+
+	memset( &record, 0, sizeof(IP) );
+	memcpy( &record.sin6_addr, address, 16 );
 
 	/* Header: leave most values intact for response */
 	msg->qr = 1; /* this is a response */
@@ -384,24 +402,49 @@ void dns_send_response( int sockfd, struct message *msg, IP *from, IP *record ) 
 	msg->arCount = 0;
 
 	/* Set AAAA Resource Record */
-	a->name = q->qName;
-	a->type = q->qType;
-	a->class = q->qClass;
-	a->ttl = 0; /* no caching */
-	a->rd_length = 16;
-	memcpy( a->rd_data.aaaa_record.addr, &record->sin6_addr, 16 );
+	rr->name = qu->qName;
+	rr->type = qu->qType;
+	rr->class = qu->qClass;
+	rr->ttl = 0; /* no caching */
+	rr->rd_length = 16;
+	memcpy( rr->rd_data.aaaa_record.addr, &record.sin6_addr, 16 );
 
 	UCHAR* p = dns_code_response( msg, buf );
 
 	if( p ) {
 		int buflen = p - buf;
-		log_info( "DNS: send address %s to %s. Packet is %d Bytes.", addr_str(record, addrbuf1 ), addr_str(from, addrbuf2 ), buflen);
+		log_info( "DNS: send address %s to %s. Packet is %d Bytes.",
+			addr_str(&record, addrbuf1 ), addr_str(&task->clientaddr, addrbuf2 ), buflen
+		);
 
-		sendto( sockfd, buf, buflen, 0, (struct sockaddr*) from, sizeof(IP) );
+		sendto( task->sockfd, buf, buflen, 0, (struct sockaddr*) &task->clientaddr, sizeof(IP) );
 	}
+
+	end:
+
+	myfree( task, "masala-dns" );
 }
 
-int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record ) {
+void dns_lookup( CALLBACK *callback, void* ctx, UCHAR *id ) {
+	IP *addr;
+
+	/* Check my own DB for that node. */
+	mutex_block( _main->p2p->mutex );
+	addr = db_address( id );
+	mutex_unblock( _main->p2p->mutex );
+
+	if( addr != NULL ) {
+		callback( ctx, id, (UCHAR *) &addr->sin6_addr.s6_addr[0] );
+		return;
+	}
+
+	/* Start find process */
+	mutex_block( _main->p2p->mutex );
+	lkp_put( id, callback, ctx );
+	mutex_unblock( _main->p2p->mutex );
+}
+
+int dns_masala_lookup( const char *hostname, size_t size, IP *clientaddr, IP *record ) {
 	UCHAR host_id[SHA_DIGEST_LENGTH];
 	IP *addr;
 	char hexbuf[HEX_LEN+1];
@@ -427,7 +470,7 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *from, IP *record )
 		return 1;
 	}
 
-	log_info( "DNS: No local entry found. Create P2P request for '%s'.", hostname  );
+	log_info( "DNS: No local entry found. Create P2P task for '%s'.", hostname  );
 
 	/* Start find process */
 	mutex_block( _main->p2p->mutex );
@@ -445,11 +488,14 @@ void* dns_loop( void* _ ) {
 	struct timeval tv;
 
 	int sockfd;
-	IP from, record, sockaddr;
+	IP clientaddr, sockaddr;
 	UCHAR buffer[1500];
+	UCHAR host_id[SHA_DIGEST_LENGTH];
+	char hexbuf[HEX_LEN+1];
 	socklen_t addr_len = sizeof(IP);
-	struct message msg;
+	struct task *task;
 	char addrbuf[FULL_ADDSTRLEN];
+	const char *hostname;
 
 	const char *addr = _main->conf->dns_addr;
 	const char *ifce = _main->conf->dns_ifce;
@@ -506,27 +552,49 @@ void* dns_loop( void* _ ) {
 		ifce ? ifce : "<any>"
 	);
 
+	task = NULL;
 	while(1) {
-		memset( &msg, 0, sizeof(msg) );
-		rc = recvfrom( sockfd, buffer, sizeof( buffer ), 0, (struct sockaddr *) &from, &addr_len );
 
-		if(rc < 0)
-			continue;
-
-		log_info( "DNS: Received query from %s.",  addr_str( &from, addrbuf )  );
-
-		rc = dns_decode_query( &msg, buffer, rc );
-
-		if(rc < 0)
-			continue;
-
-		rc = dns_masala_lookup( msg.question.qName, strlen(msg.question.qName), &from, &record );
-
-		if(rc < 0) {
-			log_warn("DNS: Lookup failed for '%s'.", msg.question.qName );
-		} else {
-			dns_send_response( sockfd, &msg, &from, &record );
+		if( task ) {
+			myfree( task, "masala-dns" );
+			task = NULL;
 		}
+
+		rc = recvfrom( sockfd, buffer, sizeof( buffer ), 0, (struct sockaddr *) &clientaddr, &addr_len );
+
+		if( rc < 0 )
+			continue;
+
+		log_info( "DNS: Received query from %s.",  addr_str( &clientaddr, addrbuf )  );
+
+		task = (struct task*) myalloc( sizeof(struct task), "masala-dns" );
+		memset( task, 0, sizeof(struct task) );
+		memcpy( &task->clientaddr, &clientaddr, sizeof(IP) );
+		task->sockfd = sockfd;
+
+		rc = dns_decode_query( &task->msg, buffer, rc );
+
+		if(rc < 0)
+			continue;
+
+		hostname = task->msg.question.qName;
+
+		if( hostname == NULL )
+			continue;
+
+		/* Validate hostname */
+		if ( !str_isValidHostname( (char*) hostname, strlen( hostname ) ) ) {
+			log_warn( "DNS: Invalid hostname for lookup: '%s'", hostname );
+			continue;
+		}
+
+		/* That is the lookup key */
+		p2p_compute_id( host_id, hostname );
+		log_info( "DNS: Lookup '%s' as '%s'.", hostname, id_str( host_id, hexbuf ) );
+
+		dns_lookup( &dns_reply, task, host_id);
+
+		task = NULL;
 	}
 
 	return NULL;
