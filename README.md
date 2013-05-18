@@ -16,7 +16,8 @@ configuration necessary within your broadcast domain (LAN) and will continue to 
 in intervals until another node is found. With a bootstrap server, it is also possible
 to connect nodes around the globe.
 Masala also includes a very simple DNS server so it can be used as
-a local upstream DNS server.
+a local upstream DNS server. A simple Web-Server does the same for
+simple queries like e.g. http://localhost:8080/foo.p2p.
 
 ## OPTIONS
 
@@ -55,6 +56,16 @@ a local upstream DNS server.
 
   * `-di, --dns-ifce`:
 	Bind the DNS server to this interface (Default: &lt;any&gt;).
+
+  * `-wa, --web-addr`:
+	Bind the DNS server interface to this address (Default: ::1).
+
+  * `-wp, --web-port`:
+	Bind the DNS server interface to this port (Default: 8080).
+
+  * `-wi, --web-ifce`:
+	Bind the DNS server to this interface (Default: &lt;any&gt;).
+
 
 ## EXAMPLES
 
