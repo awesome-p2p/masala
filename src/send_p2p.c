@@ -458,13 +458,6 @@ void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
 	struct obj_raw *raw = NULL;
 	char addrbuf[FULL_ADDSTRLEN];
 
-	UCHAR *addr = (UCHAR *) &value->sin6_addr;
-	printf("p2p_value:\n");
-	int ii;
-	for(ii = 0; ii < 16; ++ii)
-		printf("%02x ", addr[ii]);
-	printf("\n");
-
 	/*
 		1:i 20:NODE_ID
 		1:k 20:SESSION_ID
