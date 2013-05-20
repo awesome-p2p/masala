@@ -59,6 +59,9 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef WEB
 #include "masala-web.h"
 #endif
+#ifdef NSS
+#include "masala-nss.h"
+#endif
 #include "log.h"
 
 /* Global object variables */
@@ -128,6 +131,9 @@ int main( int argc, char **argv ) {
 #endif
 #ifdef WEB
 	web_start();
+#endif
+#ifdef NSS
+	nss_start();
 #endif
 	udp_start();
 	udp_stop();
