@@ -30,6 +30,10 @@
  */
 
 #include <string.h>
+#include <signal.h>
+
+#include "main.h"
+
 
 #ifdef _MSC_VER
 #include <basetsd.h>
@@ -421,23 +425,6 @@ void sha1_hmac( const unsigned char *key, size_t keylen,
     memset( &ctx, 0, sizeof( sha1_context ) );
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <time.h>
-#include <semaphore.h>
-#include <signal.h>
-#include <netinet/in.h>
-
-#include "main.h"
-#include "str.h"
-#include "list.h"
-#include "file.h"
-#include "conf.h"
-#include "malloc.h"
-#include "log.h"
 
 void sha1_hash( UCHAR *hash, const char *buffer, long int bytes ) {
 	memset( hash, '\0', SHA_DIGEST_LENGTH );
