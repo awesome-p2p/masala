@@ -25,6 +25,7 @@ define Package/masala
 	TITLE:=P2P DNS Server
 	DEPENDS:=+libpthread
 	SUBMENU:=IP Addresses and Names
+	URL:=https://github.com/mwarning/masala
 endef
 
 define Package/masala/description
