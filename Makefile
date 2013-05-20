@@ -40,7 +40,6 @@ libnss_masala.so.2: build/masala-libnss.o
 	$(CC) $(CFLAGS) -shared -Wl,-soname,libnss_masala.so.2 -o build/libnss_masala.so.2 $(POST_LINKING)
 
 masala: $(OBJS) $(EXTRA)
-	mkdir -p build/
 	$(CC) $(OBJS) -o build/masala $(POST_LINKING)
 
 clean:
