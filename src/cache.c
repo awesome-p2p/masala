@@ -52,7 +52,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "bucket.h"
 #include "lookup.h"
 #include "announce.h"
-#include "neighboorhood.h"
+#include "neighborhood.h"
 #include "cache.h"
 #include "time.h"
 #include "send_p2p.h"

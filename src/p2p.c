@@ -52,7 +52,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "bucket.h"
 #include "lookup.h"
 #include "announce.h"
-#include "neighboorhood.h"
+#include "neighborhood.h"
 #include "p2p.h"
 #include "send_p2p.h"
 #include "search.h"
@@ -193,7 +193,7 @@ void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {
 	/* Remember node. This does not update the IP address. */
 	n = node_put( id->v.s->s, (IP *)from );
 
-	/* The neighboorhood */
+	/* The neighborhood */
 	nbhd_put( n );
 
 	/* Update IP if necessary. */

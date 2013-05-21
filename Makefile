@@ -7,7 +7,7 @@ FEATURES ?= dns web nss
 OBJS_=main.o conf.o unix.o log.o file.o lookup.o \
 	hash.o list.o malloc.o opts.o str.o thrd.o \
 	ben.o udp.o random.o send_p2p.o sha1.o \
-	database.o node_p2p.o bucket.o neighboorhood.o \
+	database.o node_p2p.o bucket.o neighborhood.o \
 	cache.o announce.o time.o p2p.o
 OBJS = $(patsubst %,build/%,$(OBJS_))
 

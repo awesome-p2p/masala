@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-struct obj_neighboorhood_bucket {
+struct obj_neighborhood_bucket {
 	UCHAR id[SHA_DIGEST_LENGTH];
 	LIST *nodes;
 };
-typedef struct obj_neighboorhood_bucket BUCK;
+typedef struct obj_neighborhood_bucket BUCK;
 
 LIST *bckt_init( void );
 void bckt_free( LIST *thislist );
