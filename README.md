@@ -58,13 +58,13 @@ simple queries like e.g. http://localhost:8080/foo.p2p.
 	Bind the DNS server to this interface (Default: &lt;any&gt;).
 
   * `-wa, --web-addr`:
-	Bind the DNS server interface to this address (Default: ::1).
+	Bind the Web server interface to this address (Default: ::1).
 
   * `-wp, --web-port`:
-	Bind the DNS server interface to this port (Default: 8080).
+	Bind the Web server interface to this port (Default: 8080).
 
   * `-wi, --web-ifce`:
-	Bind the DNS server to this interface (Default: &lt;any&gt;).
+	Bind the Web server to this interface (Default: &lt;any&gt;).
 
 
 ## EXAMPLES
