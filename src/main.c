@@ -142,8 +142,11 @@ int main( int argc, char **argv ) {
 	nss_start();
 #endif
 #ifdef CMD
-	cmd_start();
-	cmd_console_loop();
+	cmd_remote_start();
+
+	if( _main->conf->mode == CONF_FOREGROUND ) {
+		cmd_console_loop();
+	}
 #endif
 
 	udp_stop();

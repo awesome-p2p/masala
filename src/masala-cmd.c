@@ -239,7 +239,7 @@ void cmd_socket_handler( int fd ) {
 	close( fd );
 }
 
-void *cmd_socket_loop( void *_ ) {
+void *cmd_remote_loop( void *_ ) {
 	int sock, fd;
 	struct sockaddr_un sa_un;
 	socklen_t len;
@@ -323,10 +323,10 @@ void cmd_console_loop() {
     }
 }
 
-int cmd_start( void ) {
+int cmd_remote_start( void ) {
 	pthread_t tid;
 
-	int rc = pthread_create( &tid, NULL, &cmd_socket_loop, 0 );
+	int rc = pthread_create( &tid, NULL, &cmd_remote_loop, 0 );
 	if( rc != 0 ) {
 		log_crit( "DNS: Failed to create thread." );
 		return 1;

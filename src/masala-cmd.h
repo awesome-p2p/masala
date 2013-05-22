@@ -17,5 +17,5 @@ You should have received a copy of the GNU General Public License
 along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-int cmd_start( void );
+int cmd_remote_start( void );
 void cmd_console_loop();
