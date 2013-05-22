@@ -79,7 +79,6 @@ void nbhd_split( void ) {
 		if( !bckt_split( _main->nbhd, _main->conf->node_id) ) {
 			return;
 		}
-		nbhd_print();
 	}
 }
 
@@ -225,36 +224,5 @@ void nbhd_announce( ANNOUNCE *a ) {
 		send_announce( &n->c_addr, a->lkp_id );
 
 		item_n = list_next( item_n );
-	}
-}
-
-void nbhd_print( void ) {
-	ITEM *item_b = NULL;
-	BUCK *b = NULL;
-	ITEM *item_n = NULL;
-	NODE *n = NULL;
-	long int j = 0, k = 0;
-	char hexbuf[HEX_LEN+1];
-
-	log_info( "Bucket split:" );
-
-	/* Cycle through all the buckets */
-	item_b = _main->nbhd->start;
-	for( k=0; k<_main->nbhd->counter; k++ ) {
-		b = item_b->val;
-
-		log_info( " Bucket: %s", id_str( b->id, hexbuf ) );
-
-		/* Cycle through all the nodes */
-		item_n = b->nodes->start;
-		for( j=0; j<b->nodes->counter; j++ ) {
-			n = item_n->val;
-
-			log_info( "  Node: %s", id_str( n->id, hexbuf ) );
-
-			item_n = list_next( item_n );
-		}
-
-		item_b = list_next( item_b );
 	}
 }
