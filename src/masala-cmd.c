@@ -181,10 +181,10 @@ int cmd_exec( int fd, int argc, char **argv ) {
 
 		dprintf( fd, "Lookup %s\n", id_str( id, hexbuf ) );
 		if( addr != NULL ) {
+			dprintf( fd, "Address found: %s\n", addr_str( addr, addrbuf ) );
+		} else {
 			dprintf( fd ,"No address found.\n" );
 			return 1;
-		} else {
-			dprintf( fd, "Address found: %s\n", addr_str( addr, addrbuf ) );
 		}
 		rc = 0;
 	} else if( argc == 2 && strcmp( argv[0], "search" ) == 0 ) {
