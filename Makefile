@@ -59,3 +59,6 @@ install:
 	strip build/masala
 	strip build/masala-ctl
 	strip build/libnss_masala.so.2
+	cp build/masala /usr/bin/
+	cp build/masala-ctl /usr/bin/
+	cp build/libnss_masala.so.2 /lib/
