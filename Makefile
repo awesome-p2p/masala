@@ -2,7 +2,7 @@
 CC ?= gcc
 CFLAGS ?= -O2 -Wall -Wwrite-strings -pedantic -std=gnu99
 POST_LINKING = -lpthread
-FEATURES ?= dns web nss
+FEATURES ?= cmd dns web nss
 
 OBJS_ = main.o conf.o unix.o log.o file.o lookup.o \
 	hash.o list.o malloc.o opts.o str.o thrd.o \
@@ -11,9 +11,15 @@ OBJS_ = main.o conf.o unix.o log.o file.o lookup.o \
 	cache.o announce.o time.o p2p.o
 OBJS = $(patsubst %,build/%,$(OBJS_))
 
-.PHONY: all clean install masala libnss_masala.so.2
+.PHONY: all clean install masala masala-ctl libnss_masala.so.2
 
 all: masala
+
+ifeq ($(findstring cmd,$(FEATURES)),cmd)
+  OBJS += build/masala-cmd.o
+  CFLAGS += -DCMD
+  EXTRA += masala-ctl
+endif
 
 ifeq ($(findstring dns,$(FEATURES)),dns)
   OBJS += build/masala-dns.o
@@ -37,14 +43,19 @@ build/%.o : src/%.c src/%.h
 libnss_masala.so.2: build/masala-libnss.o
 	$(CC) $(CFLAGS) -shared -Wl,-soname,libnss_masala.so.2 -o build/libnss_masala.so.2 $(POST_LINKING)
 
+masala-ctl:
+	$(CC) src/masala-ctl.c -o build/masala-ctl
+
 masala: $(OBJS) $(EXTRA)
 	$(CC) $(OBJS) -o build/masala $(POST_LINKING)
 
 clean:
 	rm -f build/*.o
 	rm -f build/masala
+	rm -f build/masala-ctl
 	rm -f build/libnss_masala.so.2
 
 install:
 	strip build/masala
+	strip build/masala-ctl
 	strip build/libnss_masala.so.2

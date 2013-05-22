@@ -62,6 +62,9 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef NSS
 #include "masala-nss.h"
 #endif
+#ifdef CMD
+#include "masala-cmd.h"
+#endif
 #include "log.h"
 
 /* Global object variables */
@@ -135,7 +138,12 @@ int main( int argc, char **argv ) {
 #ifdef NSS
 	nss_start();
 #endif
+
 	udp_start();
+#ifdef CMD
+	cmd_start();
+	cmd_console_loop();
+#endif
 	udp_stop();
 
 	db_free();
