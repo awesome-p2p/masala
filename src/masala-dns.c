@@ -480,8 +480,7 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *clientaddr, IP *re
 	return -1;
 }
 
-void* dns_loop( void* _ ) {
-
+void* dns_loop( void *_ ) {
 	int rc;
 	int val;
 	struct addrinfo hints, *servinfo, *p;
@@ -553,12 +552,12 @@ void* dns_loop( void* _ ) {
 	);
 
 	task = NULL;
-	while(1) {
+	while( 1 ) {
+		myfree( task, "masala-dns" );
+		task = NULL;
 
-		if( task ) {
-			myfree( task, "masala-dns" );
-			task = NULL;
-		}
+		if( _main->status == MAIN_ONLINE )
+			break;
 
 		rc = recvfrom( sockfd, buffer, sizeof( buffer ), 0, (struct sockaddr *) &clientaddr, &addr_len );
 
@@ -574,7 +573,7 @@ void* dns_loop( void* _ ) {
 
 		rc = dns_decode_query( &task->msg, buffer, rc );
 
-		if(rc < 0)
+		if( rc < 0 )
 			continue;
 
 		hostname = task->msg.question.qName;
@@ -592,7 +591,7 @@ void* dns_loop( void* _ ) {
 		p2p_compute_id( host_id, hostname );
 		log_info( "DNS: Lookup '%s' as '%s'.", hostname, id_str( host_id, hexbuf ) );
 
-		dns_lookup( &dns_reply, task, host_id);
+		dns_lookup( &dns_reply, task, host_id );
 
 		task = NULL;
 	}
@@ -600,8 +599,7 @@ void* dns_loop( void* _ ) {
 	return NULL;
 }
 
-int dns_start()
-{
+int dns_start( void ) {
 	pthread_t tid;
 	
 	int rc = pthread_create( &tid, NULL, &dns_loop, 0 );

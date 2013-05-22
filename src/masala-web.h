@@ -17,4 +17,4 @@ You should have received a copy of the GNU General Public License
 along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-int web_start();
+int web_start( void );

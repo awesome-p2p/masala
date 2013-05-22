@@ -74,7 +74,7 @@ void web_reply( void *ctx, UCHAR *id, UCHAR *address ) {
 		
 		log_info( "Web: Answer request for '%s':\n%s", id_str( id, hexbuf ), addrbuf );
 
-		sendto( request->clientfd, buffer, strlen(buffer), 0, (struct sockaddr*) &request->clientaddr, sizeof(IP) );
+		sendto( request->clientfd, buffer, strlen( buffer ), 0, (struct sockaddr*) &request->clientaddr, sizeof(IP) );
 	}
 
 	close( request->clientfd );
@@ -127,7 +127,7 @@ void* web_loop( void* _ ) {
 	hints.ai_family = AF_INET6;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if( (rc = getaddrinfo( addr, port, &hints, &servinfo )) == 0 ) {
+	if( (rc = getaddrinfo( addr, port, &hints, &servinfo ) ) == 0 ) {
 		for( p = servinfo; p != NULL; p = p->ai_next ) {
 			memset( &sockaddr, 0, sizeof(IP) );
 			sockaddr = *((IP*) p->ai_addr);
@@ -135,11 +135,11 @@ void* web_loop( void* _ ) {
 			break;
 		}
     } else {
-		printf( "Web getaddrinfo failed: %s", gai_strerror(rc));
+		printf( "Web: getaddrinfo failed: %s", gai_strerror( rc ) );
         return NULL;
 	}
 
-	if( (sockfd = socket( PF_INET6, SOCK_STREAM, IPPROTO_TCP )) < 0) {
+	if( (sockfd = socket( PF_INET6, SOCK_STREAM, IPPROTO_TCP )) < 0 ) {
 		printf( "Web: Failed to create socket: %s", gai_strerror( errno ) );
 		return NULL;
 	}
@@ -151,7 +151,7 @@ void* web_loop( void* _ ) {
 
 	val = 1;
 	if( (rc = setsockopt( sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (char*) &val, sizeof(val) )) < 0 ) {
-		log_err( "Web: Failed to set socket options: %s", gai_strerror(rc) );
+		log_err( "Web: Failed to set socket options: %s", gai_strerror( rc ) );
 		return NULL;
 	}
 
@@ -163,12 +163,12 @@ void* web_loop( void* _ ) {
 	tv.tv_usec = 0;
 
 	if( (rc = setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) )) < 0 ) {
-		log_err( "Web: Failed to set socket options: %s", gai_strerror(rc) );
+		log_err( "Web: Failed to set socket options: %s", gai_strerror( rc ) );
 		return NULL;
 	}
 
 	if( (rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) )) < 0 ) {
-		log_err( "Web: Failed to bind socket to address: %s", gai_strerror(rc) );
+		log_err( "Web: Failed to bind socket to address: %s", gai_strerror( rc ) );
 		return NULL;
 	}
 
@@ -180,20 +180,19 @@ void* web_loop( void* _ ) {
 	);
 
 	clientfd = 0;
-	while(1) {
-
+	while( _main->status == MAIN_ONLINE ) {
 		/* Close file descriptor that has not been used previously */
 		if( clientfd > 0 )
 			close( clientfd );
 
-		clientfd = accept(sockfd, (struct sockaddr*)&clientaddr, &addr_len);
-		rc = recv(clientfd, clientbuf, sizeof(clientbuf) - 1, 0);
+		clientfd = accept( sockfd, (struct sockaddr*)&clientaddr, &addr_len );
+		rc = recv( clientfd, clientbuf, sizeof(clientbuf) - 1, 0 );
 
 		if(rc < 0)
 			continue;
 
 		/* Only handle GET requests. */
-		if(rc < 6 || strncmp( "GET /", clientbuf, 5 ) != 0)
+		if(rc < 6 || strncmp( "GET /", clientbuf, 5 ) != 0 )
 			continue;
 
 		/* Jump after slash */
@@ -225,8 +224,7 @@ void* web_loop( void* _ ) {
 	return NULL;
 }
 
-
-int web_start()
+int web_start( void )
 {
 	pthread_t tid;
 	

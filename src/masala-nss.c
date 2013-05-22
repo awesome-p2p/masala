@@ -157,12 +157,12 @@ void* nss_loop( void* _ ) {
 	return NULL;
 }
 
-int nss_start()
+int nss_start( void )
 {
 	pthread_t tid;
 
 	int rc = pthread_create( &tid, NULL, &nss_loop, 0 );
-	if (rc != 0) {
+	if( rc != 0 ) {
 		log_crit( "NSS: Failed to create a new thread." );
 		return 1;
 	}

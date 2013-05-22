@@ -2,7 +2,7 @@
 CC ?= gcc
 CFLAGS ?= -O2 -Wall -Wwrite-strings -pedantic -std=gnu99
 POST_LINKING = -lpthread
-FEATURES ?= cmd dns web nss
+FEATURES ?= cmd dns nss web
 
 OBJS_ = main.o conf.o unix.o log.o file.o lookup.o \
 	hash.o list.o malloc.o opts.o str.o thrd.o \
@@ -26,15 +26,15 @@ ifeq ($(findstring dns,$(FEATURES)),dns)
   CFLAGS += -DDNS
 endif
 
-ifeq ($(findstring web,$(FEATURES)),web)
-  OBJS += build/masala-web.o
-  CFLAGS += -DWEB
-endif
-
 ifeq ($(findstring nss,$(FEATURES)),nss)
   OBJS += build/masala-nss.o
   CFLAGS += -DNSS
   EXTRA += libnss_masala.so.2
+endif
+
+ifeq ($(findstring web,$(FEATURES)),web)
+  OBJS += build/masala-web.o
+  CFLAGS += -DWEB
 endif
 
 build/%.o : src/%.c src/%.h

@@ -160,7 +160,7 @@ void udp_event( void ) {
 
 void udp_pool( void ) {
 	int i = 0;
-	
+
 	/* Initialize and set thread detached attribute */
 	pthread_attr_init( &_main->udp->attr );
 	pthread_attr_setdetachstate( &_main->udp->attr, PTHREAD_CREATE_JOINABLE );
@@ -193,7 +193,6 @@ void *udp_thread( void *arg ) {
 	log_info( "UDP Thread[%i] - Max events: %i", id, UDP_MAX_EVENTS );
 
 	while( _main->status == MAIN_ONLINE ) {
-		
 		nfds = epoll_wait( _main->udp->epollfd, events, UDP_MAX_EVENTS, CONF_EPOLL_WAIT );
 
 		if( _main->status == MAIN_ONLINE && nfds == -1 ) {
@@ -220,7 +219,6 @@ void *udp_thread( void *arg ) {
 void *udp_client( void *arg ) {
 	/* Send PING or FIND request to init the network */
 	if( node_counter() == 0 ) {
-		
 		/* Bootstrap PING */
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_restart ) {
 			p2p_bootstrap();

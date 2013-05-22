@@ -19,4 +19,4 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 
 #define MASALA_NSS_PORT 5555
 
-int nss_start();
+int nss_start( void );
