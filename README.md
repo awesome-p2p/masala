@@ -15,9 +15,12 @@ default, masala sends the first packet to a multicast address. So there is no
 configuration necessary within your broadcast domain (LAN) and will continue to do so
 in intervals until another node is found. With a bootstrap server, it is also possible
 to connect nodes around the globe.
-Masala also includes a very simple DNS server so it can be used as
-a local upstream DNS server. A simple Web-Server does the same for
-simple queries like e.g. http://localhost:8080/foo.p2p.
+Masala also includes a very simple DNS server so it can be used as a local upstream
+DNS server. A simple Web-Server does the same for simple queries
+like e.g. http://localhost:8080/foo.p2p.
+Masala also provides an interactive shell and a tool to send commands to masala
+using a local socket.
+This way scripts can easliy issue commands by calling e.g. "masla-ctl lookup foo.p2p".
 
 ## OPTIONS
 
