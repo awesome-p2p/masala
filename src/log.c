@@ -72,13 +72,13 @@ void _log( const char *filename, int line, int priority, const char *format, ...
 	char buffer[MAIN_BUF];
 	va_list vlist;
 
-	va_start( vlist, format );
-	vsnprintf( buffer, MAIN_BUF, format, vlist );
-	va_end( vlist );
-
 	if( priority == LOG_INFO && (_main->conf->quiet == CONF_BEQUIET) ) {
 		return;
 	}
+
+	va_start( vlist, format );
+	vsnprintf( buffer, MAIN_BUF, format, vlist );
+	va_end( vlist );
 
 	if( _main->conf->mode == CONF_FOREGROUND ) {
 		if(filename)
