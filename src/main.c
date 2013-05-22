@@ -53,6 +53,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "p2p.h"
 #include "cache.h"
 #include "database.h"
+#include "log.h"
 #ifdef DNS
 #include "masala-dns.h"
 #endif
@@ -65,7 +66,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef CMD
 #include "masala-cmd.h"
 #endif
-#include "log.h"
 
 /* Global object variables */
 struct obj_main *_main = NULL;
@@ -129,6 +129,9 @@ int main( int argc, char **argv ) {
 	unix_write_pidfile( getpid() );
 
 	/* Start server */
+	udp_start();
+
+	/* Start interfaces */
 #ifdef DNS
 	dns_start();
 #endif
@@ -138,14 +141,14 @@ int main( int argc, char **argv ) {
 #ifdef NSS
 	nss_start();
 #endif
-
-	udp_start();
 #ifdef CMD
 	cmd_start();
 	cmd_console_loop();
 #endif
+
 	udp_stop();
 
+	/* free resources */
 	db_free();
 	announce_free();
 	lkp_free();
