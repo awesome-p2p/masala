@@ -35,16 +35,9 @@ For details please check the OpenWRT documentation.
 
 #### Note for developers:
 
-You might want to put the sources right into the package without using git.
-To do this replace the "Build/Prepare" section of the Makefile with this:
+You might want to your own source location and not the remote respository.
+To do this create a symbolic link into the masala package folder:
 
 <pre>
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
-endef
+ln -s /my/own/project/folder/masala/.git openwrt/package/masala/git-src
 </pre>
-
-The folder "src/" needs to be created inside OpenWRT masala package folder.
-Folder "src/" needs to contain the "masala/" and "src/" folders and "Makefile"
-from the repository root.
