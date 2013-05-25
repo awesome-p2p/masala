@@ -284,11 +284,11 @@ int bckt_compute_id( LIST *thislist, ITEM *item_b, UCHAR *id_return ) {
 	bit2 = (b_next != NULL) ? bckt_significant_bit( b_next->id) : -1;
 	bit = (bit1 >= bit2) ? bit1 : bit2; bit++;
 
-	if( bit >= 160 ) {
+	if( bit >= (SHA_DIGEST_LENGTH * 8) ) {
 		return -1;
 	}
 
-	memcpy( id_return, b->id, 20 );
+	memcpy( id_return, b->id, SHA_DIGEST_LENGTH );
 	id_return[bit / 8] |= (0x80 >>( bit % 8) );
 
 	return 1;
@@ -297,7 +297,7 @@ int bckt_compute_id( LIST *thislist, ITEM *item_b, UCHAR *id_return ) {
 int bckt_significant_bit( const UCHAR *id ) {
 	int i=0, j=0;
 
-	for( i = 19; i >= 0; i-- ) {
+	for( i = SHA_DIGEST_LENGTH - 1; i >= 0; i-- ) {
 		if( id[i] != 0 ) {
 			break;
 		}
