@@ -377,8 +377,8 @@ void dns_reply( void *ctx, UCHAR *id, UCHAR *address ) {
 	struct ResourceRecord *rr;
 	struct question *qu;
 	struct task *task;
-	char addrbuf1[FULL_ADDSTRLEN];
-	char addrbuf2[FULL_ADDSTRLEN];
+	char addrbuf1[FULL_ADDSTRLEN+1];
+	char addrbuf2[FULL_ADDSTRLEN+1];
 
 	task = (struct task *) ctx;
 
@@ -493,7 +493,7 @@ void* dns_loop( void *_ ) {
 	char hexbuf[HEX_LEN+1];
 	socklen_t addr_len = sizeof(IP);
 	struct task *task;
-	char addrbuf[FULL_ADDSTRLEN];
+	char addrbuf[FULL_ADDSTRLEN+1];
 	const char *hostname;
 
 	const char *addr = _main->conf->dns_addr;

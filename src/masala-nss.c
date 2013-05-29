@@ -87,7 +87,7 @@ void* nss_loop( void* _ ) {
 	IP clientaddr, sockaddr;
 	char hostname[256];
 	UCHAR host_id[SHA_DIGEST_LENGTH];
-	char addrbuf[FULL_ADDSTRLEN];
+	char addrbuf[FULL_ADDSTRLEN+1];
 	socklen_t addr_len = sizeof(IP);
 
 	memset( &hints, 0, sizeof(hints) );

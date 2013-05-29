@@ -116,7 +116,7 @@ void* web_loop( void* _ ) {
 	struct request *request;
 	char *hex_start, *hex_end;
 	socklen_t addr_len = sizeof(IP);
-	char addrbuf[FULL_ADDSTRLEN];
+	char addrbuf[FULL_ADDSTRLEN+1];
 
 	const char *addr = _main->conf->web_addr;
 	const char *ifce = _main->conf->web_ifce;
