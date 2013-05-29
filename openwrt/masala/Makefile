@@ -32,11 +32,12 @@ define Package/masala/description
 	P2P name resolution daemon
 endef
 
-MAKE_FLAGS += FEATURES="dns"
+MAKE_FLAGS += FEATURES="cmd dns"
 
 define Package/masala/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/masala $(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/masala-ctl $(1)/usr/bin/
 
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) files/masala.init $(1)/etc/init.d/masala
