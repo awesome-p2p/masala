@@ -18,8 +18,7 @@ to connect nodes around the globe.
 Masala also includes a very simple DNS server so it can be used as a local upstream
 DNS server. A simple Web-Server does the same for simple queries
 like e.g. http://localhost:8080/foo.p2p.
-Masala also provides an interactive shell and a tool to send commands to masala
-using a local socket.
+Masala also provides an interactive shell and a tool to send commands to masala.
 This way scripts can easliy issue commands by calling e.g. "masla-ctl lookup foo.p2p".
 
 ## OPTIONS

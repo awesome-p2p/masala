@@ -17,5 +17,11 @@ You should have received a copy of the GNU General Public License
 along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* A UDP packet sized reply */
+typedef struct Reply {
+	char data[1500];
+	ssize_t size;
+} REPLY;
+
 int cmd_remote_start( void );
-void cmd_console_loop();
+void cmd_console_loop( void );

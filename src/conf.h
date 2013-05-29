@@ -37,7 +37,8 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #define CONF_DNS_PORT "3444"
 #define CONF_WEB_ADDR "::1"
 #define CONF_WEB_PORT "8080"
-#define CONF_LOCAL_SOCK "/tmp/masala.sock"
+#define CONF_CMD_ADDR "::1"
+#define CONF_CMD_PORT "4374"
 
 struct obj_conf {
 	char *user;

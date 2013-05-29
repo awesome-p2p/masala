@@ -24,6 +24,8 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netdb.h>
+#include <ifaddrs.h>
 #include <sys/un.h>
 #include <unistd.h>
 #include <syslog.h>
@@ -33,68 +35,68 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "main.h"
 #include "conf.h"
 
-int connect_to_server(char *sock_name)
-{
-	int sock;
-	struct sockaddr_un addr;
-
-	sock = socket( AF_UNIX, SOCK_STREAM, 0 );
-	memset(&addr, 0, sizeof(addr));
-	addr.sun_family = AF_UNIX;
-	strncpy( addr.sun_path, sock_name, (sizeof(addr.sun_path) - 1) );
-
-	if( connect( sock, (struct sockaddr *)&addr, strlen(addr.sun_path) + sizeof(addr.sun_family) ) ) {
-		fprintf( stderr, "Masala probably not started: %s\n", strerror( errno ) );
-		exit( 1 );
-	}
-
-	return sock;
-}
-
-int send_request(int sock, char *request) {
-	ssize_t	len, written;
-
-	len = 0;
-	while( len != strlen( request ) ) {
-		written = write( sock, (request + len), strlen( request ) - len );
-		if( written == -1 ) {
-			fprintf( stderr, "Write to socket failed: %s\n", strerror( errno ) );
-			exit( 1 );
-		}
-		len += written;
-	}
-
-	return (int) len;
-}
-
-
 int main(int argc, char **argv) {
-	int sock;
-	char buffer[512];
-	int len;
+	int sockfd;
+	struct addrinfo hints, *servinfo, *p;
+	struct timeval tv;
+	IP sockaddr;
+	char buffer[1500];
+	ssize_t rc;
 	int i;
 
-	sock = connect_to_server( strdup( CONF_LOCAL_SOCK ) );
+	memset( &hints, 0, sizeof(hints) );
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_family = AF_INET6;
+	hints.ai_socktype = SOCK_DGRAM;
 
+	if( (rc = getaddrinfo( CONF_CMD_ADDR, CONF_CMD_PORT, &hints, &servinfo )) == 0 ) {
+		for( p = servinfo; p != NULL; p = p->ai_next ) {
+			memset( &sockaddr, 0, sizeof(IP) );
+			sockaddr = *((IP*) p->ai_addr);
+			freeaddrinfo( servinfo );
+			break;
+		}
+    } else {
+		fprintf( stderr, "getaddrinfo failed: %s\n", gai_strerror( rc ) );
+        return 1;
+	}
+
+	/* Construct request string from args */
     buffer[0] = '\0';
 	for(i = 1; i < argc; ++i) {
 		strcat(buffer, " ");
 		strcat(buffer, argv[i]);
 	}
+	strcat(buffer, "\n");
 
-	len = send_request( sock, buffer );
-
-	while( (len = read( sock, buffer, sizeof(buffer) - 1) ) > 0 ) {
-		buffer[len] = '\0';
-		printf( "%s\n", buffer );
+	sockfd = socket( PF_INET6, SOCK_DGRAM, IPPROTO_UDP );
+	if( sockfd < 0 ) {
+		fprintf( stderr, "Failed to create socket: %s\n", gai_strerror( errno ) );
+		return 1;
 	}
 
-	if( len < 0 ) {
-		fprintf( stderr, "Error reading socket: %s", strerror( errno ) );
+	/* Set receive timeout */
+	tv.tv_sec = 0;
+	tv.tv_usec = 200;
+	rc = setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
+	if( rc < 0 ) {
+		fprintf( stderr, "Failed to set socket option: %s\n", gai_strerror( rc ) );
+		return 1;
 	}
 
-	shutdown( sock, 2 );
-	close( sock );
+	rc = sendto( sockfd, buffer, strlen(buffer), 0, (struct sockaddr *)&sockaddr, sizeof(IP) );
+	if( rc <= 0 ) {
+		fprintf( stderr, "Masala probably not started: %s\n", strerror( errno ) );
+		return 1;
+	}
+
+	/* Receive reply */
+	while( (rc = read( sockfd, buffer, sizeof(buffer) - 1) ) > 0 ) {
+		buffer[rc] = '\0';
+		printf( buffer );
+	}
+
+	close( sockfd );
 
 	return 0;
 }
