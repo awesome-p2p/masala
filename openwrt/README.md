@@ -4,7 +4,7 @@ you have to build an OpenWRT image.
 These steps were tested using OpenWRT-"Attitude Adjustment":
 
 <pre>
-svn co svn://svn.openwrt.org/openwrt/branches/attitude_adjustment openwrt
+git clone git://git.openwrt.org/12.09/openwrt.git
 cd openwrt
 
 ./scripts/feeds update -a
