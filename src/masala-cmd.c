@@ -60,6 +60,8 @@ const char* cmd_usage_str =
 "	ping <ip> [<port>]\n"
 "	lookup <key>\n"
 "	search <key>\n"
+"	print_database\n"
+"	print_nodes\n"
 "	print_nbhd\n"
 "	shutdown\n"
 "\n";
@@ -154,7 +156,7 @@ void cmd_print_nbhd( REPLY *r ) {
 	long int j = 0, k = 0;
 	char hexbuf[HEX_LEN+1];
 
-	r_printf( r, "Bucket split:\n" );
+	r_printf( r, "List of all buckets:\n" );
 
 	/* Cycle through all the buckets */
 	item_b = _main->nbhd->start;
@@ -175,6 +177,48 @@ void cmd_print_nbhd( REPLY *r ) {
 
 		item_b = list_next( item_b );
 	}
+}
+
+void cmd_print_database( REPLY * r ) {
+	ITEM *item_n = NULL;
+	DB *n = NULL;
+	char hexbuf[HEX_LEN+1];
+	char addrbuf[FULL_ADDSTRLEN+1];
+	long int k;
+
+	r_printf( r, "Known host id / address pairs:\n" );
+
+	item_n = _main->database->list->start;
+	for( k = 0; k < _main->database->list->counter; k++ ) {
+		n = item_n->val;
+
+		r_printf( r, " %s /  %s\n", id_str( n->host_id, hexbuf ), addr_str( &n->c_addr, addrbuf ) );
+
+		item_n = list_next( item_n );
+	}
+
+	r_printf( r, "Found %d entries.\n", k );
+}
+
+void cmd_print_nodes( REPLY * r ) {
+	ITEM *item_n = NULL;
+	NODE *n = NULL;
+	char hexbuf[HEX_LEN+1];
+	char addrbuf[FULL_ADDSTRLEN+1];
+	long int k;
+
+	r_printf( r, "Known node id / address pairs:\n" );
+
+	item_n = _main->nodes->list->start;
+	for( k = 0; k < _main->nodes->list->counter; k++ ) {
+		n = item_n->val;
+
+		r_printf( r, "%s /  %s\n", id_str( n->id, hexbuf ), addr_str( &n->c_addr, addrbuf ) );
+
+		item_n = list_next( item_n );
+	}
+
+	r_printf( r, "Found %d entries.\n", k );
 }
 
 int cmd_exec( REPLY * r, int argc, char **argv ) {
@@ -221,6 +265,10 @@ int cmd_exec( REPLY * r, int argc, char **argv ) {
 		r_printf( r, "Search started for %s.\n", id_str( id, hexbuf ) );
 	} else if( strcmp( argv[0], "print_nbhd" ) == 0 ) {
 		cmd_print_nbhd( r );
+	} else if( strcmp( argv[0], "print_database" ) == 0 ) {
+		cmd_print_database( r );
+	} else if( strcmp( argv[0], "print_nodes" ) == 0 ) {
+		cmd_print_nodes( r );
 	} else if( strcmp( argv[0], "shutdown" ) == 0 ) {
 
 		r_printf( r, "Shutting down now.\n" );
