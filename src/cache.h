@@ -23,7 +23,7 @@ struct obj_cache {
 };
 
 struct obj_key {
-	UCHAR id[SHA_DIGEST_LENGTH];
+	UCHAR skey[SHA_DIGEST_LENGTH];
 	time_t time;
 	int type;
 };
@@ -31,8 +31,8 @@ struct obj_key {
 struct obj_cache *cache_init( void );
 void cache_free( void );
 
-void cache_put( UCHAR *id, int type );
-void cache_del( UCHAR *id );
+void cache_put( UCHAR *skey, int type );
+void cache_del( UCHAR *skey );
 
 void cache_expire( void );
-int cache_validate( UCHAR *id );
+int cache_validate( UCHAR *skey );
