@@ -70,7 +70,7 @@ void announce_free( void ) {
 	myfree( _main->announce, "announce_free" );
 }
 
-ANNOUNCE *announce_put( UCHAR *lkp_id ) {
+ANNOUNCE *announce_put( UCHAR *lkp_id, UCHAR *host_id ) {
 	ITEM *i = NULL;
 	ANNOUNCE *a = NULL;
 
@@ -91,7 +91,7 @@ ANNOUNCE *announce_put( UCHAR *lkp_id ) {
 	hash_put( _main->announce->hash, a->lkp_id, SHA_DIGEST_LENGTH, i );
 
 	/* Search the requested name */
-	nbhd_announce( a );
+	nbhd_announce( a, host_id );
 
 	return a;
 }
@@ -145,7 +145,7 @@ void announce_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr ) {
 
 		/* Ask the node just once */
 		if( !node_me( node_id ) ) {
-			send_announce( c_addr, lkp_id );
+			send_announce( c_addr, lkp_id, _main->conf->host_id );
 		}
 
 		/* Remember that node */

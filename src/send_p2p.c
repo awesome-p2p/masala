@@ -139,7 +139,7 @@ void send_pong( IP *sa, UCHAR *node_sk ) {
 	log_info( "PONG %s", addr_str( sa, addrbuf ) );
 }
 
-void send_announce( IP *sa, UCHAR *lkp_id ) {
+void send_announce( IP *sa, UCHAR *lkp_id, UCHAR *host_id ) {
 	struct obj_ben *dict = ben_init( BEN_DICT );
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
@@ -183,7 +183,7 @@ void send_announce( IP *sa, UCHAR *lkp_id ) {
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"f", 1 );
-	ben_str( val, _main->conf->host_id, SHA_DIGEST_LENGTH );
+	ben_str( val, host_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Query Type: Search node or search value. */

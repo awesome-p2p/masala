@@ -686,7 +686,7 @@ void p2p_announce_myself( void ) {
 	rand_urandom( lkp_id, SHA_DIGEST_LENGTH );
 
 	/* Start find process */
-	announce_put( lkp_id );
+	announce_put( lkp_id, _main->conf->host_id );
 }
 
 void p2p_compute_id( UCHAR *host_id, const char *hostname ) {

@@ -23,7 +23,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 void send_ping( IP *sa, int type );
 void send_pong( IP *sa, UCHAR *node_sk );
 
-void send_announce( IP *sa, UCHAR *lkp_id );
+void send_announce( IP *sa, UCHAR *lkp_id, UCHAR *host_id );
 void send_find( IP *sa, UCHAR *node_id );
 void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id );
 

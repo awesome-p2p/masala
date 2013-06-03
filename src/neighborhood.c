@@ -197,7 +197,7 @@ void nbhd_lookup( LOOKUP *l ) {
 	}
 }
 
-void nbhd_announce( ANNOUNCE *a ) {
+void nbhd_announce( ANNOUNCE *a, UCHAR *host_id ) {
 	ITEM *item_b = NULL;
 	BUCK *b = NULL;
 	ITEM *item_n = NULL;
@@ -206,7 +206,7 @@ void nbhd_announce( ANNOUNCE *a ) {
 	long int max = 0;
 
 	/* Find a matching bucket */
-	if( (item_b = bckt_find_any_match( _main->nbhd, _main->conf->host_id )) == NULL ) {
+	if( (item_b = bckt_find_any_match( _main->nbhd, host_id )) == NULL ) {
 		return;
 	}
 
@@ -221,7 +221,7 @@ void nbhd_announce( ANNOUNCE *a ) {
 		announce_remember( a, n->id );
 
 		/* Send announcement */
-		send_announce( &n->c_addr, a->lkp_id );
+		send_announce( &n->c_addr, a->lkp_id, host_id );
 
 		item_n = list_next( item_n );
 	}

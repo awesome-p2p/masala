@@ -36,7 +36,7 @@ typedef struct obj_node_announce ANNOUNCE;
 struct obj_announce *announce_init( void );
 void announce_free( void );
 
-ANNOUNCE *announce_put( UCHAR *lkp_id );
+ANNOUNCE *announce_put( UCHAR *lkp_id, UCHAR *host_id );
 void announce_del( ITEM *i );
 
 void announce_expire( void );
