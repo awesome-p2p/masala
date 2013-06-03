@@ -110,7 +110,7 @@ void p2p_bootstrap( void ) {
 	while( p != NULL && i < XP2P_MAX_BOOTSTRAP_NODES ) {
 
 		/* Send PING to a bootstrap node */
-		if( strcmp( _main->conf->bootstrap_node, CONF_BOOTSTRAP_NODE ) == 0 ) {
+		if( ((IP *)p->ai_addr)->sin6_addr.s6_addr[0] == 0xff ) {
 			send_ping( (IP *)p->ai_addr, SEND_MULTICAST );
 		} else {
 			send_ping( (IP *)p->ai_addr, SEND_UNICAST );
