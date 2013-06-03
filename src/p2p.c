@@ -115,7 +115,7 @@ void p2p_bootstrap( void ) {
 		} else {
 			send_ping( (IP *)p->ai_addr, SEND_UNICAST );
 		}
-		
+
 		p = p->ai_next;
 		i++;
 	}
@@ -361,7 +361,7 @@ void p2p_announce( struct obj_ben *packet, UCHAR *node_sk, IP *from ) {
 	}
 
 	/* Store announced host_id */
-	db_put(ben_host_id->v.s->s, from);
+	db_put( ben_host_id->v.s->s, from );
 
 	/* Reply nodes, that might suit even better */
 	nbhd_send( from, ben_host_id->v.s->s, ben_lkp_id->v.s->s, node_sk, (UCHAR *)"A");

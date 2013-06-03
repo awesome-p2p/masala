@@ -53,14 +53,14 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 LIST *bckt_init( void ) {
 	BUCK *b = (BUCK *) myalloc( sizeof(BUCK), "bckt_init" );
 	LIST *l = (LIST *) list_init();
-	
+
 	/* First bucket */
 	memset( b->id, '\0', SHA_DIGEST_LENGTH );
 	b->nodes = list_init();
 
 	/* Connect bucket */
 	list_put( l, b );
-	
+
 	return l;
 }
 
@@ -232,12 +232,12 @@ int bckt_split( LIST *thislist, const UCHAR *id ) {
 	if( bckt_compute_id( thislist, item_b, id_new) < 0 ) {
 		return 0;
 	}
-	
+
 	/* Create new bucket */
 	b_new = (BUCK *) myalloc( sizeof(BUCK), "split_bucket" );
 	memcpy( b_new->id, id_new, SHA_DIGEST_LENGTH );
 	b_new->nodes = list_init();
-	
+
 	/* Insert new bucket */
 	list_ins( thislist, item_b, b_new );
 

@@ -311,7 +311,7 @@ void udp_multicast( void ) {
 
 	/* Listen to ff0e::1 */
 	memset( &hints, '\0', sizeof(hints) );
-	if( getaddrinfo( "ff0e::1", _main->conf->bootstrap_port, &hints, &multicast) != 0 ) {
+	if( getaddrinfo( "ff0e::1", _main->conf->bootstrap_port, &hints, &multicast ) != 0 ) {
 		log_err( "getaddrinfo failed" );
 	}
 	memset( &mreq, '\0', sizeof(mreq) );

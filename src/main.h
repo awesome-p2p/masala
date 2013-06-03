@@ -37,7 +37,7 @@ struct obj_main {
 	char **argv;
 
 	/* Data */
-	struct obj_conf	*conf;
+	struct obj_conf *conf;
 	struct obj_nodes *nodes;
 	struct obj_udp *udp;
 	struct obj_p2p *p2p;

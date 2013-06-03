@@ -134,7 +134,7 @@ ITEM *list_ins( LIST *list, ITEM *here, void *payload ) {
 	} else if( here == list->stop ) {
 		list->start = here->next;
 	}
-	
+
 	/* Increment counter */
 	list->counter++;
 

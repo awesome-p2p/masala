@@ -175,7 +175,7 @@ void lkp_success( UCHAR *lkp_id, UCHAR *node_id, UCHAR *address ) {
 	}
 	l = i->val;
 
-	if(l->callback)
+	if( l->callback )
 		l->callback( l->ctx, node_id, address );
 
 	/* Done */
