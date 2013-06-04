@@ -275,13 +275,13 @@ void p2p_cron( void ) {
 	}
 
 	if( node_counter() == 0 ) {
-		
+
 		/* Bootstrap PING */
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_restart ) {
 			p2p_bootstrap();
 			_main->p2p->time_restart = time_add_2_min_approx();
 		}
-	
+
 	} else {
 
 		/* Split container every ~2 minutes */
@@ -289,13 +289,13 @@ void p2p_cron( void ) {
 			nbhd_split();
 			_main->p2p->time_split = time_add_2_min_approx();
 		}
-	
+
 		/* Ping all nodes every ~2 minutes */
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_ping ) {
 			nbhd_ping();
 			_main->p2p->time_ping = time_add_2_min_approx();
 		}
-	
+
 		/* Find nodes every ~2 minutes */
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_find ) {
 			nbhd_find_myself();
@@ -391,7 +391,6 @@ void p2p_lookup( struct obj_ben *packet, UCHAR *node_sk, IP *from ) {
 		/* Reply closer nodes */
 		nbhd_send( from, ben_find_id->v.s->s, ben_lkp_id->v.s->s, node_sk, (UCHAR *)"L");
 	}
-
 }
 
 void p2p_pong( UCHAR *node_id, UCHAR *node_sk, IP *from ) {
@@ -466,8 +465,8 @@ void p2p_node_find( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, IP *
 		memcpy( &sin.sin6_port, po->v.s->s, 2 );
 
 		/* Store node */
-		if( !node_me( id->v.s->s) ) {
-			n = node_put( id->v.s->s, ( IP *)&sin );
+		if( !node_me( id->v.s->s ) ) {
+			n = node_put( id->v.s->s, (IP *)&sin );
 			node_update_address( n,( IP *)&sin );
 			nbhd_put( n );
 		}
@@ -644,7 +643,7 @@ void p2p_node_lookup( struct obj_ben *packet, UCHAR *node_id, UCHAR *node_sk, IP
 		/* Store node */
 		if( !node_me( id->v.s->s) ) {
 			n = node_put( id->v.s->s, (IP *)&sin );
-			node_update_address( n,( IP *)&sin );
+			node_update_address( n,(IP *)&sin );
 			nbhd_put( n );
 		}
 

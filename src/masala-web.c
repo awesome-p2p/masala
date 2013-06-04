@@ -150,7 +150,7 @@ void* web_loop( void* _ ) {
 	}
 
 	val = 1;
-	if( (rc = setsockopt( sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (char*) &val, sizeof(val) )) < 0 ) {
+	if( (rc = setsockopt( sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (char *) &val, sizeof(val) )) < 0 ) {
 		log_err( "Web: Failed to set socket options: %s", gai_strerror( rc ) );
 		return NULL;
 	}

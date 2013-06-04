@@ -75,7 +75,7 @@ NODE *node_put( UCHAR *id, IP *sa ) {
 	NODE *n = NULL;
 
 	/* It's me */
-	if( node_me( id) ) {
+	if( node_me( id ) ) {
 		return NULL;
 	}
 
