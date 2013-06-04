@@ -52,7 +52,7 @@ void send_ping( IP *sa, int type ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
-	UCHAR skey[SHA_DIGEST_LENGTH];
+	UCHAR session_id[SHA_DIGEST_LENGTH];
 	char addrbuf[FULL_ADDSTRLEN+1];
 
 	/*
@@ -61,8 +61,8 @@ void send_ping( IP *sa, int type ) {
 		1:q 1:p
 	*/
 
-	rand_urandom( skey, SHA_DIGEST_LENGTH );
-	cache_put( skey, type );
+	rand_urandom( session_id, SHA_DIGEST_LENGTH );
+	cache_put( session_id, type );
 
 	/* ID */
 	key = ben_init( BEN_STR );
@@ -75,7 +75,7 @@ void send_ping( IP *sa, int type ) {
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"k", 1 );
-	ben_str( val, skey, SHA_DIGEST_LENGTH );
+	ben_str( val, session_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Query type */
@@ -95,7 +95,7 @@ void send_ping( IP *sa, int type ) {
 	log_info( "PING %s", addr_str( sa, addrbuf ) );
 }
 
-void send_pong( IP *sa, UCHAR *node_sk ) {
+void send_pong( IP *sa, UCHAR *session_id ) {
 	struct obj_ben *dict = ben_init( BEN_DICT );
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
@@ -119,7 +119,7 @@ void send_pong( IP *sa, UCHAR *node_sk ) {
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"k", 1 );
-	ben_str( val, node_sk, SHA_DIGEST_LENGTH );
+	ben_str( val, session_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Query Type */
@@ -144,7 +144,7 @@ void send_announce( IP *sa, UCHAR *lkp_id, UCHAR *host_id ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
-	UCHAR skey[SHA_DIGEST_LENGTH];
+	UCHAR session_id[SHA_DIGEST_LENGTH];
 	char addrbuf[FULL_ADDSTRLEN+1];
 
 	/*
@@ -155,8 +155,8 @@ void send_announce( IP *sa, UCHAR *lkp_id, UCHAR *host_id ) {
 		1:q 1:a
 	*/
 
-	rand_urandom( skey, SHA_DIGEST_LENGTH );
-	cache_put( skey, SEND_UNICAST );
+	rand_urandom( session_id, SHA_DIGEST_LENGTH );
+	cache_put( session_id, SEND_UNICAST );
 
 	/* ID */
 	key = ben_init( BEN_STR );
@@ -169,7 +169,7 @@ void send_announce( IP *sa, UCHAR *lkp_id, UCHAR *host_id ) {
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"k", 1 );
-	ben_str( val, skey, SHA_DIGEST_LENGTH );
+	ben_str( val, session_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Lookup ID */
@@ -208,7 +208,7 @@ void send_find( IP *sa, UCHAR *node_id ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
-	UCHAR skey[SHA_DIGEST_LENGTH];
+	UCHAR session_id[SHA_DIGEST_LENGTH];
 	char addrbuf[FULL_ADDSTRLEN+1];
 	char hexbuf[HEX_LEN+1];
 
@@ -219,8 +219,8 @@ void send_find( IP *sa, UCHAR *node_id ) {
 		1:q 1:f
 	*/
 
-	rand_urandom( skey, SHA_DIGEST_LENGTH );
-	cache_put( skey, SEND_UNICAST );
+	rand_urandom( session_id, SHA_DIGEST_LENGTH );
+	cache_put( session_id, SEND_UNICAST );
 
 	/* ID */
 	key = ben_init( BEN_STR );
@@ -233,7 +233,7 @@ void send_find( IP *sa, UCHAR *node_id ) {
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"k", 1 );
-	ben_str( val, skey, SHA_DIGEST_LENGTH );
+	ben_str( val, session_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Target */
@@ -265,7 +265,7 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
 	struct obj_raw *raw = NULL;
-	UCHAR skey[SHA_DIGEST_LENGTH];
+	UCHAR session_id[SHA_DIGEST_LENGTH];
 	char addrbuf[FULL_ADDSTRLEN+1];
 	char hexbuf[HEX_LEN+1];
 
@@ -277,8 +277,8 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 		1:q 1:l
 	*/
 
-	rand_urandom( skey, SHA_DIGEST_LENGTH );
-	cache_put( skey, SEND_UNICAST );
+	rand_urandom( session_id, SHA_DIGEST_LENGTH );
+	cache_put( session_id, SEND_UNICAST );
 
 	/* ID */
 	key = ben_init( BEN_STR );
@@ -291,7 +291,7 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"k", 1 );
-	ben_str( val, skey, SHA_DIGEST_LENGTH );
+	ben_str( val, session_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Lookup ID */
@@ -325,7 +325,7 @@ void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id ) {
 	log_info( "LOOKUP %s at %s", id_str( node_id, hexbuf ), addr_str( sa, addrbuf ) );
 }
 
-void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_type ) {
+void send_node( IP *sa, BUCK *b, UCHAR *session_id, UCHAR *lkp_id, UCHAR *reply_type ) {
 	struct obj_ben *dict = ben_init( BEN_DICT );
 	struct obj_ben *list_id = NULL;
 	struct obj_ben *dict_node = NULL;
@@ -360,7 +360,7 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"k", 1 );
-	ben_str( val, node_sk, SHA_DIGEST_LENGTH );
+	ben_str( val, session_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Lookup ID
@@ -451,7 +451,7 @@ void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_typ
 	}
 }
 
-void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
+void send_value( IP *sa, IP *value, UCHAR *session_id, UCHAR *lkp_id ) {
 	struct obj_ben *dict = ben_init( BEN_DICT );
 	struct obj_ben *key = NULL;
 	struct obj_ben *val = NULL;
@@ -477,7 +477,7 @@ void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id ) {
 	key = ben_init( BEN_STR );
 	val = ben_init( BEN_STR );
 	ben_str( key,( UCHAR *)"k", 1 );
-	ben_str( val, node_sk, SHA_DIGEST_LENGTH );
+	ben_str( val, session_id, SHA_DIGEST_LENGTH );
 	ben_dict( dict, key, val );
 
 	/* Lookup ID */

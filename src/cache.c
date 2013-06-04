@@ -71,18 +71,18 @@ void cache_free( void ) {
 	myfree( _main->cache, "cache_free" );
 }
 
-void cache_put( UCHAR *skey, int type ) {
+void cache_put( UCHAR *session_id, int type ) {
 	ITEM *item_sk = NULL;
 	struct obj_key *sk = NULL;
 
-	if( hash_exists( _main->cache->hash, skey, SHA_DIGEST_LENGTH) ) {
+	if( hash_exists( _main->cache->hash, session_id, SHA_DIGEST_LENGTH) ) {
 		return;
 	}
 
 	sk = (struct obj_key *) myalloc( sizeof(struct obj_key), "cache_put" );
 
-	/* Session key */
-	memcpy( sk->skey, skey, SHA_DIGEST_LENGTH );
+	/* Session id */
+	memcpy( sk->session_id, session_id, SHA_DIGEST_LENGTH );
 
 	/* Multicast or Unicast */
 	sk->type = type;
@@ -91,19 +91,19 @@ void cache_put( UCHAR *skey, int type ) {
 	sk->time = time_add_1_min();
 
 	item_sk = list_put( _main->cache->list, sk );
-	hash_put( _main->cache->hash, sk->skey, SHA_DIGEST_LENGTH, item_sk );
+	hash_put( _main->cache->hash, sk->session_id, SHA_DIGEST_LENGTH, item_sk );
 }
 
-void cache_del( UCHAR *skey ) {
+void cache_del( UCHAR *session_id ) {
 	ITEM *item_sk = NULL;
 	struct obj_key *sk = item_sk->val;
 
-	if( ( item_sk = hash_get( _main->cache->hash, skey, SHA_DIGEST_LENGTH)) == NULL ) {
+	if( ( item_sk = hash_get( _main->cache->hash, session_id, SHA_DIGEST_LENGTH)) == NULL ) {
 		return;
 	}
 	sk = item_sk->val;
 
-	hash_del( _main->cache->hash, skey, SHA_DIGEST_LENGTH );
+	hash_del( _main->cache->hash, session_id, SHA_DIGEST_LENGTH );
 	list_del( _main->cache->list, item_sk );
 	myfree( sk, "cache_del" );
 }
@@ -121,31 +121,31 @@ void cache_expire( void ) {
 
 		/* Bad cache */
 		if( _main->p2p->time_now.tv_sec > sk->time ) {
-			cache_del( sk->skey );
+			cache_del( sk->session_id );
 		}
 		item_sk = next_sk;
 	}
 }
 
-int cache_validate( UCHAR *skey ) {
+int cache_validate( UCHAR *session_id ) {
 	ITEM *item_sk = NULL;
 	struct obj_key *sk = NULL;
 
 	/* Key not found */
-	if( ( item_sk = hash_get( _main->cache->hash, skey, SHA_DIGEST_LENGTH)) == NULL ) {
+	if( ( item_sk = hash_get( _main->cache->hash, session_id, SHA_DIGEST_LENGTH)) == NULL ) {
 		return 0;
 	}
 	sk = item_sk->val;
 
 	/* Unicast: 
-	 *  Delete session key
+	 *  Delete session id
 	 *
 	 * Multicast:
-	 *  Ignore session key, because we will receive multiple answers with same session key.
-	 *  The session key will timeout later...
+	 *  Ignore session id, because we will receive multiple answers with same session id.
+	 *  The session id will timeout later...
 	 */
 	if( sk->type == SEND_UNICAST ) {
-		cache_del( skey );
+		cache_del( session_id );
 	}
 
 	return 1;

@@ -21,13 +21,13 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #define SEND_MULTICAST 1
 
 void send_ping( IP *sa, int type );
-void send_pong( IP *sa, UCHAR *node_sk );
+void send_pong( IP *sa, UCHAR *session_id );
 
 void send_announce( IP *sa, UCHAR *lkp_id, UCHAR *host_id );
 void send_find( IP *sa, UCHAR *node_id );
 void send_lookup( IP *sa, UCHAR *node_id, UCHAR *lkp_id );
 
-void send_node( IP *sa, BUCK *b, UCHAR *node_sk, UCHAR *lkp_id, UCHAR *reply_type );
-void send_value( IP *sa, IP *value, UCHAR *node_sk, UCHAR *lkp_id );
+void send_node( IP *sa, BUCK *b, UCHAR *session_id, UCHAR *lkp_id, UCHAR *reply_type );
+void send_value( IP *sa, IP *value, UCHAR *session_id, UCHAR *lkp_id );
 
 void send_exec( IP *sa, struct obj_raw *raw );

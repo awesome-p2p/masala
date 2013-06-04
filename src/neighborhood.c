@@ -82,7 +82,7 @@ void nbhd_split( void ) {
 	}
 }
 
-void nbhd_send( IP *sa, UCHAR *node_id, UCHAR *lkp_id, UCHAR *node_sk, UCHAR *reply_type ) {
+void nbhd_send( IP *sa, UCHAR *node_id, UCHAR *lkp_id, UCHAR *session_id, UCHAR *reply_type ) {
 	ITEM *i = NULL;
 	BUCK *b = NULL;
 
@@ -91,7 +91,7 @@ void nbhd_send( IP *sa, UCHAR *node_id, UCHAR *lkp_id, UCHAR *node_sk, UCHAR *re
 	}
 	b = i->val;
 
-	send_node( sa, b, node_sk, lkp_id, reply_type );
+	send_node( sa, b, session_id, lkp_id, reply_type );
 }
 
 void nbhd_ping( void ) {
