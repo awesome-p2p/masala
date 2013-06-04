@@ -92,7 +92,6 @@ void p2p_bootstrap( void ) {
 	struct addrinfo *info = NULL;
 	struct addrinfo *p = NULL;
 	int rc = 0;
-	int i = 0;
 
 	log_info( "Connecting to a bootstrap server" );
 
@@ -107,7 +106,7 @@ void p2p_bootstrap( void ) {
 	}
 
 	p = info;
-	while( p != NULL && i < XP2P_MAX_BOOTSTRAP_NODES ) {
+	while( p != NULL ) {
 
 		/* Send PING to a bootstrap node */
 		if( ((IP *)p->ai_addr)->sin6_addr.s6_addr[0] == 0xff ) {
@@ -117,7 +116,6 @@ void p2p_bootstrap( void ) {
 		}
 
 		p = p->ai_next;
-		i++;
 	}
 
 	freeaddrinfo( info );

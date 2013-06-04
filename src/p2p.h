@@ -17,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define XP2P_MAX_BOOTSTRAP_NODES 20
-
 struct obj_p2p {
 	struct timeval time_now;
 	time_t time_maintainance;
