@@ -10,7 +10,7 @@ cd openwrt
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
-https://github.com/mwarning/masala.git
+git clone https://github.com/mwarning/masala.git
 cp -rf masala/openwrt/masala package/
 rm -rf masala/
 
