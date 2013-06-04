@@ -535,16 +535,16 @@ void* dns_loop( void *_ ) {
 		return NULL;
 	}
 
+	/* Set receive timeout */
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+	setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
+
 	rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) );
 	if(rc < 0) {
 		log_err( "DNS: Failed to bind socket to address: %s", gai_strerror(rc) );
 		return NULL;
 	}
-
-	/* Set receive timeout */
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
-	setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 
 	log_info( "Bind DNS interface to %s, interface %s.",
 		addr ? addr_str( &sockaddr, addrbuf ) : "<any>",

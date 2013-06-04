@@ -265,14 +265,14 @@ int _nss_masala_valid_tld( const char *hostname, int size ) {
 
 int _nss_masala_lookup( const char *hostname, int size, UCHAR *address ) {
 
-	IP sa;
-	socklen_t salen = sizeof(IP);
+	IP addr;
+	socklen_t addrlen = sizeof(IP);
 	char buffer[MAIN_BUF+1];
 	int sockfd = -1;
 	int n = 0;
 	struct timeval tv;
 
-	memset( &sa, '\0', salen );
+	memset( &addr, '\0', addrlen );
 	memset( buffer, '\0', MAIN_BUF+1 );
 
 	/* Setup UDP */
@@ -287,18 +287,18 @@ int _nss_masala_lookup( const char *hostname, int size, UCHAR *address ) {
 	setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO,( char *)&tv, sizeof(struct timeval) );
 
 	/* Setup IPv6 */
-	sa.sin6_family = AF_INET6;
-	sa.sin6_port = htons( MASALA_NSS_PORT );
-	if( !inet_pton( AF_INET6, "::1", &(sa.sin6_addr)) ) {
+	addr.sin6_family = AF_INET6;
+	addr.sin6_port = htons( MASALA_NSS_PORT );
+	if( !inet_pton( AF_INET6, "::1", &(addr.sin6_addr)) ) {
 		return 0;
 	}
 
-	n = sendto( sockfd, hostname, size, 0, (struct sockaddr *)&sa, salen );
+	n = sendto( sockfd, hostname, size, 0, (struct sockaddr *)&addr, addrlen );
 	if( n != size ) {
 		return 0;
 	}
 
-	n = recvfrom( sockfd, buffer, MAIN_BUF, 0, (struct sockaddr *)&sa, &salen );
+	n = recvfrom( sockfd, buffer, MAIN_BUF, 0, (struct sockaddr *)&addr, &addrlen );
 	if( n != (SHA_DIGEST_LENGTH+16) ) {
 		return 0;
 	}

@@ -321,18 +321,18 @@ void *cmd_remote_loop( void *_ ) {
 		return NULL;
 	}
 
-	rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) );
-	if( rc < 0 ) {
-		log_err( "CMD: Failed to bind socket to address: %s", gai_strerror( rc ) );
-		return NULL;
-	}
-
 	/* Set receive timeout */
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
 	rc = setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 	if( rc < 0 ) {
 		log_err( "CMD: Failed to set socket option: %s", gai_strerror( rc ) );
+		return NULL;
+	}
+
+	rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) );
+	if( rc < 0 ) {
+		log_err( "CMD: Failed to bind socket to address: %s", gai_strerror( rc ) );
 		return NULL;
 	}
 
