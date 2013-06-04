@@ -77,4 +77,5 @@ Announce the hostname *fubar.p2p* with the encryption password *fubar*:
 
 ## BUGS
 
-Lack of IPv6 support by the providers.
+  * Cannot resolve own host id without other nodes present.
+  * Lack of IPv6 support by the providers.
