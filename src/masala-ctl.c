@@ -91,12 +91,21 @@ int main(int argc, char **argv) {
 	}
 
 	/* Receive reply */
-	while( (rc = read( sockfd, buffer, sizeof(buffer) - 1) ) > 0 ) {
-		buffer[rc] = '\0';
-		printf( buffer );
+	rc = read( sockfd, buffer, sizeof(buffer) - 1);
+
+	if( rc <= 0 ) {
+		printf("No response received.\n");
+		return 1;
 	}
 
+	buffer[rc] = '\0';
 	close( sockfd );
 
-	return 0;
+	if( buffer[0] == '0' ) {
+		fprintf( stdout, buffer+1 );
+		return 0;
+	} else {
+		fprintf( stderr, buffer+1 );
+		return 1;
+	}
 }

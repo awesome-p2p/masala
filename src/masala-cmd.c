@@ -228,8 +228,6 @@ int cmd_exec( REPLY * r, int argc, char **argv ) {
 	IP *addr;
 	int rc = 0;
 
-	r_init( r );
-
 	if( argc == 0 ) {
 		/* print usage */
 		r_printf( r, cmd_usage_str );
@@ -361,11 +359,18 @@ void *cmd_remote_loop( void *_ ) {
 			continue;
 		}
 
+		/* init reply and reserve room for return status */
+		r_init( &reply );
+		r_printf( &reply, "_" );
+
 		/* split up the command line into an argument array */
 		cmd_to_args( request, &argc, &argv[0], sizeof(argv) );
 
 		/* execute command line */
-		cmd_exec( &reply, argc, argv );
+		rc = cmd_exec( &reply, argc, argv );
+
+		/* insert return code */
+		reply.data[0] = (rc == 0) ? '0' : '1';
 
 		rc = sendto( sockfd, reply.data, reply.size, 0, (struct sockaddr *)&clientaddr, sizeof(IP) );
 	}
@@ -382,7 +387,7 @@ void cmd_console_loop() {
     fd_set fds;
 	int rc;
 
-	printf( "Press Enter for help.\n" );
+	fprintf( stdout, "Press Enter for help.\n" );
 
     while( _main->status == MAIN_ONLINE ) {
 		FD_ZERO( &fds );
@@ -407,10 +412,17 @@ void cmd_console_loop() {
 		/* split up the command line into an argument array */
 		cmd_to_args( request, &argc, &argv[0], sizeof(argv) );
 
-		/* execute command line */
-		cmd_exec( &reply, argc, argv );
+		/* init reply */
+		r_init( &reply );
 
-		printf( "%.*s", (int) reply.size, reply.data );
+		/* execute command line */
+		rc = cmd_exec( &reply, argc, argv );
+
+		if( rc == 0 ) {
+			fprintf( stdout, "%.*s", (int) reply.size, reply.data );
+		} else {
+			fprintf( stderr, "%.*s", (int) reply.size, reply.data );
+		}
     }
 }
 
