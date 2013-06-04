@@ -230,7 +230,11 @@ int cmd_exec( REPLY * r, int argc, char **argv ) {
 
 	r_init( r );
 
-    if( strcmp( argv[0], "ping" ) == 0 && (argc == 2 || argc == 3) ) {
+	if( argc == 0 ) {
+		/* print usage */
+		r_printf( r, cmd_usage_str );
+		rc = 1;
+	} else if( strcmp( argv[0], "ping" ) == 0 && (argc == 2 || argc == 3) ) {
 
 		const char *addr = argv[1];
 		const char *port =  (argc == 3) ? argv[2] : CONF_PORT;
