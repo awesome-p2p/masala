@@ -37,7 +37,6 @@ void p2p_cron( void );
 void p2p_bootstrap( void );
 
 void p2p_parse( UCHAR *bencode, size_t bensize, IP *from );
-void p2p_decrypt( UCHAR *bencode, size_t bensize, IP *from );
 void p2p_decode( UCHAR *bencode, size_t bensize, IP *from );
 
 void p2p_ping( UCHAR *session_id, IP *from );
