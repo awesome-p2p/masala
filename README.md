@@ -14,12 +14,12 @@ top of UDP. There are 4 message types: PING, FIND, LOOKUP and ANNOUNCE. By
 default, masala sends the first packet to a multicast address. So there is no
 configuration necessary within your broadcast domain (LAN) and will continue to do so
 in intervals until another node is found. With a bootstrap server, it is also possible
-to connect nodes around the globe.
-Masala also includes a very simple DNS server so it can be used as a local upstream
-DNS server. A simple Web-Server does the same for simple queries
-like e.g. http://localhost:8080/foo.p2p.
-Masala also provides an interactive shell and a tool to send commands to masala.
-This way scripts can easliy issue commands by calling e.g. "masla-ctl lookup foo.p2p".
+to connect nodes around the globe. The following features are optional:
+
+  * An interactive shell and a tool to send commands to masala. This way scripts can easily issue commands: `masla-ctl lookup foo.p2p`
+  * A simple DNS server interface that can be used like a local upstream DNS server.
+  * A simple web server interface can resolve queries: `http://localhost:8080/foo.p2p`
+  * Name Service Switch (NSS) support through /etc/nsswitch.conf.
 
 ## OPTIONS
 
