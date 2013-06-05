@@ -556,7 +556,7 @@ void* dns_loop( void *_ ) {
 		myfree( task, "masala-dns" );
 		task = NULL;
 
-		if( _main->status == MAIN_ONLINE )
+		if( _main->status != MAIN_ONLINE )
 			break;
 
 		rc = recvfrom( sockfd, buffer, sizeof( buffer ), 0, (struct sockaddr *) &clientaddr, &addr_len );
