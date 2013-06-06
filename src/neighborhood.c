@@ -76,7 +76,7 @@ void nbhd_del( NODE *n ) {
 void nbhd_split( void ) {
 	/* Do as many splits as neccessary */
 	for( ;; ) {
-		if( !bckt_split( _main->nbhd, _main->conf->node_id) ) {
+		if( !bckt_split( _main->nbhd, _main->conf->node_id ) ) {
 			return;
 		}
 	}
@@ -86,7 +86,7 @@ void nbhd_send( IP *sa, UCHAR *node_id, UCHAR *lkp_id, UCHAR *session_id, UCHAR 
 	ITEM *i = NULL;
 	BUCK *b = NULL;
 
-	if( ( i = bckt_find_any_match( _main->nbhd, node_id)) == NULL ) {
+	if( (i = bckt_find_any_match( _main->nbhd, node_id )) == NULL ) {
 		return;
 	}
 	b = i->val;
@@ -148,7 +148,7 @@ void nbhd_find( UCHAR *find_id ) {
 	NODE *n = NULL;
 	long int j = 0;
 
-	if( ( item_b = bckt_find_any_match( _main->nbhd, find_id)) != NULL ) {
+	if( (item_b = bckt_find_any_match( _main->nbhd, find_id )) != NULL ) {
 		b = item_b->val;
 
 		item_n = b->nodes->start;
@@ -176,7 +176,7 @@ void nbhd_lookup( LOOKUP *l ) {
 	long int max = 0;
 
 	/* Find a matching bucket */
-	if( ( item_b = bckt_find_any_match( _main->nbhd, l->find_id )) == NULL ) {
+	if( (item_b = bckt_find_any_match( _main->nbhd, l->find_id )) == NULL ) {
 		return;
 	}
 
