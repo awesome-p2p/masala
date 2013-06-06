@@ -28,11 +28,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/epoll.h>
 
 #include "malloc.h"
-#include "main.h"
-#include "conf.h"
-#include "str.h"
 #include "list.h"
-#include "ben.h"
 
 LIST *list_init( void ) {
 	LIST *list = (LIST *) myalloc( sizeof(LIST), "list_init" );
