@@ -71,9 +71,9 @@ to connect nodes around the globe. The following features are optional:
 
 ## EXAMPLES
 
-Announce the hostname *fubar.p2p* with the encryption password *fubar*:
+Announce the hostname *fubar.p2p*:
 
-	$ masala -h fubar.p2p -k fubar
+	$ masala -h fubar.p2p
 
 ## BUGS
 
