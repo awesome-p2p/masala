@@ -118,15 +118,14 @@ void lkp_del( ITEM *i ) {
 }
 
 void lkp_expire( void ) {
-	ITEM *i = NULL;
+	ITEM *item = NULL;
 	ITEM *next = NULL;
 	LOOKUP *l = NULL;
-	long int j = 0;
 
-	i = _main->lkps->list->start;
-	for( j=0; j<_main->lkps->list->counter; j++ ) {
-		l = i->val;
-		next = list_next( i );
+	item = _main->lkps->list->start;
+	while( item ) {
+		l = item->val;
+		next = list_next( item );
 
 		if( _main->p2p->time_now.tv_sec > l->time_find ) {
 
@@ -134,9 +133,9 @@ void lkp_expire( void ) {
 			if(l->callback)
 				l->callback( l->ctx, l->find_id, NULL );
 
-			lkp_del( i );
+			lkp_del( item );
 		}
-		i = next;
+		item = next;
 	}
 }
 

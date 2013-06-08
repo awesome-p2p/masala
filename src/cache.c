@@ -111,10 +111,9 @@ void cache_expire( void ) {
 	ITEM *item_sk = NULL;
 	ITEM *next_sk = NULL;
 	struct obj_key *sk = NULL;
-	long int i = 0;
 
 	item_sk = _main->cache->list->start;
-	for( i=0; i<_main->cache->list->counter; i++ ) {
+	while( item_sk ) {
 		sk = item_sk->val;
 		next_sk = list_next( item_sk );
 

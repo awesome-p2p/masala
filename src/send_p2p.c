@@ -333,7 +333,6 @@ void send_node( IP *sa, BUCK *b, UCHAR *session_id, UCHAR *lkp_id, UCHAR *reply_
 	struct obj_raw *raw = NULL;
 	ITEM *item_n = NULL;
 	NODE *n = NULL;
-	long int i = 0;
 	IP *sin = NULL;
 	char addrbuf[FULL_ADDSTRLEN+1];
 
@@ -383,7 +382,7 @@ void send_node( IP *sa, BUCK *b, UCHAR *session_id, UCHAR *lkp_id, UCHAR *reply_
 
 	/* Insert nodes */
 	item_n = b->nodes->start;
-	for( i=0; i<b->nodes->counter; i++ ) {
+	while( item_n ) {
 		n = item_n->val;
 
 		/* Do not include nodes, that are questionable */

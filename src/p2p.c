@@ -401,7 +401,6 @@ void p2p_node_find( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id, I
 	struct obj_ben *po = NULL;
 	ITEM *item = NULL;
 	IP sin;
-	long int i = 0;
 
 	if( !cache_validate( session_id ) ) {
 		log_info( "Unexpected reply!" );
@@ -417,7 +416,7 @@ void p2p_node_find( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id, I
 
 	/* Reply */
 	item = nodes->v.l->start;
-	for( i=0; i<nodes->v.l->counter; i++ ) {
+	while( item ) {
 		node = item->val;
 
 		/* Node */
@@ -469,7 +468,6 @@ void p2p_node_announce( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_i
 	struct obj_ben *ben_lkp_id = NULL;
 	ITEM *item = NULL;
 	IP sin;
-	long int i = 0;
 
 	if( !cache_validate( session_id ) ) {
 		log_info( "Unexpected reply!" );
@@ -497,7 +495,7 @@ void p2p_node_announce( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_i
 
 	/* Reply */
 	item = nodes->v.l->start;
-	for( i=0; i<nodes->v.l->counter; i++ ) {
+	while( item ) {
 		node = item->val;
 
 		/* Node */
@@ -554,7 +552,6 @@ void p2p_node_lookup( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id,
 	struct obj_ben *ben_lkp_id = NULL;
 	ITEM *item = NULL;
 	IP sin;
-	long int i = 0;
 
 	if( !cache_validate( session_id ) ) {
 		log_info( "Unexpected reply!" );
@@ -580,7 +577,7 @@ void p2p_node_lookup( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id,
 
 	/* Reply */
 	item = nodes->v.l->start;
-	for( i=0; i<nodes->v.l->counter; i++ ) {
+	while( item ) {
 		node = item->val;
 
 		/* Node */

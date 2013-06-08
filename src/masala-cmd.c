@@ -151,21 +151,20 @@ void cmd_print_nodes( REPLY *r ) {
 	BUCK *b = NULL;
 	ITEM *item_n = NULL;
 	NODE *n = NULL;
-	long int j = 0, k = 0;
 	char hexbuf[HEX_LEN+1];
 
 	r_printf( r, "List of all buckets:\n" );
 
 	/* Cycle through all the buckets */
 	item_b = _main->nbhd->start;
-	for( k=0; k<_main->nbhd->counter; k++ ) {
+	while( item_b ) {
 		b = item_b->val;
 
 		r_printf( r, " Bucket: %s\n", id_str( b->id, hexbuf ) );
 
 		/* Cycle through all the nodes */
 		item_n = b->nodes->start;
-		for( j=0; j<b->nodes->counter; j++ ) {
+		while( item_n ) {
 			n = item_n->val;
 
 			r_printf( r, "  Node: %s\n", id_str( n->id, hexbuf ) );
@@ -182,12 +181,11 @@ void cmd_print_database( REPLY * r ) {
 	DB *n = NULL;
 	char hexbuf[HEX_LEN+1];
 	char addrbuf[FULL_ADDSTRLEN+1];
-	long int k;
 
 	r_printf( r, "Known host id / address pairs:\n" );
 
 	item_n = _main->database->list->start;
-	for( k = 0; k < _main->database->list->counter; k++ ) {
+	while( item_n ) {
 		n = item_n->val;
 
 		r_printf( r, " %s /  %s\n", id_str( n->host_id, hexbuf ), addr_str( &n->c_addr, addrbuf ) );
@@ -195,7 +193,7 @@ void cmd_print_database( REPLY * r ) {
 		item_n = list_next( item_n );
 	}
 
-	r_printf( r, "Found %d entries.\n", k );
+	r_printf( r, "Found %d entries.\n", _main->database->list->counter );
 }
 
 int cmd_exec( REPLY * r, int argc, char **argv ) {

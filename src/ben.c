@@ -232,18 +232,16 @@ long int ben_enc_size( struct obj_ben *node ) {
 				return size;
 
 			item = node->v.d->start;
-			do {
+			while( item ) {
 				tuple = item->val;
 
 				if( tuple->key != NULL && tuple->val != NULL ) {
 					size += ben_enc_size( tuple->key );
 					size += ben_enc_size( tuple->val );
 				}
-				
-				item = list_next( item );
-				
-			} while( item != node->v.d->stop->next );
 
+				item = list_next( item );
+			}
 			break;
 
 		case BEN_LIST:
@@ -256,16 +254,13 @@ long int ben_enc_size( struct obj_ben *node ) {
 				return size;
 
 			item = node->v.l->start;
-			do {
+			while( item ) {
 				if( item->val != NULL ) {
 					size += ben_enc_size( item->val );
 				}
 				item = list_next( item );
-				
-			} while( item != node->v.l->stop->next );
-
+			}
 			break;
-
 		case BEN_INT:
 			snprintf( buf, MAIN_BUF+1, "i%lie", node->v.i );
 			size += strlen( buf );
@@ -275,7 +270,6 @@ long int ben_enc_size( struct obj_ben *node ) {
 			snprintf( buf, MAIN_BUF+1, "%li:", node->v.s->i );
 			size += strlen( buf) + node->v.s->i;
 			break;
-
 	}
 
 	return size;
@@ -318,20 +312,19 @@ UCHAR *ben_enc_rec( struct obj_ben *node, UCHAR *p ) {
  
 			if( node->v.d != NULL && node->v.d->counter > 0 ) {
 				item = node->v.d->start;
-				do {
+				while( item ) {
 					tuple = item->val;
 
 					if( tuple->key != NULL && tuple->val != NULL ) {
 						if( ( p = ben_enc_rec( tuple->key, p)) == NULL )
 							return NULL;
-						
+
 						if( ( p = ben_enc_rec( tuple->val, p)) == NULL )
 							return NULL;
 					}
-					
+
 					item = list_next( item );
-					
-				} while( item != node->v.d->stop->next );
+				}
 			}
 			
 			*p++ = 'e';
@@ -342,13 +335,12 @@ UCHAR *ben_enc_rec( struct obj_ben *node, UCHAR *p ) {
 			
 			if( node->v.l != NULL && node->v.l->counter > 0 ) {
 				item = node->v.l->start;
-				do {
+				while( item ) {
 					if( ( p = ben_enc_rec( item->val, p)) == NULL )
 						return NULL;
-					
+
 					item = list_next( item );
-					
-				} while( item != node->v.l->stop->next );
+				}
 			}
 
 			*p++ = 'e';
@@ -812,16 +804,16 @@ struct obj_ben *ben_searchDictKey( struct obj_ben *node, struct obj_ben *key ) {
 		return NULL;
 
 	item = node->v.d->start;
-
-	do {
+	while( item ) {
 		tuple = item->val;
 		thiskey = tuple->key;
+
 		if( thiskey->v.s->i == key->v.s->i && memcmp( thiskey->v.s->s, key->v.s->s, key->v.s->i) == 0 ) {
 			return tuple->val;
 		}
+
 		item = list_next( item );
-		
-	} while( item != node->v.d->stop->next );
+	}
 
 	return NULL;
 }
@@ -901,7 +893,7 @@ void ben_sort( struct obj_ben *node ) {
 		next = list_next( item );
 
 		/* Reached the end */
-		if( next == node->v.d->start ) {
+		if( next == NULL ) {
 			if( switchcounter == 0 ) {
 				/* The list is sorted now */
 				break;
@@ -925,8 +917,8 @@ void ben_sort( struct obj_ben *node ) {
 			list_swap( node->v.d, item, next );
 			switchcounter++;
 			
-			/* Continue moving up until start is reached */
-			if( next != node->v.d->start ) {
+			/* Continue moving up until end is reached */
+			if( next ) {
 				item = list_prev( next );
 			}
 		} else {

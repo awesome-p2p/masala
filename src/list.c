@@ -50,14 +50,13 @@ void list_free( LIST *list ) {
 }
 
 void list_clear( LIST *list ) {
-	ITEM *i = NULL;
-	long int j = 0;
+	ITEM *item;
 
 	/* Free payload */
-	i = list->start;
-	for( j=0; j<list->counter; j++ ) {
-		myfree( i->val, "list_clear" );
-		i = list_next( i );
+	item = list->start;
+	while( item ) {
+		myfree( item->val, "list_clear" );
+		item = list_next( item );
 	}
 }
 
@@ -75,22 +74,19 @@ ITEM *list_put( LIST *list, void *payload ) {
 	/* Data container */
 	newItem->val = payload;
 
-	/* First item? */
-	if( list->start == NULL )
+	if(list->start == NULL ) {
+		newItem->prev = NULL;
+		newItem->next = NULL;
+
 		list->start = newItem;
-	if( list->stop == NULL )
 		list->stop = newItem;
+	} else {
+		newItem->prev = list->stop;
+		newItem->next = NULL;
 
-	/* Setup pointer for newItem */
-	newItem->next = list->start;
-	newItem->prev = list->stop;
-
-	/* Update pointer for global start/stop */
-	list->start->prev = newItem;
-	list->stop->next  = newItem;
-
-	/* We have a new ending */
-	list->stop = newItem;
+		list->stop->next = newItem;
+		list->stop = newItem;
+	}
 
 	/* Increment counter */
 	list->counter++;
@@ -114,21 +110,16 @@ ITEM *list_ins( LIST *list, ITEM *here, void *payload ) {
 	}
 
 	/* Data */
-	new = (ITEM *) myalloc( sizeof(ITEM), "list_app" );
+	new = (ITEM *) myalloc( sizeof(ITEM), "list_ins" );
 	new->val = payload;
 
 	/* Setup pointer */
 	next = here->next;
-	new->next = here->next;
+	new->next = next;
 	new->prev = here;
 	here->next = new;
-	next->prev = new;
-
-	/* Fix start and stop */
-	if( here == list->start && list->counter == 2 ) {
-		list->stop = here->next;
-	} else if( here == list->stop ) {
-		list->start = here->next;
+	if( next ) {
+		next->prev = new;
 	}
 
 	/* Increment counter */
@@ -140,37 +131,32 @@ ITEM *list_ins( LIST *list, ITEM *here, void *payload ) {
 
 ITEM *list_del( LIST *list, ITEM *item ) {
 	/* Variables */
+	ITEM *prev = NULL;
 	ITEM *next = NULL;
 
 	/* Check input */
 	if( list == NULL )
 		return NULL;
+
 	if( item == NULL )
 		return NULL;
+
 	if( list->counter <= 0 )
 		return NULL;
 
-	/* If TRUE, there is only one item left */
-	if( item == item->next && item == item->prev ) {
-		list->start = NULL;
-		list->stop = NULL;
+	prev = item->prev;
+	next = item->next;
+
+	if( prev == NULL ) {
+		list->start = next;
 	} else {
-		/* Remember next->item */
-		next = item->next;
+		prev->next = next;
+	}
 
-		/* Set list pointer to make the item disappear */
-		item->prev->next = item->next;
-		item->next->prev = item->prev;
-
-		/* If item is the stop item, set new stop item */
-		if( list->stop == item ) {
-			list->stop = item->prev;
-		}
-
-		/* If item is the start item, set new start item */
-		if( list->start == item ) {
-			list->start = item->next;
-		}
+	if( next == NULL ) {
+		list->stop = prev;
+	} else {
+		next->prev = prev;
 	}
 
 	/* Decrement list counter */
@@ -183,113 +169,36 @@ ITEM *list_del( LIST *list, ITEM *item ) {
 }
 
 ITEM *list_next( ITEM *item ) {
-	/* Variables */
-	ITEM *next = NULL;
-
 	/* Next item */
-	if( item != NULL ) {
-		next = (item->next != NULL ) ? item->next : NULL;
-	}
-
-	/* Return pointer to the next item */
-	return next;
+	return item->next;
 }
 
 ITEM *list_prev( ITEM *item ) {
-	/* Variables */
-	ITEM *prev = NULL;
-
-	/* Next item */
-	if( item != NULL ) {
-		prev = (item->prev != NULL ) ? item->prev : NULL;
-	}
-
-	/* Return pointer to the next item */
-	return prev;
+	/* Previous item */
+	return NULL;
 }
 
 void list_swap( LIST *list, ITEM *item1, ITEM *item2 ) {
-	ITEM *a = item1->prev;
-	ITEM *b = item1;
-	ITEM *c = item1->next;
+	ITEM *prev1 = item1->prev;
+	ITEM *next1 = item1->next;
+	ITEM *prev2 = item2->prev;
+	ITEM *next2 = item2->next;
 
-	ITEM *x = item2->prev;
-	ITEM *y = item2;
-	ITEM *z = item2->next;
+	item1->prev = prev2;
+	item1->next = next2;
 
-	/*
-	struct obj_ben *key1 = NULL;
-	struct obj_ben *key2 = NULL;
-	struct obj_ben *key3 = NULL;
-	*/
+	item2->prev = prev1;
+	item2->next = next1;
 
-	/*
-	key1 = b->key;
-	key2 = y->key;
-	printf( "#Vertausche: %s <> %s\n", key1->v.s->s, key2->v.s->s );
-	*/
-
-	/*
-	key1 = b->prev->key;
-	key2 = b->key;
-	key3 = b->next->key;
-	printf( "#Vorher: %s > %s > %s\n", key1->v.s->s, key2->v.s->s, key3->v.s->s );
-	*/
-
-	if( list->counter < 2 ) {
-		return;
-	} else if( list->counter == 2 ) {
+	if( list->start == item1 ) {
 		list->start = item2;
-		list->stop  = item1;
-	} else {
-		/* item1 -> item2 */
-		if( c == y && x == b ) {
-			item2->prev = a;
-			item2->next = item1;
-			item1->prev = item2;
-			item1->next = z;
-			a->next = item2;
-			z->prev = item1;
-		}
-		/* item2 -> item1 */
-		else if( a == y && z == b ) {
-			item2->prev = item1;
-			item2->next = c;
-			item1->prev = x;
-			item1->next = item2;
-			z->next = item2;
-			c->prev = item1;
-		} else {
-			item1->prev = x;
-			item1->next = z;
-			item2->prev = a;
-			item2->next = c;
+	} else if( list->start == item2 ) {
+		list->start = item1;
+	}
 
-			a->next = item2;
-			x->next = item1;
-			c->prev = item2;
-			z->prev = item1;
-		}
-
-		if( item1 == list->start ) {
-			list->start = item2;
-			list->stop = list->start->prev;
-		} else if( item1 == list->stop ) {
-			list->stop = item2;
-			list->start = list->stop->next;
-		} else if( item2 == list->start ) {
-			list->start = item1;
-			list->stop = list->start->prev;
-		} else if( item2 == list->stop ) {
-			list->stop = item1;
-			list->start = list->stop->next;
-		}
-
-		/* 
-		key1 = b->prev->key;
-		key2 = b->key;
-		key3 = b->next->key;
-		printf( "#Nachher: %s > %s > %s\n", key1->v.s->s, key2->v.s->s, key3->v.s->s );
-		*/
+	if( list->stop == item1 ) {
+		list->stop = item2;
+	} else if( list->stop == item2 ) {
+		list->stop = item1;
 	}
 }

@@ -113,10 +113,9 @@ void announce_expire( void ) {
 	ITEM *i = NULL;
 	ITEM *n = NULL;
 	ANNOUNCE *a = NULL;
-	long int j = 0;
 
 	i = _main->announce->list->start;
-	for( j=0; j<_main->announce->list->counter; j++ ) {
+	while( i ) {
 		a = i->val;
 		n = list_next( i );
 

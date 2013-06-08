@@ -66,10 +66,9 @@ LIST *bckt_init( void ) {
 void bckt_free( LIST *thislist ) {
 	ITEM *i = NULL;
 	BUCK *b = NULL;
-	long int j = 0;
 
 	i = thislist->start;
-	for( j=0; j<thislist->counter; j++ ) {
+	while( i ) {
 		b = i->val;
 
 		/* Delete node references */
