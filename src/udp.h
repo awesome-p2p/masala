@@ -51,7 +51,6 @@ void udp_event( void );
 
 void udp_pool( void );
 void *udp_thread( void *arg );
-void *udp_client( void *arg );
 void udp_worker( struct epoll_event *events, int nfds, int thrd_id );
 void udp_rearm( int sockfd );
 

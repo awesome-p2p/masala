@@ -126,7 +126,7 @@ void udp_stop( void ) {
 
 	/* Join threads */
 	pthread_attr_destroy( &_main->udp->attr );
-	for( i=0; i <= _main->conf->cores; i++ ) {
+	for( i=0; i < _main->conf->cores; i++ ) {
 		if( pthread_join( *_main->udp->threads[i], NULL) != 0 ) {
 			log_err( "pthread_join() failed" );
 		}
@@ -169,18 +169,12 @@ void udp_pool( void ) {
 	pthread_attr_setdetachstate( &_main->udp->attr, PTHREAD_CREATE_JOINABLE );
 
 	/* Create worker threads */
-	_main->udp->threads = (pthread_t **) myalloc( (_main->conf->cores+1) * sizeof(pthread_t *), "udp_pool" );
+	_main->udp->threads = (pthread_t **) myalloc( _main->conf->cores * sizeof(pthread_t *), "udp_pool" );
 	for( i=0; i < _main->conf->cores; i++ ) {
 		_main->udp->threads[i] = (pthread_t *) myalloc( sizeof(pthread_t), "udp_pool" );
 		if( pthread_create( _main->udp->threads[i], &_main->udp->attr, udp_thread, NULL) != 0 ) {
 			log_err( "pthread_create()" );
 		}
-	}
-
-	/* Send 1st request while the workers are starting */
-	_main->udp->threads[_main->conf->cores] = (pthread_t *) myalloc( sizeof(pthread_t), "udp_pool" );
-	if( pthread_create( _main->udp->threads[_main->conf->cores], NULL, udp_client, NULL) != 0 ) {
-		log_err( "pthread_create()" );
 	}
 }
 
@@ -213,19 +207,6 @@ void *udp_thread( void *arg ) {
 		} else {
 			/* Shutdown server */
 			break;
-		}
-	}
-
-	pthread_exit( NULL );
-}
-
-void *udp_client( void *arg ) {
-	/* Send PING or FIND request to init the network */
-	if( nbhd_empty() ) {
-		/* Bootstrap PING */
-		if( _main->p2p->time_now.tv_sec > _main->p2p->time_restart ) {
-			p2p_bootstrap();
-			_main->p2p->time_restart = time_add_2_min_approx();
 		}
 	}
 
