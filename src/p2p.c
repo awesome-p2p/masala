@@ -306,7 +306,7 @@ void p2p_cron( void ) {
 	}
 
 	/* Try to register multicast address until it works. */
-	if( _main->udp->multicast == 0 && _main->conf->hostname != NULL ) {
+	if( _main->udp->multicast == 0  ) {
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_multicast ) {
 			udp_multicast();
 			_main->p2p->time_multicast = time_add_5_min_approx();
@@ -653,11 +653,13 @@ void p2p_value( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id, IP *f
 void p2p_announce_myself( void ) {
 	UCHAR lkp_id[SHA_DIGEST_LENGTH];
 
-	/* Create random id to identify this search request */
-	rand_urandom( lkp_id, SHA_DIGEST_LENGTH );
+	if( _main->conf->hostname != NULL ) {
+		/* Create random id to identify this search request */
+		rand_urandom( lkp_id, SHA_DIGEST_LENGTH );
 
-	/* Start find process */
-	announce_put( lkp_id, _main->conf->host_id );
+		/* Start find process */
+		announce_put( lkp_id, _main->conf->host_id );
+	}
 }
 
 void p2p_compute_id( UCHAR *host_id, const char *hostname ) {

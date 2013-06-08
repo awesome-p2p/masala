@@ -142,7 +142,7 @@ void announce_resolve( UCHAR *lkp_id, UCHAR *node_id, IP *c_addr ) {
 	if( !hash_exists( a->hash, node_id, SHA_DIGEST_LENGTH ) ) {
 
 		/* Ask the node just once */
-		if( !node_me( node_id ) ) {
+		if( !node_me( node_id ) && _main->conf->hostname != NULL ) {
 			send_announce( c_addr, lkp_id, _main->conf->host_id );
 		}
 
