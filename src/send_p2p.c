@@ -510,11 +510,11 @@ void send_value( IP *sa, IP *value, UCHAR *session_id, UCHAR *lkp_id ) {
 }
 
 void send_exec( IP *sa, struct obj_raw *raw ) {
-	socklen_t addrlen = sizeof(IP );
+	socklen_t addrlen = sizeof(IP);
 
 	if( _main->udp->sockfd < 0 ) {
 		return;
 	}
 
-	sendto( _main->udp->sockfd, raw->code, raw->size, 0,( const struct sockaddr *)sa, addrlen );
+	sendto( _main->udp->sockfd, raw->code, raw->size, 0, (const struct sockaddr *)sa, addrlen );
 }

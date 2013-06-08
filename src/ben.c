@@ -288,7 +288,7 @@ struct obj_raw *ben_enc( struct obj_ben *node ) {
 	/* Encode ben object */
 	raw->code = (UCHAR *) myalloc( (raw->size) * sizeof(UCHAR), "ben_enc" );
 	raw->p = ben_enc_rec( node,raw->code );
-	if( raw->p == NULL ||( long int)(raw->p-raw->code) != raw->size ) {
+	if( raw->p == NULL || (long int)(raw->p-raw->code) != raw->size ) {
 		raw_free( raw );
 		return NULL;
 	}

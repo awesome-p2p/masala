@@ -34,8 +34,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 
 struct obj_ben {
 	int t;
-	
-	union  {
+	union {
 		unsigned long int i;
 		struct obj_str *s;
 		LIST *d;
@@ -100,5 +99,3 @@ int ben_compare( struct obj_ben *key1, struct obj_ben *key2 );
 long int ben_str_size( struct obj_ben *node );
 
 void ben_sort( struct obj_ben *node );
-
-

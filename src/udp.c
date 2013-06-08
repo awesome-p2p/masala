@@ -83,7 +83,7 @@ void udp_free( void ) {
 void udp_start( void ) {
 	int optval = 1;
 
-	if( ( _main->udp->sockfd = socket( PF_INET6, SOCK_DGRAM, 0) ) < 0 ) {
+	if( ( _main->udp->sockfd = socket( PF_INET6, SOCK_DGRAM, 0 ) ) < 0 ) {
 		log_err( "Creating socket failed." );
 	}
 	_main->udp->s_addr.sin6_family = AF_INET6;
@@ -156,7 +156,7 @@ void udp_event( void ) {
 	ev.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
 	ev.data.fd = _main->udp->sockfd;
 	
-	if( epoll_ctl( _main->udp->epollfd, EPOLL_CTL_ADD, _main->udp->sockfd, &ev) == -1 ) {
+	if( epoll_ctl( _main->udp->epollfd, EPOLL_CTL_ADD, _main->udp->sockfd, &ev ) == -1 ) {
 		log_err( "udp_event: epoll_ctl() failed" );
 	}
 }
@@ -172,7 +172,7 @@ void udp_pool( void ) {
 	_main->udp->threads = (pthread_t **) myalloc( _main->conf->cores * sizeof(pthread_t *), "udp_pool" );
 	for( i=0; i < _main->conf->cores; i++ ) {
 		_main->udp->threads[i] = (pthread_t *) myalloc( sizeof(pthread_t), "udp_pool" );
-		if( pthread_create( _main->udp->threads[i], &_main->udp->attr, udp_thread, NULL) != 0 ) {
+		if( pthread_create( _main->udp->threads[i], &_main->udp->attr, udp_thread, NULL ) != 0 ) {
 			log_err( "pthread_create()" );
 		}
 	}
@@ -215,7 +215,6 @@ void *udp_thread( void *arg ) {
 
 void udp_worker( struct epoll_event *events, int nfds, int thrd_id ) {
 	int i;
-
 	for( i=0; i<nfds; i++ ) {
 		if( ( events[i].events & EPOLLIN) == EPOLLIN ) {
 			udp_input( events[i].data.fd );
@@ -233,7 +232,7 @@ void udp_rearm( int sockfd ) {
 	ev.data.fd = sockfd;
 
 	if( epoll_ctl( _main->udp->epollfd, EPOLL_CTL_MOD, sockfd, &ev) == -1 ) {
-		log_info( strerror( errno) );
+		log_info( strerror( errno ) );
 		log_err( "udp_rearm: epoll_ctl() failed" );
 	}
 }
@@ -255,7 +254,7 @@ void udp_input( int sockfd ) {
 	UCHAR buffer[UDP_BUF+1];
 	ssize_t bytes = 0;
 	IP c_addr;
-	socklen_t c_addrlen = sizeof(IP );
+	socklen_t c_addrlen = sizeof(IP);
 
 	while( _main->status == MAIN_ONLINE ) {
 		/* Clean Source */
@@ -263,7 +262,7 @@ void udp_input( int sockfd ) {
 		memset( buffer, '\0', UDP_BUF+1 );
 
 		/* Get data */
-		bytes = recvfrom( sockfd, buffer, UDP_BUF, 0,( struct sockaddr*)&c_addr, &c_addrlen );
+		bytes = recvfrom( sockfd, buffer, UDP_BUF, 0,(struct sockaddr *)&c_addr, &c_addrlen );
 
 		if( bytes < 0 ) {
 			if( errno == EAGAIN || errno == EWOULDBLOCK ) {
