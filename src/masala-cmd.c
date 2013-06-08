@@ -132,7 +132,7 @@ int cmd_ping( REPLY *r, const char *addr, const char *port ) {
 	p = info;
 	while( p != NULL ) {
 
-		if( strcmp( _main->conf->bootstrap_node, CONF_BOOTSTRAP_NODE ) == 0 ) {
+		if( ((IP *)p->ai_addr)->sin6_addr.s6_addr[0] == 0xff ) {
 			/* Send PING to a bootstrap node */
 			send_ping( (IP *)p->ai_addr, SEND_MULTICAST );
 		} else {
