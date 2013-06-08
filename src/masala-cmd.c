@@ -56,6 +56,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 
 const char* cmd_usage_str = 
 "Usage:\n"
+"	status\n"
 "	ping <ip> [<port>]\n"
 "	lookup <key>\n"
 "	search <key>\n"
@@ -124,7 +125,7 @@ int cmd_ping( REPLY *r, const char *addr, const char *port ) {
 	hints.ai_family = AF_INET6;
 	rc = getaddrinfo( addr, port, &hints, &info );
 	if( rc != 0 ) {
-		r_printf( r, "CMD: Failed to get address: %s", gai_strerror( rc ) );
+		r_printf( r, "Failed to get address: %s", gai_strerror( rc ) );
 		return 1;
 	}
 
@@ -132,8 +133,8 @@ int cmd_ping( REPLY *r, const char *addr, const char *port ) {
 	p = info;
 	while( p != NULL ) {
 
+		/* Send PING to a bootstrap node */
 		if( ((IP *)p->ai_addr)->sin6_addr.s6_addr[0] == 0xff ) {
-			/* Send PING to a bootstrap node */
 			send_ping( (IP *)p->ai_addr, SEND_MULTICAST );
 		} else {
 			send_ping( (IP *)p->ai_addr, SEND_UNICAST );
@@ -146,14 +147,27 @@ int cmd_ping( REPLY *r, const char *addr, const char *port ) {
 	return 0;
 }
 
+void cmd_print_status( REPLY *r ) {
+	char hexbuf[HEX_LEN+1];
+
+	r_printf( r, "Own node id: %s\n", id_str( _main->conf->node_id, hexbuf ) );
+
+	if( _main->conf->hostname ) {
+		r_printf( r, "Own host id: %s\n", id_str( _main->conf->host_id, hexbuf ) );
+	} else {
+		r_printf( r, "Own host id: <none>\n" );
+	}
+}
+
 void cmd_print_nodes( REPLY *r ) {
 	ITEM *item_b = NULL;
 	BUCK *b = NULL;
 	ITEM *item_n = NULL;
 	NODE *n = NULL;
+	char addrbuf[FULL_ADDSTRLEN+1];
 	char hexbuf[HEX_LEN+1];
 
-	r_printf( r, "List of all buckets:\n" );
+	r_printf( r, "Known node id / address pairs from neighborhood:\n" );
 
 	/* Cycle through all the buckets */
 	item_b = _main->nbhd->start;
@@ -167,10 +181,12 @@ void cmd_print_nodes( REPLY *r ) {
 		while( item_n ) {
 			n = item_n->val;
 
-			r_printf( r, "  Node: %s\n", id_str( n->id, hexbuf ) );
+			r_printf( r, "  Node: %s / %s\n", id_str( n->id, hexbuf ), addr_str( &n->c_addr, addrbuf ) );
 
 			item_n = list_next( item_n );
 		}
+
+		r_printf( r, "  Found %li entries.\n", b->nodes->counter );
 
 		item_b = list_next( item_b );
 	}
@@ -182,18 +198,18 @@ void cmd_print_database( REPLY * r ) {
 	char hexbuf[HEX_LEN+1];
 	char addrbuf[FULL_ADDSTRLEN+1];
 
-	r_printf( r, "Known host id / address pairs:\n" );
+	r_printf( r, "Known host id / address pairs from value database:\n" );
 
 	item_n = _main->database->list->start;
 	while( item_n ) {
 		n = item_n->val;
 
-		r_printf( r, " %s /  %s\n", id_str( n->host_id, hexbuf ), addr_str( &n->c_addr, addrbuf ) );
+		r_printf( r, " %s / %s\n", id_str( n->host_id, hexbuf ), addr_str( &n->c_addr, addrbuf ) );
 
 		item_n = list_next( item_n );
 	}
 
-	r_printf( r, "Found %d entries.\n", _main->database->list->counter );
+	r_printf( r, " Found %li entries.\n", _main->database->list->counter );
 }
 
 int cmd_exec( REPLY * r, int argc, char **argv ) {
@@ -239,6 +255,8 @@ int cmd_exec( REPLY * r, int argc, char **argv ) {
 		mutex_unblock( _main->p2p->mutex );
 
 		r_printf( r, "Search started for %s.\n", id_str( id, hexbuf ) );
+	} else if( strcmp( argv[0], "status" ) == 0 ) {
+		cmd_print_status( r );
 	} else if( strcmp( argv[0], "print_nodes" ) == 0 ) {
 		cmd_print_nodes( r );
 	} else if( strcmp( argv[0], "print_database" ) == 0 ) {
