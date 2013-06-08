@@ -48,7 +48,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "udp.h"
 #include "ben.h"
 #include "p2p.h"
-#include "node_p2p.h"
 #include "bucket.h"
 #include "send_p2p.h"
 #include "lookup.h"
@@ -65,8 +64,42 @@ void nbhd_free( void ) {
 	bckt_free( _main->nbhd );
 }
 
-void nbhd_put( NODE *n ) {
-	bckt_put( _main->nbhd, n );
+void nbhd_put( UCHAR *id, IP *sa ) {
+	ITEM *item_n = NULL;
+	NODE *n = NULL;
+
+	/* It's me */
+	if( node_me( id ) ) {
+		return;
+	}
+
+	if( (item_n = bckt_find_node( _main->nbhd, id )) != NULL ) {
+		/* Node found */
+		n = item_n->val;
+		nbhd_update_address( n, sa );
+
+	} else {
+		n = (NODE *) myalloc( sizeof(NODE), "nbhd_put" );
+
+		/* ID */
+		memcpy( n->id, id, SHA_DIGEST_LENGTH );
+
+		/* Timings */
+		n->time_ping = time_add_5_min_approx();
+		n->time_find = time_add_5_min_approx();
+		n->pinged = 1;
+
+		/* Update IP address */
+		nbhd_update_address( n, sa );
+
+		bckt_put( _main->nbhd, n );
+
+		/* Send a PING */
+		send_ping( &n->c_addr, SEND_UNICAST );
+
+		/* New node: Ask for myself */
+		send_find( &n->c_addr, _main->conf->node_id );
+	}
 }
 
 void nbhd_del( NODE *n ) {
@@ -117,10 +150,9 @@ void nbhd_ping( void ) {
 				/* Ping the first 8 nodes. Sort out the rest. */
 				if( j < 8 ) {
 					send_ping( &n->c_addr, SEND_UNICAST );
-					node_pinged( n->id );
-				} else {
-					node_pinged( n->id );
 				}
+
+				nbhd_pinged( n->id );
 			}
 
 			item_n = list_next( item_n );
@@ -224,5 +256,95 @@ void nbhd_announce( ANNOUNCE *a, UCHAR *host_id ) {
 		send_announce( &n->c_addr, a->lkp_id, host_id );
 
 		item_n = list_next( item_n );
+	}
+}
+
+void nbhd_pinged( UCHAR *id ) {
+	ITEM *item_n = NULL;
+	NODE *n = NULL;
+
+	if( (item_n = bckt_find_node( _main->nbhd, id )) == NULL ) {
+		return;
+	}
+
+	n = item_n->val;
+	n->pinged++;
+
+	/* ~5 minutes */
+	n->time_ping = time_add_5_min_approx();
+}
+
+void nbhd_ponged( UCHAR *id, IP *sa ) {
+	ITEM *item_n = NULL;
+	NODE *n = NULL;
+
+	if( (item_n = bckt_find_node( _main->nbhd, id )) == NULL ) {
+		return;
+	}
+
+	n = item_n->val;
+	n->pinged = 0;
+
+	/* ~5 minutes */
+	n->time_ping = time_add_5_min_approx();
+
+	memcpy( &n->c_addr, sa, sizeof(IP) );
+}
+
+void nbhd_expire( void ) {
+	ITEM *next = NULL;
+	ITEM *item_b = NULL;
+	BUCK *b = NULL;
+	ITEM *item_n = NULL;
+	NODE *n = NULL;
+	long int j = 0, k = 0;
+
+	/* Cycle through all the buckets */
+	item_b = _main->nbhd->start;
+	for( k=0; k<_main->nbhd->counter; k++ ) {
+		b = item_b->val;
+
+		/* Cycle through all the nodes */
+		item_n = b->nodes->start;
+		for( j=0; j<b->nodes->counter; j++ ) {
+			n = item_n->val;
+			next = list_next( item_n );
+
+			/* Bad node */
+			if( n->pinged >= 4 ) {
+				/* Delete references */
+				nbhd_del( n );
+			}
+
+			item_n = next;
+		}
+
+		item_b = list_next( item_b );
+	}
+}
+
+/* Are all buckets empty? */
+int nbhd_empty( void ) {
+	ITEM *item_b;
+	BUCK *b;
+	long int k;
+
+	/* Cycle through all the buckets */
+	item_b = _main->nbhd->start;
+	for( k=0; k<_main->nbhd->counter; k++ ) {
+		b = item_b->val;
+
+		if( b->nodes->counter > 0)
+			return 0;
+
+		item_b = list_next( item_b );
+	}
+
+	return 1;
+}
+
+void nbhd_update_address( NODE *n, IP *sa ) {
+	if( memcmp( &n->c_addr, sa, sizeof(IP)) != 0 ) {
+		memcpy( &n->c_addr, sa, sizeof(IP) );
 	}
 }

@@ -48,7 +48,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "udp.h"
 #include "ben.h"
 #include "p2p.h"
-#include "node_p2p.h"
 #include "bucket.h"
 #include "lookup.h"
 #include "announce.h"

@@ -47,7 +47,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "unix.h"
 #include "udp.h"
 #include "ben.h"
-#include "node_p2p.h"
 #include "bucket.h"
 
 LIST *bckt_init( void ) {
@@ -99,7 +98,7 @@ void bckt_put( LIST *l, NODE *n ) {
 	b = i->val;
 
 	if( bckt_find_node( l, n->id ) != NULL ) {
-		/* Node node found */
+		/* Node found */
 		return;
 	}
 
@@ -314,4 +313,18 @@ int bckt_significant_bit( const UCHAR *id ) {
 	}
 
 	return 8 * i + j;
+}
+
+int node_me( UCHAR *node_id ) {
+	if( node_equal( node_id, _main->conf->node_id ) ) {
+		return 1;
+	}
+	return 0;
+}
+
+int node_equal( const UCHAR *node_a, const UCHAR *node_b ) {
+	if( memcmp( node_a, node_b, SHA_DIGEST_LENGTH ) == 0 ) {
+		return 1;
+	}
+	return 0;
 }

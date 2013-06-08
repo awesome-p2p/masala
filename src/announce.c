@@ -51,9 +51,8 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "time.h"
 #include "lookup.h"
 #include "announce.h"
-#include "node_p2p.h"
-#include "neighborhood.h"
 #include "bucket.h"
+#include "neighborhood.h"
 #include "send_p2p.h"
 
 struct obj_announce *announce_init( void ) {

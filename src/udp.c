@@ -47,11 +47,14 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "hash.h"
 #include "udp.h"
 #include "unix.h"
+#include "time.h"
 #include "ben.h"
 #include "p2p.h"
-#include "node_p2p.h"
 #include "bucket.h"
-#include "time.h"
+#include "lookup.h"
+#include "announce.h"
+#include "neighborhood.h"
+
 
 struct obj_udp *udp_init( void ) {
 	struct obj_udp *udp = (struct obj_udp *) myalloc( sizeof(struct obj_udp), "udp_init" );
@@ -218,7 +221,7 @@ void *udp_thread( void *arg ) {
 
 void *udp_client( void *arg ) {
 	/* Send PING or FIND request to init the network */
-	if( node_counter() == 0 ) {
+	if( nbhd_empty() ) {
 		/* Bootstrap PING */
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_restart ) {
 			p2p_bootstrap();

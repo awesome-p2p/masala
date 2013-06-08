@@ -44,12 +44,11 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "unix.h"
 #include "udp.h"
 #include "ben.h"
-#include "node_p2p.h"
-#include "bucket.h"
 #include "lookup.h"
 #include "announce.h"
-#include "search.h"
+#include "bucket.h"
 #include "neighborhood.h"
+#include "search.h"
 #include "p2p.h"
 #include "cache.h"
 #include "database.h"
@@ -79,7 +78,6 @@ struct obj_main *main_init( int argc, char **argv ) {
 
 	_main->conf = NULL;
 	_main->p2p = NULL;
-	_main->nodes = NULL;
 	_main->cache = NULL;
 	_main->nbhd = NULL;
 	_main->udp = NULL;
@@ -101,7 +99,6 @@ int main( int argc, char **argv ) {
 	/* Init */
 	_main = main_init( argc,argv );
 	_main->conf = conf_init();
-	_main->nodes = nodes_init();
 	_main->nbhd = nbhd_init();
 	_main->lkps = lkp_init();
 	_main->announce = announce_init();
@@ -156,7 +153,6 @@ int main( int argc, char **argv ) {
 	announce_free();
 	lkp_free();
 	nbhd_free();
-	nodes_free();
 	cache_free();
 	p2p_free();
 	udp_free();

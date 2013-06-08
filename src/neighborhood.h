@@ -20,7 +20,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 LIST *nbhd_init( void );
 void nbhd_free( void );
 
-void nbhd_put( NODE *n );
+void nbhd_put( UCHAR *id, IP *sa );
 void nbhd_del( NODE *n );
 
 void nbhd_split( void );
@@ -34,3 +34,11 @@ void nbhd_announce( ANNOUNCE *a, UCHAR *host_id );
 
 void nbhd_send( IP *sa, UCHAR *node_id, UCHAR *lkp_id, UCHAR *session_id, UCHAR *reply_type );
 void nbhd_print( void );
+
+void nbhd_pinged( UCHAR *id );
+void nbhd_ponged( UCHAR *id, IP *sa );
+
+void nbhd_expire( void );
+
+int nbhd_empty( void );
+void nbhd_update_address( NODE *n, IP *sa );

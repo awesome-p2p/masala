@@ -35,7 +35,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "log.h"
 #include "file.h"
 #include "opts.h"
-#include "node_p2p.h"
 #include "search.h"
 #include "ben.h"
 #include "p2p.h"

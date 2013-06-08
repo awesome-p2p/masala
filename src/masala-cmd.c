@@ -43,7 +43,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "udp.h"
 #include "ben.h"
 #include "p2p.h"
-#include "node_p2p.h"
 #include "bucket.h"
 #include "send_p2p.h"
 #include "lookup.h"
@@ -62,7 +61,6 @@ const char* cmd_usage_str =
 "	search <key>\n"
 "	print_database\n"
 "	print_nodes\n"
-"	print_nbhd\n"
 "	shutdown\n"
 "\n";
 
@@ -148,7 +146,7 @@ int cmd_ping( REPLY *r, const char *addr, const char *port ) {
 	return 0;
 }
 
-void cmd_print_nbhd( REPLY *r ) {
+void cmd_print_nodes( REPLY *r ) {
 	ITEM *item_b = NULL;
 	BUCK *b = NULL;
 	ITEM *item_n = NULL;
@@ -200,27 +198,6 @@ void cmd_print_database( REPLY * r ) {
 	r_printf( r, "Found %d entries.\n", k );
 }
 
-void cmd_print_nodes( REPLY * r ) {
-	ITEM *item_n = NULL;
-	NODE *n = NULL;
-	char hexbuf[HEX_LEN+1];
-	char addrbuf[FULL_ADDSTRLEN+1];
-	long int k;
-
-	r_printf( r, "Known node id / address pairs:\n" );
-
-	item_n = _main->nodes->list->start;
-	for( k = 0; k < _main->nodes->list->counter; k++ ) {
-		n = item_n->val;
-
-		r_printf( r, "%s /  %s\n", id_str( n->id, hexbuf ), addr_str( &n->c_addr, addrbuf ) );
-
-		item_n = list_next( item_n );
-	}
-
-	r_printf( r, "Found %d entries.\n", k );
-}
-
 int cmd_exec( REPLY * r, int argc, char **argv ) {
 	UCHAR id[SHA_DIGEST_LENGTH];
 	char addrbuf[FULL_ADDSTRLEN+1];
@@ -264,12 +241,10 @@ int cmd_exec( REPLY * r, int argc, char **argv ) {
 		mutex_unblock( _main->p2p->mutex );
 
 		r_printf( r, "Search started for %s.\n", id_str( id, hexbuf ) );
-	} else if( strcmp( argv[0], "print_nbhd" ) == 0 ) {
-		cmd_print_nbhd( r );
-	} else if( strcmp( argv[0], "print_database" ) == 0 ) {
-		cmd_print_database( r );
 	} else if( strcmp( argv[0], "print_nodes" ) == 0 ) {
 		cmd_print_nodes( r );
+	} else if( strcmp( argv[0], "print_database" ) == 0 ) {
+		cmd_print_database( r );
 	} else if( strcmp( argv[0], "shutdown" ) == 0 ) {
 
 		r_printf( r, "Shutting down now.\n" );

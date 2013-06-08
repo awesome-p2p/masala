@@ -40,7 +40,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "log.h"
 #include "conf.h"
 #include "ben.h"
-#include "node_p2p.h"
 #include "lookup.h"
 #include "p2p.h"
 #include "random.h"

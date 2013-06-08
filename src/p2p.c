@@ -48,7 +48,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "opts.h"
 #include "udp.h"
 #include "ben.h"
-#include "node_p2p.h"
 #include "bucket.h"
 #include "lookup.h"
 #include "announce.h"
@@ -148,7 +147,6 @@ void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {
 	struct obj_ben *q = NULL;
 	struct obj_ben *id = NULL;
 	struct obj_ben *key = NULL;
-	NODE *n = NULL;
 
 	/* Parse request */
 	packet = ben_dec( bencode, bensize );
@@ -168,7 +166,7 @@ void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {
 		ben_free( packet );
 		return;
 	} else if( node_me( id->v.s->s) ) {
-		if( node_counter() > 0 ) {
+		if( !nbhd_empty() ) {
 			/* Received packet from myself 
 			 * If the node_counter is 0, 
 			 * then you may see multicast requests from yourself.
@@ -188,14 +186,8 @@ void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {
 		return;
 	}
 
-	/* Remember node. This does not update the IP address. */
-	n = node_put( id->v.s->s, (IP *)from );
-
-	/* The neighborhood */
-	nbhd_put( n );
-
-	/* Update IP if necessary. */
-	node_update_address( n, (IP *)from );
+	/* Remember node. */
+	nbhd_put( id->v.s->s, (IP *)from );
 
 	/* Query Details */
 	q = ben_searchDictStr( packet, "q" );
@@ -266,13 +258,13 @@ void p2p_cron( void ) {
 	if( _main->p2p->time_now.tv_sec > _main->p2p->time_expire ) {
 		announce_expire();
 		cache_expire();
-		node_expire();
+		nbhd_expire();
 		lkp_expire();
 		db_expire();
 		_main->p2p->time_expire = time_add_2_min_approx();
 	}
 
-	if( node_counter() == 0 ) {
+	if( nbhd_empty() ) {
 
 		/* Bootstrap PING */
 		if( _main->p2p->time_now.tv_sec > _main->p2p->time_restart ) {
@@ -398,7 +390,7 @@ void p2p_pong( UCHAR *node_id, UCHAR *session_id, IP *from ) {
 	}
 
 	/* Reply */
-	node_ponged( node_id, from );
+	nbhd_ponged( node_id, from );
 }
 
 void p2p_node_find( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id, IP *from ) {
@@ -408,7 +400,6 @@ void p2p_node_find( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id, I
 	struct obj_ben *ip = NULL;
 	struct obj_ben *po = NULL;
 	ITEM *item = NULL;
-	NODE *n = NULL;
 	IP sin;
 	long int i = 0;
 
@@ -463,11 +454,7 @@ void p2p_node_find( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id, I
 		memcpy( &sin.sin6_port, po->v.s->s, 2 );
 
 		/* Store node */
-		if( !node_me( id->v.s->s ) ) {
-			n = node_put( id->v.s->s, (IP *)&sin );
-			node_update_address( n,( IP *)&sin );
-			nbhd_put( n );
-		}
+		nbhd_put( id->v.s->s, (IP *)&sin );
 
 		item = list_next( item );
 	}
@@ -481,7 +468,6 @@ void p2p_node_announce( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_i
 	struct obj_ben *po = NULL;
 	struct obj_ben *ben_lkp_id = NULL;
 	ITEM *item = NULL;
-	NODE *n = NULL;
 	IP sin;
 	long int i = 0;
 
@@ -553,11 +539,7 @@ void p2p_node_announce( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_i
 		}
 
 		/* Store node */
-		if( !node_me( id->v.s->s) ) {
-			n = node_put( id->v.s->s, (IP *)&sin );
-			node_update_address( n, (IP *)&sin );
-			nbhd_put( n );
-		}
+		nbhd_put( id->v.s->s, (IP *)&sin );
 
 		item = list_next( item );
 	}
@@ -571,7 +553,6 @@ void p2p_node_lookup( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id,
 	struct obj_ben *po = NULL;
 	struct obj_ben *ben_lkp_id = NULL;
 	ITEM *item = NULL;
-	NODE *n = NULL;
 	IP sin;
 	long int i = 0;
 
@@ -639,11 +620,7 @@ void p2p_node_lookup( struct obj_ben *packet, UCHAR *node_id, UCHAR *session_id,
 		lkp_resolve( ben_lkp_id->v.s->s, id->v.s->s, &sin );
 
 		/* Store node */
-		if( !node_me( id->v.s->s) ) {
-			n = node_put( id->v.s->s, (IP *)&sin );
-			node_update_address( n,(IP *)&sin );
-			nbhd_put( n );
-		}
+		nbhd_put( id->v.s->s, (IP *)&sin );
 
 		item = list_next( item );
 	}

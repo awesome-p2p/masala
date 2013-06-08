@@ -41,7 +41,6 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #include "list.h"
 #include "ben.h"
 #include "hash.h"
-#include "node_p2p.h"
 #include "p2p.h"
 #include "bucket.h"
 #include "send_p2p.h"

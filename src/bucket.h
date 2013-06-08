@@ -17,6 +17,23 @@ You should have received a copy of the GNU General Public License
 along with masala.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+struct obj_nodes {
+	LIST *list;
+	HASH *hash;
+};
+typedef struct obj_nodes NODES;
+
+struct obj_node {
+	IP c_addr;
+
+	UCHAR id[SHA_DIGEST_LENGTH];
+
+	time_t time_ping;
+	time_t time_find;
+	int pinged;
+};
+typedef struct obj_node NODE;
+
 struct obj_neighborhood_bucket {
 	UCHAR id[SHA_DIGEST_LENGTH];
 	LIST *nodes;
@@ -36,3 +53,6 @@ int bckt_split( LIST *thislist, const UCHAR *id );
 
 int bckt_compute_id( LIST *thislist, ITEM *item_b, UCHAR *id_return );
 int bckt_significant_bit( const UCHAR *id );
+
+int node_me( UCHAR *node_id );
+int node_equal( const UCHAR *node_a, const UCHAR *node_b );
