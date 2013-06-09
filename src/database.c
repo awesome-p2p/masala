@@ -131,7 +131,7 @@ ITEM *db_find( UCHAR *host_id ) {
 	return NULL;
 }
 
-int db_send( IP *from, UCHAR *host_id, UCHAR *lkp_id, UCHAR *key_id ) {
+int db_send( IP *from, UCHAR *host_id, UCHAR *lkp_id, UCHAR *session_id ) {
 	ITEM *i = NULL;
 	DB *db = NULL;
 
@@ -141,7 +141,7 @@ int db_send( IP *from, UCHAR *host_id, UCHAR *lkp_id, UCHAR *key_id ) {
 	db = i->val;
 
 	/* Reply the stored IP address. */
-	send_value( from, &db->c_addr, key_id, lkp_id );
+	send_value( from, &db->c_addr, session_id, lkp_id );
 
 	return 1;
 }
