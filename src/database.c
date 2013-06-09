@@ -67,11 +67,6 @@ void db_put( UCHAR *host_id, IP *sa ) {
 	ITEM *i = NULL;
 	DB *db = NULL;
 
-	/* It's me */
-	if( node_me( host_id ) ) {
-		return;
-	}
-
 	/* Create new storage place holder if necessary */
 	if ( (i = db_find( host_id )) == NULL ) {
 
