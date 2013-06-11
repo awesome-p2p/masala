@@ -79,3 +79,12 @@ Announce the hostname *fubar.p2p*:
 
   * Cannot resolve own host id without other nodes present.
   * Lack of IPv6 support by the providers.
+
+## LICENSE
+
+  GNU General Public License (GPL) v3
+
+##Authors
+
+  * Aiko Barz (http://github.com/torrentkino)
+  * Moritz Warning (http://github.com/mwarning)
