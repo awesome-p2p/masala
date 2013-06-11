@@ -129,9 +129,10 @@ int cmd_ping( REPLY *r, const char *addr, const char *port ) {
 		return 1;
 	}
 
-	r_printf( r, "Ping address %s", addr_str( (IP *)p->ai_addr, addrbuf ) );
 	p = info;
 	while( p != NULL ) {
+
+		r_printf( r, "Ping address %s", addr_str( (IP *)p->ai_addr, addrbuf ) );
 
 		/* Send PING to a bootstrap node */
 		if( ((IP *)p->ai_addr)->sin6_addr.s6_addr[0] == 0xff ) {
