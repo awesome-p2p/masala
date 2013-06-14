@@ -93,13 +93,13 @@ void cmd_to_args(char *str, int* argc, char** argv, int max_argv) {
     *argc = 0;
 
 	/* Zero out white/control characters  */
-    for (i = 0; i <= len; i++) {
+    for( i = 0; i <= len; i++ ) {
         if( str[i] <= ' ')
             str[i] = '\0';
     }
 
 	/* Record strings */
-    for (i = 0; i <= len; i++) {
+    for( i = 0; i <= len; i++ ) {
         if( str[i] == '\0')
 			continue;
 
@@ -310,7 +310,7 @@ void *cmd_remote_loop( void *_ ) {
 
 	sockfd = socket( PF_INET6, SOCK_DGRAM, IPPROTO_UDP );
 	if( sockfd < 0 ) {
-		log_err( "CMD: Failed to create socket: %s", gai_strerror( errno ) );
+		log_err( "CMD: Failed to create socket: %s", strerror( errno ) );
 		return NULL;
 	}
 
@@ -319,17 +319,17 @@ void *cmd_remote_loop( void *_ ) {
 	tv.tv_usec = 0;
 	rc = setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 	if( rc < 0 ) {
-		log_err( "CMD: Failed to set socket option: %s", gai_strerror( rc ) );
+		log_err( "CMD: Failed to set socket option: %s", strerror( rc ) );
 		return NULL;
 	}
 
 	rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) );
 	if( rc < 0 ) {
-		log_err( "CMD: Failed to bind socket to address: %s", gai_strerror( rc ) );
+		log_err( "CMD: Failed to bind socket to address: %s", strerror( rc ) );
 		return NULL;
 	}
 
-	log_info( "Bind CMD interface to %s.",
+	log_info( "CMD: Bind socket to %s.",
 		addr_str( &sockaddr, addrbuf )
 	);
 

@@ -37,7 +37,7 @@ ifeq ($(findstring web,$(FEATURES)),web)
   CFLAGS += -DWEB
 endif
 
-build/%.o : src/%.c src/%.h
+build/%.o: src/%.c src/%.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 libnss_masala.so.2: build/masala-libnss.o

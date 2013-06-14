@@ -109,7 +109,7 @@ void* nss_loop( void* _ ) {
 
 	sockfd = socket( PF_INET6, SOCK_DGRAM, IPPROTO_UDP );
 	if( sockfd < 0 ) {
-		log_err( "NSS: Failed to create socket: %s", gai_strerror( errno ) );
+		log_err( "NSS: Failed to create socket: %s", strerror( errno ) );
 		return NULL;
 	}
 
@@ -118,26 +118,27 @@ void* nss_loop( void* _ ) {
 	tv.tv_usec = 0;
 	rc = setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 	if( rc < 0 ) {
-		log_err( "NSS: Failed to set socket option: %s", gai_strerror( rc ) );
+		log_err( "NSS: Failed to set socket option: %s", strerror( errno ) );
 		return NULL;
 	}
 
 	rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) );
 	if( rc < 0 ) {
-		log_err( "NSS: Failed to bind socket to address: %s", gai_strerror( rc ) );
+		log_err( "NSS: Failed to bind socket to address: %s", strerror( errno ) );
 		return NULL;
 	}
 
-	log_info( "Bind NSS interface to %s.",
+	log_info( "NSS: Bind socket to %s.",
 		addr_str( &sockaddr, addrbuf )
 	);
 
-	while(1) {
+	while( 1 ) {
 
 		rc = recvfrom( sockfd, hostname, sizeof( hostname ), 0, (struct sockaddr *) &clientaddr, &addr_len );
 
-		if( rc <= 0 || rc >= 256 )
+		if( rc <= 0 || rc >= 256 ) {
 			continue;
+		}
 
 		hostname[rc] = '\0';
 

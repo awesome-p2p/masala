@@ -72,7 +72,8 @@ void _log( const char *filename, int line, int priority, const char *format, ...
 	char buffer[MAIN_BUF];
 	va_list vlist;
 
-	if( priority == LOG_INFO && (_main->conf->quiet == CONF_BEQUIET) ) {
+	if( (priority == LOG_INFO || priority == LOG_DEBUG) &&
+			(_main->conf->quiet == CONF_BEQUIET) ) {
 		return;
 	}
 
@@ -81,19 +82,22 @@ void _log( const char *filename, int line, int priority, const char *format, ...
 	va_end( vlist );
 
 	if( _main->conf->mode == CONF_FOREGROUND ) {
-		if(filename)
+		if( filename ) {
 			fprintf( stderr, "(%s:%d) %s\n", filename, line, buffer );
-		else
+		} else {
 			fprintf( stderr, "%s\n", buffer );
+		}
 	} else {
 		openlog( CONF_SRVNAME, LOG_PID|LOG_CONS, LOG_USER|LOG_PERROR );
-		if(filename)
+		if( filename ) {
 			syslog( priority, "(%s:%d) %s", filename, line, buffer );
-		else
+		} else {
 			syslog( priority, "%s", buffer );
+		}
 		closelog();
 	}
 
-	if( priority == LOG_CRIT || priority == LOG_ERR )
+	if( priority == LOG_CRIT || priority == LOG_ERR ) {
 		exit( 1 );
+	}
 }

@@ -300,7 +300,7 @@ void udp_multicast( void ) {
 	memset( &mreq, '\0', sizeof(mreq) );
 	memcpy( &mreq.ipv6mr_multiaddr, &((IP *) multicast->ai_addr)->sin6_addr, sizeof(mreq.ipv6mr_multiaddr) );
 
-	if ( _main->conf->interface && ((mreq.ipv6mr_interface = if_nametoindex( _main->conf->interface )) == 0) ) {
+	if( _main->conf->interface && ((mreq.ipv6mr_interface = if_nametoindex( _main->conf->interface )) == 0) ) {
 		log_err( "Cannot get device '%s': %s", _main->conf->interface, strerror( errno ) );
 	} else {
 		mreq.ipv6mr_interface = 0;

@@ -165,7 +165,7 @@ void p2p_decode( UCHAR *bencode, size_t bensize, IP *from ) {
 		log_info( "Node ID missing or broken" );
 		ben_free( packet );
 		return;
-	} else if( node_me( id->v.s->s) ) {
+	} else if( node_me( id->v.s->s ) ) {
 		if( !nbhd_empty() ) {
 			/* Received packet from myself 
 			 * If the node_counter is 0, 

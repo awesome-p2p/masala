@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
 	sockfd = socket( PF_INET6, SOCK_DGRAM, IPPROTO_UDP );
 	if( sockfd < 0 ) {
-		fprintf( stderr, "Failed to create socket: %s\n", gai_strerror( errno ) );
+		fprintf( stderr, "Failed to create socket: %s\n", strerror( errno ) );
 		return 1;
 	}
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 	tv.tv_usec = 200;
 	rc = setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 	if( rc < 0 ) {
-		fprintf( stderr, "Failed to set socket option: %s\n", gai_strerror( rc ) );
+		fprintf( stderr, "Failed to set socket option: %s\n", strerror( errno ) );
 		return 1;
 	}
 

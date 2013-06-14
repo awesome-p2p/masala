@@ -311,25 +311,27 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 	int i, rc;
 
 	rc = dns_decode_header( msg, &buffer, size );
-	if( rc < 0 )
+	if( rc < 0 ) {
 		return -1;
+	}
 	size -= rc;
 
-	if(( msg->anCount+msg->nsCount+msg->arCount) != 0 ) {
+	if( (msg->anCount+msg->nsCount+msg->arCount) != 0 ) {
 		log_warn("DNS: Only questions expected.");
 		return -1;
 	}
 
 	/* parse questions */
-	for(i = 0; i < msg->qdCount; ++i) {
+	for( i = 0; i < msg->qdCount; ++i ) {
 		rc = dns_decode_domain( msg->qName_buffer, &buffer, size );
-		if( rc < 0 )
+		if( rc < 0 ) {
 			return -1;
-
+		}
 		size -= rc;
 
-		if( size < 4 )
+		if( size < 4 ) {
 			return -1;
+		}
 
 		int qType = get16bits( &buffer );
 		int qClass = get16bits( &buffer );
@@ -346,11 +348,11 @@ int dns_decode_query( struct message *msg, const UCHAR *buffer, int size )
 	return -1;
 }
 
-UCHAR * dns_code_response( struct message *msg, UCHAR *buffer )
+UCHAR *dns_code_response( struct message *msg, UCHAR *buffer )
 {
 	dns_code_header( msg, &buffer );
 
-	if(msg->anCount == 1) {
+	if( msg->anCount == 1 ) {
 		/* Attach a single question section. */
 		dns_code_domain( &buffer, msg->question.qName );
 		put16bits( &buffer, msg->question.qType );
@@ -412,7 +414,7 @@ void dns_reply( void *ctx, UCHAR *id, UCHAR *address ) {
 
 	if( p ) {
 		int buflen = p - buf;
-		log_info( "DNS: send address %s to %s. Packet is %d Bytes.",
+		log_debug( "DNS: send address %s to %s. Packet is %d Bytes.",
 			addr_str(&record, addrbuf1 ), addr_str(&task->clientaddr, addrbuf2 ), buflen
 		);
 
@@ -456,7 +458,7 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *clientaddr, IP *re
 
 	/* That is the lookup key */
 	p2p_compute_id( host_id, (char *)hostname );
-	log_info( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
+	log_debug( "DNS: Lookup %s as '%s'.", hostname, id_str( host_id, hexbuf ) );
 
 	/* Check my own DB for that node. */
 	mutex_block( _main->p2p->mutex );
@@ -464,12 +466,12 @@ int dns_masala_lookup( const char *hostname, size_t size, IP *clientaddr, IP *re
 	mutex_unblock( _main->p2p->mutex );
 
 	if( addr != NULL ) {
-		log_info( "DNS: Found entry for '%s'.", hostname );
+		log_debug( "DNS: Found entry for '%s'.", hostname );
 		memcpy( &record->sin6_addr, &addr->sin6_addr, 16 );
 		return 1;
 	}
 
-	log_info( "DNS: No local entry found. Create P2P task for '%s'.", hostname  );
+	log_debug( "DNS: No local entry found. Create P2P task for '%s'.", hostname  );
 
 	/* Start find process */
 	mutex_block( _main->p2p->mutex );
@@ -512,24 +514,24 @@ void* dns_loop( void *_ ) {
 			break;
 		}
     } else {
-		log_err( "DNS getaddrinfo failed: %s", gai_strerror(rc));
+		log_err( "DNS getaddrinfo failed: %s", gai_strerror( rc ));
         return NULL;
 	}
 
 	sockfd = socket( PF_INET6, SOCK_DGRAM, IPPROTO_UDP );
-	if(sockfd < 0) {
-		log_err( "DNS: Failed to create socket: %s", gai_strerror( errno ) );
+	if( sockfd < 0 ) {
+		log_err( "DNS: Failed to create socket: %s", strerror( errno ) );
 		return NULL;
 	}
 
 	if( ifce && setsockopt( sockfd, SOL_SOCKET, SO_BINDTODEVICE, ifce, strlen( ifce )) ) {
-		log_err( "DNS: Unable to set interface '%s': %s", ifce,  gai_strerror( errno ) );
+		log_err( "DNS: Unable to set interface '%s': %s", ifce, strerror( errno ) );
 		return NULL;
 	}
 
 	val = 1;
 	rc = setsockopt( sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (char*) &val, sizeof(val) );
-	if(rc < 0) {
+	if( rc < 0 ) {
 		log_err( "DNS: Failed to set socket option IPV6_V6ONLY." );
 		return NULL;
 	}
@@ -540,12 +542,12 @@ void* dns_loop( void *_ ) {
 	setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) );
 
 	rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) );
-	if(rc < 0) {
-		log_err( "DNS: Failed to bind socket to address: %s", gai_strerror(rc) );
+	if( rc < 0 ) {
+		log_err( "DNS: Failed to bind socket to address: %s", strerror( errno ) );
 		return NULL;
 	}
 
-	log_info( "Bind DNS interface to %s, interface %s.",
+	log_info( "DNS: Bind socket to %s, interface %s.",
 		addr ? addr_str( &sockaddr, addrbuf ) : "<any>",
 		ifce ? ifce : "<any>"
 	);
@@ -555,15 +557,17 @@ void* dns_loop( void *_ ) {
 		myfree( task, "masala-dns" );
 		task = NULL;
 
-		if( _main->status != MAIN_ONLINE )
+		if( _main->status != MAIN_ONLINE ) {
 			break;
+		}
 
 		rc = recvfrom( sockfd, buffer, sizeof( buffer ), 0, (struct sockaddr *) &clientaddr, &addr_len );
 
-		if( rc < 0 )
+		if( rc < 0 ) {
 			continue;
+		}
 
-		log_info( "DNS: Received query from %s.",  addr_str( &clientaddr, addrbuf )  );
+		log_debug( "DNS: Received query from %s.",  addr_str( &clientaddr, addrbuf )  );
 
 		task = (struct task*) myalloc( sizeof(struct task), "masala-dns" );
 		memset( task, 0, sizeof(struct task) );
@@ -571,14 +575,15 @@ void* dns_loop( void *_ ) {
 		task->sockfd = sockfd;
 
 		rc = dns_decode_query( &task->msg, buffer, rc );
-
-		if( rc < 0 )
+		if( rc < 0 ) {
 			continue;
+		}
 
 		hostname = task->msg.question.qName;
 
-		if( hostname == NULL )
+		if( hostname == NULL ) {
 			continue;
+		}
 
 		/* Validate hostname */
 		if ( !str_isValidHostname( (char*) hostname, strlen( hostname ) ) ) {
@@ -588,7 +593,7 @@ void* dns_loop( void *_ ) {
 
 		/* That is the lookup key */
 		p2p_compute_id( host_id, hostname );
-		log_info( "DNS: Lookup '%s' as '%s'.", hostname, id_str( host_id, hexbuf ) );
+		log_debug( "DNS: Lookup '%s' as '%s'.", hostname, id_str( host_id, hexbuf ) );
 
 		dns_lookup( &dns_reply, task, host_id );
 

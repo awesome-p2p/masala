@@ -70,14 +70,14 @@ void web_reply( void *ctx, UCHAR *id, UCHAR *address ) {
 	if( address ) {
 		inet_ntop( AF_INET6, address, addrbuf, sizeof(addrbuf) );
 		sprintf( buffer, reply_fmt, strlen( addrbuf ), addrbuf );
-		
-		log_info( "Web: Answer request for '%s':\n%s", id_str( id, hexbuf ), addrbuf );
+
+		log_debug( "Web: Answer request for '%s':\n%s", id_str( id, hexbuf ), addrbuf );
 
 		sendto( request->clientfd, buffer, strlen( buffer ), 0, (struct sockaddr*) &request->clientaddr, sizeof(IP) );
 	}
 
 	close( request->clientfd );
-	myfree( request, "masalla-web" );
+	myfree( request, "masala-web" );
 }
 
 void web_lookup( CALLBACK *callback, void* ctx, UCHAR *id ) {
@@ -134,23 +134,23 @@ void* web_loop( void* _ ) {
 			break;
 		}
     } else {
-		printf( "Web: getaddrinfo failed: %s", gai_strerror( rc ) );
+		log_err( "Web: getaddrinfo failed: %s", gai_strerror( rc ) );
         return NULL;
 	}
 
 	if( (sockfd = socket( PF_INET6, SOCK_STREAM, IPPROTO_TCP )) < 0 ) {
-		printf( "Web: Failed to create socket: %s", gai_strerror( errno ) );
+		log_err( "Web: Failed to create socket: %s", strerror( errno ) );
 		return NULL;
 	}
 
 	if( ifce && setsockopt( sockfd, SOL_SOCKET, SO_BINDTODEVICE, ifce, strlen( ifce )) ) {
-		printf( "Web: Unable to set interface '%s': %s", ifce,  gai_strerror( errno ) );
+		log_err( "Web: Unable to set interface '%s': %s", ifce, strerror( errno ) );
 		return NULL;
 	}
 
 	val = 1;
 	if( (rc = setsockopt( sockfd, IPPROTO_IPV6, IPV6_V6ONLY, (char *) &val, sizeof(val) )) < 0 ) {
-		log_err( "Web: Failed to set socket options: %s", gai_strerror( rc ) );
+		log_err( "Web: Failed to set socket options: %s", strerror( errno ) );
 		return NULL;
 	}
 
@@ -162,55 +162,61 @@ void* web_loop( void* _ ) {
 	tv.tv_usec = 0;
 
 	if( (rc = setsockopt( sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(tv) )) < 0 ) {
-		log_err( "Web: Failed to set socket options: %s", gai_strerror( rc ) );
+		log_err( "Web: Failed to set socket options: %s", strerror( errno ) );
 		return NULL;
 	}
 
 	if( (rc = bind( sockfd, (struct sockaddr*) &sockaddr, sizeof(IP) )) < 0 ) {
-		log_err( "Web: Failed to bind socket to address: %s", gai_strerror( rc ) );
+		log_err( "Web: Failed to bind socket to address: %s", strerror( errno ) );
 		return NULL;
 	}
 
 	listen( sockfd, ntohs( sockaddr.sin6_port ) );
 
-	log_info( "Bind Web interface to %s, interface %s.",
+	log_info( "Web: Bind socket to %s, interface %s.",
 		addr ? addr_str( &sockaddr, addrbuf ) : "<any>",
 		ifce ? ifce : "<any>"
 	);
 
 	clientfd = 0;
 	while( _main->status == MAIN_ONLINE ) {
+
 		/* Close file descriptor that has not been used previously */
-		if( clientfd > 0 )
+		if( clientfd > 0 ) {
 			close( clientfd );
+		}
 
 		clientfd = accept( sockfd, (struct sockaddr*)&clientaddr, &addr_len );
 		rc = recv( clientfd, clientbuf, sizeof(clientbuf) - 1, 0 );
 
-		if(rc < 0)
+		if( rc < 0 ) {
 			continue;
+		}
 
 		/* Only handle GET requests. */
-		if(rc < 6 || strncmp( "GET /", clientbuf, 5 ) != 0 )
+		if( rc < 6 || strncmp( "GET /", clientbuf, 5 ) != 0 ) {
 			continue;
+		}
 
 		/* Jump after slash */
 		hex_start = clientbuf + 5;
 
 		clientbuf[rc] = ' ';
 		hex_end = strchr( hex_start, ' ' );
-		if( hex_end == NULL )
+		if( hex_end == NULL ) {
 			continue;
+		}
 
 		*hex_end = '\0';
-		if( strlen( hex_start ) == 0 || strcmp( hex_start, "favicon.ico" ) == 0 )
+		if( strlen( hex_start ) == 0 || strcmp( hex_start, "favicon.ico" ) == 0 ) {
 			continue;
+		}
 
 		/* That is the lookup key */
 		p2p_compute_id( id, hex_start );
-		log_info( "Web: Lookup '%s' as '%s'.", hex_start, id_str( id, hexbuf ) );
+		log_debug( "Web: Lookup '%s' as '%s'.", hex_start, id_str( id, hexbuf ) );
 
-		request = (struct request *) myalloc( sizeof(struct request), "masalla-web"); 
+		request = (struct request *) myalloc( sizeof(struct request), "masalla-web" );
 		memcpy( &request->clientaddr, &clientaddr, sizeof(IP) );
 		request->clientfd = clientfd;
 

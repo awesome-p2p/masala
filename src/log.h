@@ -23,6 +23,7 @@ along with masala.  If not, see <http://www.gnu.org/licenses/>.
 #define log_err(...) _log(NULL, 0, LOG_ERR, __VA_ARGS__)
 #define log_info(...) _log(NULL, 0, LOG_INFO, __VA_ARGS__)
 #define log_warn(...) _log(NULL, 0, LOG_WARNING, __VA_ARGS__)
+#define log_debug(...) _log(NULL, 0, LOG_DEBUG, __VA_ARGS__)
 
 #define HEX_LEN (2 * SHA_DIGEST_LENGTH)
 /* IPv6 address length including port, e.g. [::1]:12345*/
