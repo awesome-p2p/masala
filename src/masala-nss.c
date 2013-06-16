@@ -132,7 +132,7 @@ void* nss_loop( void* _ ) {
 		addr_str( &sockaddr, addrbuf )
 	);
 
-	while( 1 ) {
+	while( _main->status == MAIN_ONLINE ) {
 
 		rc = recvfrom( sockfd, hostname, sizeof( hostname ), 0, (struct sockaddr *) &clientaddr, &addr_len );
 
