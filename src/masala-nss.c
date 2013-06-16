@@ -136,7 +136,7 @@ void* nss_loop( void* _ ) {
 
 		rc = recvfrom( sockfd, hostname, sizeof( hostname ), 0, (struct sockaddr *) &clientaddr, &addr_len );
 
-		if( rc <= 0 || rc >= 256 ) {
+		if( rc <= 0 || rc >= sizeof( hostname ) ) {
 			continue;
 		}
 
