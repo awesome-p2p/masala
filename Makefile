@@ -40,8 +40,9 @@ endif
 build/%.o: src/%.c src/%.h
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-libnss_masala.so.2: build/masala-libnss.o
-	$(CC) $(CFLAGS) -shared -Wl,-soname,libnss_masala.so.2 -o build/libnss_masala.so.2 $(POST_LINKING)
+libnss_masala.so.2:
+	$(CC) $(CFLAGS) -fPIC -c -o build/masala-libnss.o src/masala-libnss.c
+	$(CC) $(CFLAGS) -fPIC -shared -Wl,-soname,libnss_masala.so.2 -o build/libnss_masala.so.2 build/masala-libnss.o
 
 masala-ctl:
 	$(CC) src/masala-ctl.c -o build/masala-ctl
