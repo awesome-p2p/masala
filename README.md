@@ -3,7 +3,7 @@ masala(1) -- P2P name resolution daemon
 
 ## SYNOPSIS
 
-`masala`  [-d] [-q] [-h hostname] [-k password] [-i interface ] [-p port] [-ba server] [-bp port] [-u username]
+`masala`  [-d] [-q] [-h hostname] [-i interface ] [-p port] [-ba server] [-bp port] [-u username]
 
 ## DESCRIPTION
 
