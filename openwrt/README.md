@@ -41,3 +41,11 @@ To do this create a symbolic link in the masala package folder:
 <pre>
 ln -s /my/own/project/folder/masala/.git openwrt/package/masala/git-src
 </pre>
+
+Also make sure to enable
+
+<pre>
+"Advanced configuration options" => "Enable package source tree override"
+</pre>
+
+in the menu when you do `make menuconfig`.
