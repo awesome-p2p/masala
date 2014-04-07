@@ -1,3 +1,5 @@
+_Note: This projects development has been halted._
+
 masala(1) -- P2P name resolution daemon
 =======================================
 
