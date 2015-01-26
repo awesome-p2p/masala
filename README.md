@@ -1,4 +1,5 @@
-_Note: This projects development has been halted._
+_Note: This projects development has been halted._  
+_This was a fork of a project that is now part of [torrentkino](https://github.com/torrentkino/torrentkino)_
 
 masala(1) -- P2P name resolution daemon
 =======================================
